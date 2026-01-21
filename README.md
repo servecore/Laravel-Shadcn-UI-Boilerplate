@@ -10,6 +10,7 @@ A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailw
 
 -   **Laravel 12.x**: The latest version of the PHP framework.
 -   **Shadcn UI (Blade)**: Pre-built, accessible, and customizable UI components using `bjnstnkvc/shadcn-ui`.
+    -   *Includes custom Blade implementations for:* **Dialog**, **Select**, **Tabs**, and **Progress**.
 -   **Tailwind CSS v4**: Using the next-generation Tailwind engine with `@tailwindcss/vite`.
 -   **Alpine.js**: Lightweight JavaScript framework for interactivity (modals, dropdowns, etc.).
 -   **Auto-Aliasing Fix**: Custom `AppServiceProvider` logic to automatically register Shadcn components (fixing missing `vendor` source issues).
