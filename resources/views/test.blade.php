@@ -4,11 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShadCN UI Components Preview</title>
+    <script>
+        {!! file_get_contents(resource_path('js/init-theme.js')) !!}
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-background text-foreground p-6">
     <div class="max-w-6xl mx-auto space-y-12">
-        <h1 class="text-4xl font-bold text-center mb-8">ShadCN UI Components Preview</h1>
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold">ShadCN UI Components Preview</h1>
+            <x-theme-toggle />
+        </div>
 
         <!-- Button -->
         <section class="space-y-4">
