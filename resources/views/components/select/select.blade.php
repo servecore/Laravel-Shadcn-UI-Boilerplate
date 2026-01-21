@@ -11,5 +11,6 @@
 @endphp
 
 <div {{ $attributes }} class="relative">
+    <input type="hidden" name="{{ $name }}" x-model="value" />
     {{ $slot }}
 </div>

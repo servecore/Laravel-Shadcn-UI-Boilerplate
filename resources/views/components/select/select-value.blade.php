@@ -5,6 +5,6 @@
     ]);
 @endphp
 
-<span {{ $attributes }}>
+<span {{ $attributes }} x-text="value || placeholder || '{{ $placeholder }}'">
     {{ $slot }}
 </span>

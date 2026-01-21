@@ -5,6 +5,6 @@
     ]);
 @endphp
 
-<button {{ $attributes }}>
+<div {{ $attributes }}>
     {{ $slot }}
-</button>
+</div>

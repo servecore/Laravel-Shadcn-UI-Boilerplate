@@ -7,12 +7,6 @@ use Illuminate\View\View;
 
 class Select extends Component
 {
-    /**
-     * The style theme of the component.
-     *
-     * @var string
-     */
-    public string $theme;
 
     /**
      * The value of the select.
@@ -36,27 +30,25 @@ class Select extends Component
     public bool $disabled;
 
     /**
-     * Change the default rendered element for the one passed as a child, merging their props and behavior.
+     * The name attribute for the input.
      *
-     * @var bool
+     * @var string|null
      */
-    public bool $asChild;
+    public ?string $name;
 
     /**
      * Create a new component instance.
      */
     public function __construct(
-        string $theme = 'default',
+        string $placeholder = '',
         ?string $value = null,
-        string $placeholder = 'Select an option',
         bool $disabled = false,
-        bool $asChild = false
+        ?string $name = null
     ) {
-        $this->theme       = $theme;
-        $this->value       = $value;
         $this->placeholder = $placeholder;
+        $this->value       = $value;
         $this->disabled    = $disabled;
-        $this->asChild     = $asChild;
+        $this->name        = $name;
     }
 
     /**
