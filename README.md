@@ -9,11 +9,13 @@ A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailw
 ## 🚀 Features
 
 -   **Laravel 12.x**: The latest version of the PHP framework.
--   **Shadcn UI (Blade)**: Pre-built, accessible, and customizable UI components using `bjnstnkvc/shadcn-ui`.
+-   **Shadcn UI (Blade)**: Pre-built, accessible, and customizable UI components.
     -   *Includes custom Blade implementations for:* **Dialog**, **Select**, **Tabs**, and **Progress**.
+-   **Theme System 🌙**: Integrated Dark/Light/System mode with FOUC prevention.
+-   **Button Loading**: Built-in loading state support (`<x-button loading="true" />`).
 -   **Tailwind CSS v4**: Using the next-generation Tailwind engine with `@tailwindcss/vite`.
--   **Alpine.js**: Lightweight JavaScript framework for interactivity (modals, dropdowns, etc.).
--   **Auto-Aliasing Fix**: Custom `AppServiceProvider` logic to automatically register Shadcn components (fixing missing `vendor` source issues).
+-   **Alpine.js**: Lightweight JavaScript framework for interactivity.
+-   **Auto-Aliasing Fix**: Custom `AppServiceProvider` logic to automatically register Shadcn components.
 -   **Pre-configured Demo**: Validated components available at `/test` route.
 
 ## 🛠️ Installation
@@ -52,6 +54,33 @@ A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailw
 
     Visit `http://127.0.0.1:8000/test` to see the components in action.
 
+## 📖 Usage Guide
+
+### Theme System (Dark Mode)
+This boilerplate comes with a flicker-free Theme System out of the box.
+
+1.  **Setup**: Add the initialization script in your main layout `<head>`:
+    ```html
+    <head>
+        ...
+        <x-theme-script /> <!-- Inject blocking script to prevent FOUC -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    ```
+
+2.  **Toggle Button**: Place the toggle component anywhere (e.g., Navbar):
+    ```html
+    <x-theme-toggle />
+    ```
+
+### Button Loading State
+The button component supports a `loading` prop that automatically disables the button and shows a spinner:
+```html
+<x-button loading="true">
+    Please Wait...
+</x-button>
+```
+
 ## 🧩 Adding Components
 
 You can add new Shadcn components using the artisan command:
@@ -69,11 +98,9 @@ Classes named `Switch` are reserved in PHP. If you install the switch component,
 -   **File**: `app/View/Components/Switch/Switch.php` -> `SwitchComponent.php`
 -   **Class**: `class Switch` -> `class SwitchComponent`
 
-#### 2. Component Aliasing
-We have patched `AppServiceProvider.php` to automatically discover and register components in `app/View/Components`. You can use kebab-case tags in your blade files safely:
-```html
-<x-select-value /> <!-- Works automatically -->
-```
+#### 2. Dependencies
+Some components require extra packages which are already pre-configured in `package.json`:
+-   **Carousel**: Requires `embla-carousel-autoplay` and `embla-carousel`.
 
 ## 📂 Tech Stack
 
