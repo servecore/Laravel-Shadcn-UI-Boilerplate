@@ -36,19 +36,28 @@ class Button extends Component
     public bool $asChild;
 
     /**
+     * Whether the button is in a loading state.
+     *
+     * @var bool
+     */
+    public bool $loading;
+
+    /**
      * Create a new component instance.
      *
      * @param string $theme
      * @param string $variant
      * @param string $size
      * @param bool   $asChild
+     * @param bool   $loading
      */
-    public function __construct(string $theme = 'default', string $variant = 'default', string $size = 'default', bool $asChild = false)
+    public function __construct(string $theme = 'default', string $variant = 'default', string $size = 'default', bool $asChild = false, bool $loading = false)
     {
         $this->theme   = $theme;
         $this->variant = $variant;
         $this->size    = $size;
         $this->asChild = $asChild;
+        $this->loading = $loading;
     }
 
     /**

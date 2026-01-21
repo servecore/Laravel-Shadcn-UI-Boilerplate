@@ -23,6 +23,7 @@
                 <x-button size="sm">Small</x-button>
                 <x-button size="lg">Large</x-button>
                 <x-button disabled>Disabled</x-button>
+                <x-button loading="true">Loading</x-button>
             </div>
         </section>
 
