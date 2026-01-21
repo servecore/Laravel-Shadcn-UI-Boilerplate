@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShadCN UI Components Preview</title>
-    <script>
-        {!! file_get_contents(resource_path('js/init-theme.js')) !!}
-    </script>
+    <x-theme-script />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-background text-foreground p-6">
