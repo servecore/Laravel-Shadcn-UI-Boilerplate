@@ -10,97 +10,123 @@ A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailw
 
 -   **Laravel 12.x**: The latest version of the PHP framework.
 -   **Shadcn UI (Blade)**: Pre-built, accessible, and customizable UI components.
-    -   *Includes custom Blade implementations for:* **Dialog**, **Select**, **Tabs**, and **Progress**.
 -   **Theme System 🌙**: Integrated Dark/Light/System mode with FOUC prevention.
--   **Button Loading**: Built-in loading state support (`<x-button loading="true" />`).
--   **Tailwind CSS v4**: Using the next-generation Tailwind engine with `@tailwindcss/vite`.
+-   **Tailwind CSS v4**: Using the next-generation Tailwind engine.
 -   **Alpine.js**: Lightweight JavaScript framework for interactivity.
--   **Auto-Aliasing Fix**: Custom `AppServiceProvider` logic to automatically register Shadcn components.
--   **Pre-configured Demo**: Validated components available at `/test` route.
+
+## 🧩 Available Components
+
+### Core Components
+Button, Card, Avatar, Badge, Alert, Dialog, Select, Tabs, Progress, Input, Label, Checkbox, Radio, Form
+
+### Extended Components (from rustam76/shadcn-blade)
+| Component | Description |
+|-----------|-------------|
+| **Table** | Full table system with header, body, footer, row, cell |
+| **Skeleton** | Loading placeholder with pulse animation |
+| **Switch** | Toggle switch with Alpine.js state |
+| **Textarea** | Multi-line text input |
+| **Tooltip** | Hover tooltips with positioning |
+| **Pagination** | Complete pagination system |
+| **Dropdown** | Dropdown menu with items, checkboxes, radio groups |
+| **Scroll Area** | Custom scrollbar container |
+| **Toggle** | Toggle button component |
+| **Button Group** | Grouped buttons with separators |
+| **Sidebar** | Full-featured collapsible sidebar (see below) |
+
+### 🎯 Sidebar Component
+A complete sidebar navigation system with:
+- ✅ Collapsible (toggle button + keyboard shortcut ⌘+B)
+- ✅ Cookie persistence for state
+- ✅ Multi-level navigation (3+ levels)
+- ✅ Tooltip on hover when collapsed
+- ✅ Group labels (Platform, Settings, etc.)
+- ✅ Mobile responsive (offcanvas)
+- ✅ Active state highlighting
 
 ## 🛠️ Installation
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/yourusername/laravel-shadcn-project.git
-    cd laravel-shadcn-project
-    ```
-
-2.  **Install PHP dependencies**
-    ```bash
-    composer install
-    ```
-
-3.  **Install Node.js dependencies**
-    ```bash
-    npm install
-    ```
-
-4.  **Environment Setup**
-    ```bash
-    cp .env.example .env
-    php artisan key:generate
-    ```
-
-5.  **Run Development Server**
-    Start Vite and Laravel server:
-    ```bash
-    # Terminal 1
-    npm run dev
-
-    # Terminal 2
-    php artisan serve
-    ```
-
-    Visit `http://127.0.0.1:8000/test` to see the components in action.
-
-## 📖 Usage Guide
-
-### Theme System (Dark Mode)
-This boilerplate comes with a flicker-free Theme System out of the box.
-
-1.  **Setup**: Add the initialization script in your main layout `<head>`:
-    ```html
-    <head>
-        ...
-        <x-theme-script /> <!-- Inject blocking script to prevent FOUC -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    ```
-
-2.  **Toggle Button**: Place the toggle component anywhere (e.g., Navbar):
-    ```html
-    <x-theme-toggle />
-    ```
-
-### Button Loading State
-The button component supports a `loading` prop that automatically disables the button and shows a spinner:
-```html
-<x-button loading="true">
-    Please Wait...
-</x-button>
-```
-
-## 🧩 Adding Components
-
-You can add new Shadcn components using the artisan command:
-
 ```bash
-php artisan shadcn:add [component-name]
-# Example:
-php artisan shadcn:add card
+# Clone repository
+git clone https://github.com/yourusername/laravel-shadcn-project.git
+cd laravel-shadcn-project
+
+# Install dependencies
+composer install
+npm install
+
+# Environment setup
+cp .env.example .env
+php artisan key:generate
+
+# Run development server
+npm run dev          # Terminal 1
+php artisan serve    # Terminal 2
 ```
 
-### ⚠️ Important Notes
+## 📖 Demo Pages
 
-#### 1. The `Switch` Component
-Classes named `Switch` are reserved in PHP. If you install the switch component, you **MUST** manually rename the class and file to avoid a crash:
--   **File**: `app/View/Components/Switch/Switch.php` -> `SwitchComponent.php`
--   **Class**: `class Switch` -> `class SwitchComponent`
+| URL | Description |
+|-----|-------------|
+| `/test` | All basic components preview |
+| `/sidebar-demo` | Sidebar with all features |
 
-#### 2. Dependencies
-Some components require extra packages which are already pre-configured in `package.json`:
--   **Carousel**: Requires `embla-carousel-autoplay` and `embla-carousel`.
+## 🎨 Usage Examples
+
+### Theme Toggle
+```html
+<head>
+    <x-theme-script />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body>
+    <x-theme-toggle />
+</body>
+```
+
+### Sidebar Layout
+```html
+<x-sidebar.provider :defaultOpen="true" collapsible="icon">
+    <x-sidebar.sidebar collapsible="icon">
+        <x-sidebar.header>Logo</x-sidebar.header>
+        <x-sidebar.content>
+            <x-sidebar.group>
+                <x-sidebar.group-label>Menu</x-sidebar.group-label>
+                <x-sidebar.menu>
+                    <x-sidebar.menu-item>
+                        <x-sidebar.menu-button :active="true" tooltip="Dashboard">
+                            <x-slot:icon><!-- SVG --></x-slot:icon>
+                            Dashboard
+                        </x-sidebar.menu-button>
+                    </x-sidebar.menu-item>
+                </x-sidebar.menu>
+            </x-sidebar.group>
+        </x-sidebar.content>
+    </x-sidebar.sidebar>
+    <x-sidebar.inset>
+        <x-sidebar.trigger />
+        <!-- Main content -->
+    </x-sidebar.inset>
+</x-sidebar.provider>
+```
+
+### Table
+```html
+<x-table.table>
+    <x-table.header>
+        <x-table.row>
+            <x-table.head>Name</x-table.head>
+            <x-table.head>Email</x-table.head>
+        </x-table.row>
+    </x-table.header>
+    <x-table.body>
+        <x-table.row>
+            <x-table.cell>John Doe</x-table.cell>
+            <x-table.cell>john@example.com</x-table.cell>
+        </x-table.row>
+    </x-table.body>
+</x-table.table>
+```
 
 ## 📂 Tech Stack
 
