@@ -319,6 +319,255 @@
             </x-tabs>
         </section>
 
+        <!-- ============================================= -->
+        <!-- NEW COMPONENTS added 22 Januari 2026 -->
+        <!-- ============================================= -->
+
+        <div class="border-t border-border pt-8 mt-8">
+            <h2 class="text-3xl font-bold mb-8 text-primary">✨ New Components (from rustam76/shadcn-blade)</h2>
+        </div>
+
+        <!-- Table -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Table</h2>
+            <x-table.table>
+                <x-table.caption>A list of your recent invoices.</x-table.caption>
+                <x-table.header>
+                    <x-table.row>
+                        <x-table.head class="w-[100px]">Invoice</x-table.head>
+                        <x-table.head>Status</x-table.head>
+                        <x-table.head>Method</x-table.head>
+                        <x-table.head class="text-right">Amount</x-table.head>
+                    </x-table.row>
+                </x-table.header>
+                <x-table.body>
+                    <x-table.row>
+                        <x-table.cell class="font-medium">INV001</x-table.cell>
+                        <x-table.cell><x-badge variant="secondary">Paid</x-badge></x-table.cell>
+                        <x-table.cell>Credit Card</x-table.cell>
+                        <x-table.cell class="text-right">$250.00</x-table.cell>
+                    </x-table.row>
+                    <x-table.row>
+                        <x-table.cell class="font-medium">INV002</x-table.cell>
+                        <x-table.cell><x-badge>Pending</x-badge></x-table.cell>
+                        <x-table.cell>PayPal</x-table.cell>
+                        <x-table.cell class="text-right">$150.00</x-table.cell>
+                    </x-table.row>
+                    <x-table.row>
+                        <x-table.cell class="font-medium">INV003</x-table.cell>
+                        <x-table.cell><x-badge variant="destructive">Unpaid</x-badge></x-table.cell>
+                        <x-table.cell>Bank Transfer</x-table.cell>
+                        <x-table.cell class="text-right">$350.00</x-table.cell>
+                    </x-table.row>
+                </x-table.body>
+                <x-table.footer>
+                    <x-table.row>
+                        <x-table.cell colspan="3">Total</x-table.cell>
+                        <x-table.cell class="text-right font-bold">$750.00</x-table.cell>
+                    </x-table.row>
+                </x-table.footer>
+            </x-table.table>
+        </section>
+
+        <!-- Skeleton -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Skeleton</h2>
+            <div class="flex items-center space-x-4">
+                <x-skeleton.skeleton class="h-12 w-12 rounded-full" />
+                <div class="space-y-2">
+                    <x-skeleton.skeleton class="h-4 w-[250px]" />
+                    <x-skeleton.skeleton class="h-4 w-[200px]" />
+                </div>
+            </div>
+            <div class="space-y-2">
+                <x-skeleton.skeleton class="h-4 w-full" />
+                <x-skeleton.skeleton class="h-4 w-3/4" />
+                <x-skeleton.skeleton class="h-4 w-1/2" />
+            </div>
+        </section>
+
+        <!-- Switch -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Switch</h2>
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center space-x-2">
+                    <x-switch.switch name="airplane" />
+                    <x-label>Airplane Mode</x-label>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <x-switch.switch name="notifications" :checked="true" />
+                    <x-label>Enable Notifications</x-label>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <x-switch.switch name="disabled" :disabled="true" />
+                    <x-label>Disabled Switch</x-label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Textarea -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Textarea</h2>
+            <div class="space-y-2 max-w-md">
+                <x-label for="bio">Your Bio</x-label>
+                <x-textarea.textarea id="bio" placeholder="Tell us about yourself..." rows="4" />
+            </div>
+        </section>
+
+        <!-- Tooltip -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Tooltip</h2>
+            <div class="flex flex-wrap gap-4">
+                <x-tooltip.tooltip side="top">
+                    <x-slot:trigger>
+                        <x-button variant="outline">Hover (Top)</x-button>
+                    </x-slot:trigger>
+                    Add to library
+                </x-tooltip.tooltip>
+
+                <x-tooltip.tooltip side="bottom">
+                    <x-slot:trigger>
+                        <x-button variant="outline">Hover (Bottom)</x-button>
+                    </x-slot:trigger>
+                    Tooltip on bottom
+                </x-tooltip.tooltip>
+
+                <x-tooltip.tooltip side="left">
+                    <x-slot:trigger>
+                        <x-button variant="outline">Hover (Left)</x-button>
+                    </x-slot:trigger>
+                    Tooltip on left
+                </x-tooltip.tooltip>
+
+                <x-tooltip.tooltip side="right">
+                    <x-slot:trigger>
+                        <x-button variant="outline">Hover (Right)</x-button>
+                    </x-slot:trigger>
+                    Tooltip on right
+                </x-tooltip.tooltip>
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Pagination</h2>
+            <x-pagination.pagination>
+                <x-pagination.content>
+                    <x-pagination.item>
+                        <x-pagination.previous href="#" />
+                    </x-pagination.item>
+                    <x-pagination.item>
+                        <x-pagination.link href="#" :isActive="true">1</x-pagination.link>
+                    </x-pagination.item>
+                    <x-pagination.item>
+                        <x-pagination.link href="#">2</x-pagination.link>
+                    </x-pagination.item>
+                    <x-pagination.item>
+                        <x-pagination.link href="#">3</x-pagination.link>
+                    </x-pagination.item>
+                    <x-pagination.item>
+                        <x-pagination.ellipsis />
+                    </x-pagination.item>
+                    <x-pagination.item>
+                        <x-pagination.next href="#" />
+                    </x-pagination.item>
+                </x-pagination.content>
+            </x-pagination.pagination>
+        </section>
+
+        <!-- Dropdown Menu -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Dropdown Menu</h2>
+            <div class="flex gap-4">
+                <x-dropdown.dropdown>
+                    <x-slot:trigger>
+                        <x-button variant="outline">Open Menu</x-button>
+                    </x-slot:trigger>
+                    <x-dropdown.label>My Account</x-dropdown.label>
+                    <x-dropdown.separator />
+                    <x-dropdown.item>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Profile
+                        <x-dropdown.shortcut>⇧⌘P</x-dropdown.shortcut>
+                    </x-dropdown.item>
+                    <x-dropdown.item>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Settings
+                        <x-dropdown.shortcut>⌘S</x-dropdown.shortcut>
+                    </x-dropdown.item>
+                    <x-dropdown.separator />
+                    <x-dropdown.item variant="destructive">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Logout
+                        <x-dropdown.shortcut>⇧⌘Q</x-dropdown.shortcut>
+                    </x-dropdown.item>
+                </x-dropdown.dropdown>
+            </div>
+        </section>
+
+        <!-- Toggle -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Toggle</h2>
+            <div class="flex flex-wrap gap-4">
+                <x-toggle.toggle>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                    </svg>
+                </x-toggle.toggle>
+                <x-toggle.toggle variant="outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                </x-toggle.toggle>
+                <x-toggle.toggle :pressed="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </x-toggle.toggle>
+            </div>
+        </section>
+
+        <!-- Button Group -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Button Group</h2>
+            <div class="space-y-4">
+                <x-button-group.group>
+                    <x-button variant="outline">Left</x-button>
+                    <x-button variant="outline">Center</x-button>
+                    <x-button variant="outline">Right</x-button>
+                </x-button-group.group>
+
+                <x-button-group.group orientation="vertical">
+                    <x-button variant="outline">Top</x-button>
+                    <x-button variant="outline">Middle</x-button>
+                    <x-button variant="outline">Bottom</x-button>
+                </x-button-group.group>
+            </div>
+        </section>
+
+        <!-- Scroll Area -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Scroll Area</h2>
+            <x-scroll-area.scroll-area class="h-72 w-48 rounded-md border">
+                <div class="p-4">
+                    <h4 class="mb-4 text-sm font-medium leading-none">Tags</h4>
+                    @foreach(range(1, 50) as $i)
+                        <div class="text-sm">Tag {{ $i }}</div>
+                        @if($i < 50)
+                            <div class="my-2 h-px bg-border"></div>
+                        @endif
+                    @endforeach
+                </div>
+            </x-scroll-area.scroll-area>
+        </section>
+
     </div>
 </body>
 </html>
