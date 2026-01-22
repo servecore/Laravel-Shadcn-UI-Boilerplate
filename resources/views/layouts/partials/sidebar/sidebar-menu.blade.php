@@ -37,7 +37,6 @@
                     Users
                 </x-sidebar.menu-button>
             </x-sidebar.menu-item>
-            
 
             {{-- ============================================
                  MULTI-LEVEL MENU EXAMPLES
@@ -61,7 +60,7 @@
         <x-sidebar.menu>
             {{-- Profile --}}
             <x-sidebar.menu-item>
-                <x-sidebar.menu-button :active="request()->routeIs('demo.profile')" tooltip="Profile" href="{{ route('demo.profile') }}">
+                <x-sidebar.menu-button :active="request()->routeIs('demo.users.profile')" tooltip="Profile" href="{{ route('demo.users.profile') }}">
                     <x-slot:icon>
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -72,7 +71,7 @@
             </x-sidebar.menu-item>
 
             {{-- General Settings --}}
-            <x-sidebar.menu-item>
+             <x-sidebar.menu-item>
                 <x-sidebar.menu-button :active="request()->routeIs('demo.settings')" tooltip="General" href="{{ route('demo.settings') }}">
                     <x-slot:icon>
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

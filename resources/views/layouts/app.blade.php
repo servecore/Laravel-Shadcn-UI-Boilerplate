@@ -6,6 +6,9 @@
     <title>@yield('title', 'Dashboard') - {{ config('app.name', 'Laravel') }}</title>
     <x-theme-script />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @stack('styles')
+    {{-- put your css custome in here --}}
 </head>
 <body class="bg-background text-foreground font-sans antialiased">
     <x-sidebar.provider :defaultOpen="true" variant="sidebar" collapsible="icon">
@@ -71,5 +74,9 @@
             </footer>
         </x-sidebar.inset>
     </x-sidebar.provider>
+    
+    @stack('scripts')
+    {{-- put your javascript dynamic ini here--}}
+    
 </body>
 </html>
