@@ -12,18 +12,6 @@
     data-side="{{ $side }}"
     class="group peer text-sidebar-foreground hidden md:block"
 >
-    {{-- GAP spacer --}}
-    <div 
-        data-slot="sidebar-gap"
-        class="relative bg-transparent transition-[width] duration-200 ease-linear
-        group-data-[side=right]:rotate-180"
-        x-bind:class="{
-            'w-[var(--sidebar-width)]': $data.state === 'expanded',
-            'w-[var(--sidebar-width-icon)]': $data.state === 'collapsed',
-            'w-0': '{{ $collapsible }}' === 'offcanvas' && $data.state === 'collapsed',
-        }"
-    ></div>
-
     {{-- CONTAINER --}}
     <div 
         data-slot="sidebar-container"
