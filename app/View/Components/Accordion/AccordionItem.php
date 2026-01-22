@@ -2,8 +2,8 @@
 
 namespace App\View\Components\Accordion;
 
-use Bjnstnkvc\ShadcnUi\View\Concerns\HasID;
-use Bjnstnkvc\ShadcnUi\View\Concerns\SharesData;
+use App\View\Concerns\HasID;
+use App\View\Concerns\SharesData;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 

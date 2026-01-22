@@ -2,7 +2,7 @@
 
 namespace App\View\Components\Checkbox;
 
-use Bjnstnkvc\ShadcnUi\View\Concerns\SharesData;
+use App\View\Concerns\SharesData;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 

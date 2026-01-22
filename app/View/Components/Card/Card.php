@@ -2,7 +2,7 @@
 
 namespace App\View\Components\Card;
 
-use Bjnstnkvc\ShadcnUi\View\Concerns\SharesData;
+use App\View\Concerns\SharesData;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 

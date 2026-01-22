@@ -4,69 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ea99337c3202a49c513b1504cdd8d04",
+    "content-hash": "c238471f34b6588dab7e05727fcb3d01",
     "packages": [
-        {
-            "name": "bjnstnkvc/shadcn-ui",
-            "version": "1.1.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/BJNSTNKVC/laravel-shadcn-ui.git",
-                "reference": "b4fd3763f671020b3ff6c99184ed3b5ba058afea"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/BJNSTNKVC/laravel-shadcn-ui/zipball/b4fd3763f671020b3ff6c99184ed3b5ba058afea",
-                "reference": "b4fd3763f671020b3ff6c99184ed3b5ba058afea",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/console": "^10.0|^11.0|^12.0",
-                "illuminate/support": "^10.0|^11.0|^12.0",
-                "illuminate/view": "^10.0|^11.0|^12.0"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^8.0|^9.0",
-                "orchestra/testbench-dusk": "^8.0|^9.0",
-                "phpunit/phpunit": "^10.0|^11.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Bjnstnkvc\\ShadcnUi\\ShadcnUiServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Bjnstnkvc\\ShadcnUi\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bojan Stankovic",
-                    "email": "dev.bojan.stankovic@gmail.com"
-                }
-            ],
-            "description": "Port of shadcn/ui for Laravel.",
-            "keywords": [
-                "blade",
-                "laravel",
-                "shadcn",
-                "tailwindcss",
-                "ui"
-            ],
-            "support": {
-                "issues": "https://github.com/BJNSTNKVC/laravel-shadcn-ui/issues",
-                "source": "https://github.com/BJNSTNKVC/laravel-shadcn-ui/tree/1.1.7"
-            },
-            "time": "2025-03-05T22:54:13+00:00"
-        },
         {
             "name": "brick/math",
             "version": "0.14.1",
@@ -8439,5 +8378,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

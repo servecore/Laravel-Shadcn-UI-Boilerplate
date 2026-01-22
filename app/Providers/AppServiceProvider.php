@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Bjnstnkvc\ShadcnUi\ShadcnUiServiceProvider;
+use Illuminate\Support\Facades\Blade;
+use App\View\Components\Compiler\CompileAsChild;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,8 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         ShadcnUiServiceProvider::components();
-         $this->registerComponentAliases();
+        // Register CompileAsChild component (previously from bjnstnkvc/shadcn-ui)
+        Blade::component('compile-as-child', CompileAsChild::class);
+
+        $this->registerComponentAliases();
     }
 
     /**
