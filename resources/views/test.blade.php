@@ -93,6 +93,89 @@
             </div>
         </section>
 
+        <!-- Offcanvas / Sheet Examples -->
+        <section class="space-y-8">
+            <h2 class="text-2xl font-semibold">Offcanvas / Sheet Examples</h2>
+            
+            <div class="flex flex-wrap gap-4">
+                <!-- Right Side (Default) -->
+                <x-sheet.sheet>
+                    <x-sheet.trigger>
+                        <x-button variant="outline">Open Right (Default)</x-button>
+                    </x-sheet.trigger>
+                    <x-sheet.content>
+                        <x-sheet.header>
+                            <x-sheet.title>Edit Profile</x-sheet.title>
+                            <x-sheet.description>Make changes to your profile here. Click save when you're done.</x-sheet.description>
+                        </x-sheet.header>
+                        <div class="grid gap-4 py-4">
+                            <div class="grid grid-cols-4 items-center gap-4">
+                                <label for="sheet-name" class="text-right text-sm">Name</label>
+                                <input id="sheet-name" value="Pedro Duarte" class="col-span-3 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                            </div>
+                            <div class="grid grid-cols-4 items-center gap-4">
+                                <label for="sheet-username" class="text-right text-sm">Username</label>
+                                <input id="sheet-username" value="@peduarte" class="col-span-3 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" />
+                            </div>
+                        </div>
+                        <x-sheet.footer>
+                            <x-button type="submit">Save changes</x-button>
+                        </x-sheet.footer>
+                    </x-sheet.content>
+                </x-sheet.sheet>
+
+                <!-- Left Side -->
+                <x-sheet.sheet>
+                    <x-sheet.trigger>
+                        <x-button variant="outline">Open Left</x-button>
+                    </x-sheet.trigger>
+                    <x-sheet.content side="left">
+                        <x-sheet.header>
+                            <x-sheet.title>Sidebar Menu</x-sheet.title>
+                            <x-sheet.description>This is ideal for mobile navigation.</x-sheet.description>
+                        </x-sheet.header>
+                        <div class="py-4">
+                            <ul class="space-y-2">
+                                <li><a href="#" class="block p-2 hover:bg-muted rounded-md">Home</a></li>
+                                <li><a href="#" class="block p-2 hover:bg-muted rounded-md">Settings</a></li>
+                                <li><a href="#" class="block p-2 hover:bg-muted rounded-md">Logout</a></li>
+                            </ul>
+                        </div>
+                    </x-sheet.content>
+                </x-sheet.sheet>
+
+                <!-- Top Side -->
+                <x-sheet.sheet>
+                    <x-sheet.trigger>
+                        <x-button variant="outline">Open Top</x-button>
+                    </x-sheet.trigger>
+                    <x-sheet.content side="top">
+                        <x-sheet.header>
+                            <x-sheet.title>Top Notification</x-sheet.title>
+                            <x-sheet.description>A quick message from the top.</x-sheet.description>
+                        </x-sheet.header>
+                    </x-sheet.content>
+                </x-sheet.sheet>
+
+                <!-- Bottom Side -->
+                <x-sheet.sheet>
+                    <x-sheet.trigger>
+                        <x-button variant="outline">Open Bottom</x-button>
+                    </x-sheet.trigger>
+                    <x-sheet.content side="bottom">
+                        <x-sheet.header>
+                            <x-sheet.title>Bottom Sheet</x-sheet.title>
+                            <x-sheet.description>Useful for mobile actions.</x-sheet.description>
+                        </x-sheet.header>
+                        <div class="py-4 flex justify-center gap-4">
+                            <x-button variant="secondary" class="w-full">Cancel</x-button>
+                            <x-button class="w-full">Confirm</x-button>
+                        </div>
+                    </x-sheet.content>
+                </x-sheet.sheet>
+            </div>
+        </section>
+
         <!-- Button -->
         <section class="space-y-4">
             <h2 class="text-2xl font-semibold">Button</h2>
@@ -430,12 +513,12 @@
                         </x-card-header>
                         <x-card-content class="space-y-2">
                             <div class="space-y-1">
-                                <x-label for="name">Name</x-label>
-                                <x-input id="name" default-value="Pedro Duarte" />
+                                <x-label for="account-name">Name</x-label>
+                                <x-input id="account-name" default-value="Pedro Duarte" />
                             </div>
                             <div class="space-y-1">
-                                <x-label for="username">Username</x-label>
-                                <x-input id="username" default-value="@peduarte" />
+                                <x-label for="account-username">Username</x-label>
+                                <x-input id="account-username" default-value="@peduarte" />
                             </div>
                         </x-card-content>
                         <x-card-footer>
