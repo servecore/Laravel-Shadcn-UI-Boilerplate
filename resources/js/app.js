@@ -1,5 +1,8 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
+import collapse from '@alpinejs/collapse';
+
+Alpine.plugin(collapse);
 
 import accordion from './components/accordion';
 import avatar from './components/avatar';

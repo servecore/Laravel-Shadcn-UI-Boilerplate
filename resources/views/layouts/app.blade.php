@@ -87,7 +87,7 @@
 
             <x-sidebar.footer>
                 <div class="p-1">
-                    <x-dropdown.dropdown class="w-full">
+                    <x-dropdown.dropdown class="w-full" side="top" align="start">
                         <x-slot:trigger>
                             <x-sidebar.menu-button tooltip="User">
                                 <x-slot:icon>
