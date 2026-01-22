@@ -2,36 +2,40 @@
 
 namespace App\View\Concerns;
 
+use Closure;
+use Illuminate\View\View;
+
 /**
  * SharesData trait for sharing data between parent and child components.
- * 
+ *
  * This trait provides functionality to share data from a parent component
- * to its child components through the view.
+ * to its child components through view composers.
  */
 trait SharesData
 {
     /**
-     * Share data with child components.
+     * Share data with specific views using a callback.
      *
-     * @param string $key
-     * @param mixed $value
-     *
+     * @param  array  $views  Array of view names to share data with
+     * @param  Closure  $callback  Callback that receives $data and $view, returns array of data to share
      * @return $this
      */
-    public function share(string $key, mixed $value): static
+    public function share(array $views, Closure $callback): static
     {
-        view()->share($key, $value);
+        view()->composer($views, function (View $view) use ($callback) {
+            $data = $view->getData();
+            $shared = $callback($data, $view);
+
+            foreach ($shared as $key => $value) {
+                $view->with($key, $value);
+            }
+        });
 
         return $this;
     }
 
     /**
-     * Get shared data by key.
-     *
-     * @param string $key
-     * @param mixed $default
-     *
-     * @return mixed
+     * Get shared data by key from view.
      */
     public function getShared(string $key, mixed $default = null): mixed
     {

@@ -14,39 +14,60 @@ trait HasID
 {
     /**
      * The component ID.
+     * 
+     * @var string|null
      */
-    protected ?string $componentId = null;
+    public ?string $id = null;
 
     /**
-     * Generate a unique ID for the component.
+     * Generate or get a unique ID for the component.
+     *
+     * @param string $prefix Optional prefix for the generated ID
+     *
+     * @return string
+     */
+    public function id(string $prefix = ''): string
+    {
+        if ($this->id === null) {
+            $this->id = $prefix . '-' . Str::random(8);
+        }
+
+        return $this->id;
+    }
+
+    /**
+     * Generate a unique ID for the component (alias for id()).
+     *
+     * @param string $prefix Optional prefix for the generated ID
+     *
+     * @return string
      */
     public function generateId(string $prefix = ''): string
     {
-        if ($this->componentId === null) {
-            $this->componentId = $prefix.Str::random(8);
-        }
-
-        return $this->componentId;
+        return $this->id($prefix);
     }
 
     /**
      * Set the component ID.
      *
+     * @param string $id
      *
      * @return $this
      */
     public function setId(string $id): static
     {
-        $this->componentId = $id;
+        $this->id = $id;
 
         return $this;
     }
 
     /**
      * Get the component ID.
+     *
+     * @return string|null
      */
     public function getId(): ?string
     {
-        return $this->componentId;
+        return $this->id;
     }
 }
