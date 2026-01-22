@@ -14,6 +14,85 @@
             <x-theme-toggle />
         </div>
 
+        <!-- Jumbotron / Hero Section -->
+        <section class="space-y-8">
+            <h2 class="text-2xl font-semibold">Jumbotron / Hero Examples</h2>
+            
+            <!-- Example 1: Simple Centered Hero -->
+            <div class="py-12 md:py-24 lg:py-32 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
+                <div class="container px-4 md:px-6 mx-auto">
+                    <div class="flex flex-col items-center space-y-4 text-center">
+                        <div class="space-y-2">
+                            <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                                Build your next idea
+                            </h1>
+                            <p class="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+                                Beautifully designed components built with Radix UI and Tailwind CSS. Open source and customizable.
+                            </p>
+                        </div>
+                        <div class="space-x-4">
+                            <x-button size="lg">Get Started</x-button>
+                            <x-button variant="outline" size="lg">Learn More</x-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Gradient Card Hero -->
+            <div class="relative overflow-hidden rounded-lg border bg-background p-8 md:p-12 lg:p-16">
+                <div class="absolute inset-0 z-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10 dark:from-purple-900/20 dark:via-pink-900/20 dark:to-blue-900/20"></div>
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                    <div class="flex-1 space-y-4">
+                        <div class="inline-block rounded-lg bg-muted px-3 py-1 text-sm font-medium">
+                            New Feature
+                        </div>
+                        <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                            Supercharge your workflow
+                        </h2>
+                        <p class="text-muted-foreground md:text-xl">
+                            Unlock the power of automated tools and streamline your development process today.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <x-button size="lg" class="gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                Start Now
+                            </x-button>
+                            <x-button variant="ghost" size="lg" class="gap-2">
+                                Watch Demo 
+                                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </x-button>
+                        </div>
+                    </div>
+                    <div class="flex-1 w-full max-w-sm lg:max-w-md">
+                         <div class="aspect-video rounded-xl bg-muted/50 border flex items-center justify-center p-6 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-16 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navbar / Navigation Examples -->
+        <section class="space-y-8">
+            <h2 class="text-2xl font-semibold">Navbar / Navigation Examples</h2>
+            
+            <!-- Example 1: Simple Navbar -->
+            <div class="rounded-lg border bg-background shadow-sm">
+                <x-navbar.simple />
+            </div>
+
+            <!-- Example 2: Dashboard Navbar -->
+            <div class="rounded-lg border bg-background shadow-sm">
+                <x-navbar.dashboard />
+            </div>
+        </section>
+
         <!-- Button -->
         <section class="space-y-4">
             <h2 class="text-2xl font-semibold">Button</h2>

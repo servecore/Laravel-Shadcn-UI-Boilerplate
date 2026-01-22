@@ -13,7 +13,7 @@
 
     <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
         {{-- Sidebar Navigation --}}
-        <aside class="-mx-4 lg:w-1/5">
+        <aside class="-mx-4 lg:mx-0 lg:w-1/5">
             <nav class="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
                 <a href="#" class="inline-flex items-center rounded-md bg-muted px-3 py-2 text-sm font-medium hover:bg-muted">
                     Profile
