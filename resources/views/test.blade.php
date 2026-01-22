@@ -238,21 +238,19 @@
         <!-- Select -->
         <section class="space-y-4">
             <h2 class="text-2xl font-semibold">Select</h2>
-            <x-select>
-                <x-select-trigger class="w-[180px]">
-                    <x-select-value placeholder="Select a fruit" />
-                </x-select-trigger>
-                <x-select-content>
-                    <x-select-item value="apple">Apple</x-select-item>
-                    <x-select-item value="banana">Banana</x-select-item>
-                    <x-select-item value="blueberry">Blueberry</x-select-item>
-                    <x-select-item value="grapes">Grapes</x-select-item>
-                    <x-select-item value="pineapple">Pineapple</x-select-item>
-                </x-select-content>
-            </x-select>
+            <x-select.select>
+                <x-select.trigger class="w-[180px]">
+                    <x-select.value placeholder="Select a fruit" />
+                </x-select.trigger>
+                <x-select.content>
+                    <x-select.item value="apple">Apple</x-select.item>
+                    <x-select.item value="banana">Banana</x-select.item>
+                    <x-select.item value="blueberry">Blueberry</x-select.item>
+                    <x-select.item value="grapes">Grapes</x-select.item>
+                    <x-select.item value="pineapple">Pineapple</x-select.item>
+                </x-select.content>
+            </x-select.select>
         </section>
-
-
 
         <!-- Progress -->
         <section class="space-y-4">

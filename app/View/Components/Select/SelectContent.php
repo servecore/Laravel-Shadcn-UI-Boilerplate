@@ -25,8 +25,8 @@ class SelectContent extends Component
     /**
      * Get the view / contents that represent the component.
      */
-    public function render(): View
+    public function render(): View|Closure|string
     {
-        return $this->view('components.select.select-content');
+        return view('components.select.content');
     }
 }

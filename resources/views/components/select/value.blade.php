@@ -1,4 +1,7 @@
+@props(['placeholder' => ''])
+
 @php
+
     /* @var Illuminate\View\ComponentAttributeBag $attributes */
     $attributes = $attributes->class([
         'truncate',

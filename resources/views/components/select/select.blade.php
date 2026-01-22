@@ -1,3 +1,9 @@
+@props([
+    'name' => '',
+    'value' => '',
+    'placeholder' => '',
+    'disabled' => false,
+])
 @php
     /* @var Illuminate\View\ComponentAttributeBag $attributes */
     $attributes = $attributes->merge([
