@@ -15,7 +15,7 @@
                 Edit: layouts/partials/sidebar-header.blade.php
             --}}
             <x-sidebar.header>
-                @include('layouts.partials.sidebar-header')
+                @include('layouts.partials.sidebar.sidebar-header')
             </x-sidebar.header>
 
             {{-- 
@@ -27,7 +27,7 @@
                 - layouts/partials/sidebar-menu-reports.blade.php (3 levels)
             --}}
             <x-sidebar.content>
-                @include('layouts.partials.sidebar-menu')
+                @include('layouts.partials.sidebar.sidebar-menu')
             </x-sidebar.content>
 
             {{-- 
@@ -35,7 +35,7 @@
                 Edit: layouts/partials/sidebar-footer.blade.php
             --}}
             <x-sidebar.footer>
-                @include('layouts.partials.sidebar-footer')
+                @include('layouts.partials.sidebar.sidebar-footer')
             </x-sidebar.footer>
         </x-sidebar.sidebar>
 

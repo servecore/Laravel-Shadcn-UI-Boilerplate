@@ -44,10 +44,10 @@
             ============================================= --}}
 
             {{-- Example: Projects (2 levels) --}}
-            @include('layouts.partials.sidebar-menu-projects')
+            @include('layouts.partials.sidebar.sidebar-menu-projects')
 
             {{-- Example: Reports (3 levels with nested submenu) --}}
-            @include('layouts.partials.sidebar-menu-reports')
+            @include('layouts.partials.sidebar.sidebar-menu-reports')
 
         </x-sidebar.menu>
     </x-sidebar.group-content>
