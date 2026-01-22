@@ -13,6 +13,7 @@ A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailw
 -   **Theme System 🌙**: Integrated Dark/Light/System mode with FOUC prevention.
 -   **Tailwind CSS v4**: Using the next-generation Tailwind engine.
 -   **Alpine.js**: Lightweight JavaScript framework for interactivity.
+-   **100% Standalone**: No external dependencies for UI components.
 
 ## 🧩 Available Components
 
@@ -62,6 +63,41 @@ php artisan key:generate
 # Run development server
 npm run dev          # Terminal 1
 php artisan serve    # Terminal 2
+```
+
+## 🔧 CLI Commands
+
+Manage your components with built-in Artisan commands:
+
+```bash
+# List available components
+php artisan shadcn:add
+
+# Add specific component(s)
+php artisan shadcn:add Button Card
+
+# Remove component(s)
+php artisan shadcn:remove Button
+```
+
+## 📁 Project Structure
+
+```
+app/
+├── Console/Commands/Shadcn/    # CLI commands
+├── View/
+│   ├── Components/             # Blade component classes
+│   │   ├── Accordion/
+│   │   ├── Button/
+│   │   ├── Card/
+│   │   └── ...
+│   └── Concerns/               # Shared traits
+│       ├── HasID.php
+│       └── SharesData.php
+resources/
+├── views/components/           # Blade templates
+├── js/components/              # Alpine.js logic
+└── css/app.css                 # Tailwind config
 ```
 
 ## 📖 Demo Pages
@@ -133,7 +169,7 @@ php artisan serve    # Terminal 2
 -   **Backend**: Laravel Framework 12.x
 -   **Frontend**: Blade Templates + Alpine.js
 -   **Styling**: Tailwind CSS v4.0+
--   **Bundler**: Vite 6.x
+-   **Bundler**: Vite 7.x
 
 ## 📄 License
 
