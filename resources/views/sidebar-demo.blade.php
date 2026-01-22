@@ -23,7 +23,7 @@
                     </div>
                 </div>
             </x-sidebar.header>
-
+            
             <x-sidebar.content>
                 <x-sidebar.group>
                     <x-sidebar.group-label>Platform</x-sidebar.group-label>
@@ -136,14 +136,44 @@
                                     </div>
                                 </div>
                                 
-                                {{-- Submenu --}}
+                                {{-- Submenu with nested sub-submenu --}}
                                 <ul
                                     x-show="reportsOpen && $data.state === 'expanded'"
                                     x-collapse
                                     class="border-sidebar-border mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5"
                                 >
                                     <li><a href="#" class="flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm">Sales Report</a></li>
-                                    <li><a href="#" class="flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent bg-sidebar-accent font-medium text-sm">Analytics</a></li>
+                                    
+                                    {{-- Level 3: Nested submenu inside Analytics --}}
+                                    <li x-data="{ analyticsOpen: false }">
+                                        <button 
+                                            type="button"
+                                            @click="analyticsOpen = !analyticsOpen"
+                                            class="flex h-7 w-full min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+                                        >
+                                            <span class="flex-1 text-left">Analytics</span>
+                                            <svg 
+                                                xmlns="http://www.w3.org/2000/svg" 
+                                                class="size-3 transition-transform duration-200" 
+                                                :class="{ 'rotate-90': analyticsOpen }"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                            >
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </button>
+                                        
+                                        {{-- Level 3 submenu items --}}
+                                        <ul
+                                            x-show="analyticsOpen"
+                                            x-collapse
+                                            class="border-sidebar-border ml-2 flex min-w-0 translate-x-px flex-col gap-1 border-l px-2.5 py-0.5"
+                                        >
+                                            <li><a href="#" class="flex h-6 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-xs">Overview</a></li>
+                                            <li><a href="#" class="flex h-6 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-xs bg-sidebar-accent font-medium">Trends</a></li>
+                                            <li><a href="#" class="flex h-6 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-xs">Custom</a></li>
+                                        </ul>
+                                    </li>
+                                    
                                     <li><a href="#" class="flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm">Finance</a></li>
                                     <li><a href="#" class="flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm">Inventory</a></li>
                                 </ul>

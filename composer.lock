@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "026b0793ee20ef5a929b1f59eb1fb134",
+    "content-hash": "3ea99337c3202a49c513b1504cdd8d04",
     "packages": [
         {
             "name": "bjnstnkvc/shadcn-ui",
