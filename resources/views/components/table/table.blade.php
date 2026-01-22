@@ -1,6 +1,6 @@
 @props(['class' => ''])
 
-<div data-slot="table-container" class="relative w-full overflow-x-auto">
+<div data-slot="table-container" class="relative w-full overflow-x-auto rounded-md border">
     <table
         data-slot="table"
         {{ $attributes->merge([
