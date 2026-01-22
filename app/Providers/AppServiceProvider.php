@@ -5,7 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Bjnstnkvc\ShadcnUi\ShadcnUiServiceProvider;
 
-
 class AppServiceProvider extends ServiceProvider
 {
     /**
