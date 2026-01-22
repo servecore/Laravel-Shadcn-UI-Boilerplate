@@ -19,7 +19,7 @@ A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailw
 ### Core Components
 Button, Card, Avatar, Badge, Alert, Dialog, Select, Tabs, Progress, Input, Label, Checkbox, Radio, Form
 
-### Extended Components (from rustam76/shadcn-blade)
+### Extended Components 
 | Component | Description |
 |-----------|-------------|
 | **Table** | Full table system with header, body, footer, row, cell |
@@ -48,7 +48,7 @@ A complete sidebar navigation system with:
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/laravel-shadcn-project.git
+git clone https://github.com/servecore/laravel-shadcn-project.git
 cd laravel-shadcn-project
 
 # Install dependencies
@@ -68,7 +68,7 @@ php artisan serve    # Terminal 2
 
 | URL | Description |
 |-----|-------------|
-| `/test` | All basic components preview |
+| `/` | All basic components preview |
 | `/sidebar-demo` | Sidebar with all features |
 
 ## 🎨 Usage Examples
