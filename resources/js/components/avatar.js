@@ -1,5 +1,5 @@
 /**
- * @param { import('bjnstnkvc/shadcn-ui/avatar').Config } config
+ * @param { Config } config
  */
 export default (config) => ({
     /**
@@ -113,7 +113,7 @@ export default (config) => ({
     /**
      * Set the avatar image hidden state.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/avatar').State } state
+     * @param { State } state
      *
      * @return { void }
      */
@@ -124,7 +124,7 @@ export default (config) => ({
     /**
      * Set the fallback state.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/avatar').State } state
+     * @param { State } state
      *
      * @return { void }
      */
@@ -165,7 +165,7 @@ export default (config) => ({
     /**
      * Dispatch the loading status change event.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/avatar').Status } status
+     * @param { Status } status
      * @param { Number } delay
      */
     dispatch(status, delay = 0) {

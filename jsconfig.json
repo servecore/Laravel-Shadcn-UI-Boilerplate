@@ -1,13 +1,9 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "paths"  : {
-            "bjnstnkvc/shadcn-ui/*": [
-                "./vendor/bjnstnkvc/shadcn-ui/resources/js/types/*"
-            ]
-        }
+        "paths": {}
     },
-    "include"        : [
+    "include": [
         "resources/js/**/*"
     ]
 }

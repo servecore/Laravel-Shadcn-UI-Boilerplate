@@ -69,7 +69,7 @@ export default () => ({
     /**
      * Set the state of the checkbox.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/checkbox').State } state
+     * @param { State } state
      *
      * @return { void }
      */
@@ -86,7 +86,7 @@ export default () => ({
     /**
      * Set the visibility of the indicator.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/checkbox').Visibility } visibility
+     * @param { Visibility } visibility
      *
      * @return { void }
      */

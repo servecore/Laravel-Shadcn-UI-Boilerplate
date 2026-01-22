@@ -87,7 +87,7 @@ export default () => ({
     /**
      * Set the state of the collapsible element.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/collapsible').State } state
+     * @param { State } state
      *
      * @return { void }
      */

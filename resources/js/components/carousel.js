@@ -2,8 +2,8 @@ import EmblaCarousel from 'embla-carousel';
 import EmblaCarouselAutoplay from 'embla-carousel-autoplay';
 
 /**
- * @param { import('bjnstnkvc/shadcn-ui/carousel').Config } config
- * @param { import('bjnstnkvc/shadcn-ui/carousel').Plugins } plugins
+ * @param { Config } config
+ * @param { Plugins } plugins
  */
 export default (config, plugins) => ({
     /**
@@ -105,7 +105,7 @@ export default (config, plugins) => ({
     /**
      * Set the Carousel options.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/carousel').Config } config
+     * @param { Config } config
      *
      * @return { import('embla-carousel').EmblaOptionsType }
      */
@@ -120,7 +120,7 @@ export default (config, plugins) => ({
     /**
      * Set the Carousel plugins.
      *
-     * @param { import('bjnstnkvc/shadcn-ui/carousel').Config } plugins
+     * @param { Config } plugins
      *
      * @return { Array }
      */
