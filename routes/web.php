@@ -19,5 +19,12 @@ Route::prefix('demo')->name('demo.')->group(function () {
     Route::get('/dashboard', fn() => view('dashboard.index'))->name('dashboard');
     Route::get('/profile', fn() => view('dashboard.profile'))->name('profile');
     Route::get('/settings', fn() => view('dashboard.settings'))->name('settings');
+
+    // User Management
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', fn() => view('dashboard.users.index'))->name('index');
+        Route::get('/create', fn() => view('dashboard.users.form'))->name('create');
+        Route::get('/{id}/edit', fn() => view('dashboard.users.form'))->name('edit');
+    });
 });
 
