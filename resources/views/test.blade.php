@@ -324,7 +324,7 @@
         <!-- ============================================= -->
 
         <div class="border-t border-border pt-8 mt-8">
-            <h2 class="text-3xl font-bold mb-8 text-primary">✨ New Components (from rustam76/shadcn-blade)</h2>
+            <h2 class="text-3xl font-bold mb-8 text-primary">✨ New Components (22 Januari 2026)</h2>
         </div>
 
         <!-- Table -->
