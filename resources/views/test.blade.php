@@ -17,17 +17,88 @@
         <!-- Button -->
         <section class="space-y-4">
             <h2 class="text-2xl font-semibold">Button</h2>
-            <div class="flex flex-wrap gap-4">
-                <x-button variant="default">Default</x-button>
-                <x-button variant="destructive">Destructive</x-button>
-                <x-button variant="outline">Outline</x-button>
-                <x-button variant="secondary">Secondary</x-button>
-                <x-button variant="ghost">Ghost</x-button>
-                <x-button variant="link">Link</x-button>
-                <x-button size="sm">Small</x-button>
-                <x-button size="lg">Large</x-button>
-                <x-button disabled>Disabled</x-button>
-                <x-button loading="true">Loading</x-button>
+            
+            <!-- Variants -->
+            <div>
+                <h3 class="text-lg font-medium mb-2 text-muted-foreground">Variants</h3>
+                <div class="flex flex-wrap gap-4">
+                    <x-button variant="default">Default</x-button>
+                    <x-button variant="destructive">Destructive</x-button>
+                    <x-button variant="outline">Outline</x-button>
+                    <x-button variant="secondary">Secondary</x-button>
+                    <x-button variant="ghost">Ghost</x-button>
+                    <x-button variant="link">Link</x-button>
+                </div>
+            </div>
+            
+            <!-- Sizes -->
+            <div>
+                <h3 class="text-lg font-medium mb-2 text-muted-foreground">Sizes</h3>
+                <div class="flex flex-wrap items-center gap-4">
+                    <x-button size="sm">Small</x-button>
+                    <x-button size="default">Default</x-button>
+                    <x-button size="lg">Large</x-button>
+                    <x-button size="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </x-button>
+                </div>
+            </div>
+            
+            <!-- With Icons -->
+            <div>
+                <h3 class="text-lg font-medium mb-2 text-muted-foreground">With Icons</h3>
+                <div class="flex flex-wrap gap-4">
+                    <x-button>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add New
+                    </x-button>
+                    <x-button variant="secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        Upload
+                    </x-button>
+                    <x-button variant="outline">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download
+                    </x-button>
+                    <x-button variant="destructive">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                    </x-button>
+                </div>
+            </div>
+            
+            <!-- Custom Colors (using class override) -->
+            <div>
+                <h3 class="text-lg font-medium mb-2 text-muted-foreground">Custom Colors</h3>
+                <div class="flex flex-wrap gap-4">
+                    <x-button class="!bg-green-600 hover:!bg-green-700 text-white">Success</x-button>
+                    <x-button class="!bg-yellow-500 hover:!bg-yellow-600 text-black">Warning</x-button>
+                    <x-button class="!bg-blue-500 hover:!bg-blue-600 text-white">Info</x-button>
+                    <x-button class="!bg-purple-600 hover:!bg-purple-700 text-white">Purple</x-button>
+                    <x-button class="!bg-pink-500 hover:!bg-pink-600 text-white">Pink</x-button>
+                    <x-button class="!bg-orange-500 hover:!bg-orange-600 text-white">Orange</x-button>
+                    <x-button class="!bg-teal-500 hover:!bg-teal-600 text-white">Teal</x-button>
+                    <x-button class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-none">Gradient</x-button>
+                </div>
+            </div>
+            
+            <!-- States -->
+            <div>
+                <h3 class="text-lg font-medium mb-2 text-muted-foreground">States</h3>
+                <div class="flex flex-wrap gap-4">
+                    <x-button disabled>Disabled</x-button>
+                    <x-button loading="true">Loading</x-button>
+                </div>
             </div>
         </section>
 
@@ -217,21 +288,23 @@
                 <x-dialog-trigger>
                     <x-button>Open Dialog</x-button>
                 </x-dialog-trigger>
-                <x-dialog-header>
-                    <x-dialog-title>Are you sure absolutely sure?</x-dialog-title>
-                    <x-dialog-description>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
-                    </x-dialog-description>
-                </x-dialog-header>
-                <x-dialog-footer>
-                    <x-dialog-close>
-                        <x-button variant="outline">Cancel</x-button>
-                    </x-dialog-close>
-                    <x-dialog-close>
-                        <x-button variant="destructive">Delete Account</x-button>
-                    </x-dialog-close>
-                </x-dialog-footer>
+                <x-dialog-content>
+                    <x-dialog-header>
+                        <x-dialog-title>Are you sure absolutely sure?</x-dialog-title>
+                        <x-dialog-description>
+                            This action cannot be undone. This will permanently delete your account
+                            and remove your data from our servers.
+                        </x-dialog-description>
+                    </x-dialog-header>
+                    <x-dialog-footer>
+                        <x-dialog-close>
+                            <x-button variant="outline">Cancel</x-button>
+                        </x-dialog-close>
+                        <x-dialog-close>
+                            <x-button variant="destructive">Delete Account</x-button>
+                        </x-dialog-close>
+                    </x-dialog-footer>
+                </x-dialog-content>
             </x-dialog>
         </section>
 

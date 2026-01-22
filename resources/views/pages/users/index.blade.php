@@ -19,12 +19,68 @@
                 </x-breadcrumb-list>
             </x-breadcrumb>
 
-            <x-button href="{{ route('demo.users.create') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Add User
-            </x-button>
+            <x-dialog>
+                <x-dialog-trigger>
+                    <x-button>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add User
+                    </x-button>
+                </x-dialog-trigger>
+                <x-dialog-content>
+                    <x-dialog-header>
+                        <x-dialog-title>Add New User</x-dialog-title>
+                        <x-dialog-description>
+                            Fill in the details below to create a new user account.
+                        </x-dialog-description>
+                    </x-dialog-header>
+                    
+                    <form class="space-y-4 py-4">
+                        <div class="space-y-2">
+                            <x-label for="name">Full Name</x-label>
+                            <x-input id="name" placeholder="Enter full name" />
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <x-label for="email">Email Address</x-label>
+                            <x-input id="email" type="email" placeholder="Enter email address" />
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <x-label for="role">Role</x-label>
+                            <x-select.select>
+                                <x-select.trigger class="w-full">
+                                    <x-select.value placeholder="Select a role" />
+                                </x-select.trigger>
+                                <x-select.content>
+                                    <x-select.item value="admin">Administrator</x-select.item>
+                                    <x-select.item value="manager">Manager</x-select.item>
+                                    <x-select.item value="editor">Editor</x-select.item>
+                                    <x-select.item value="viewer">Viewer</x-select.item>
+                                </x-select.content>
+                            </x-select.select>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <x-label for="password">Password</x-label>
+                            <x-input id="password" type="password" placeholder="Enter password" />
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <x-checkbox id="send-email" />
+                            <x-label for="send-email" class="text-sm font-normal">Send welcome email to user</x-label>
+                        </div>
+                    </form>
+                    
+                    <x-dialog-footer>
+                        <x-dialog-close>
+                            <x-button variant="outline">Cancel</x-button>
+                        </x-dialog-close>
+                        <x-button type="submit">Create User</x-button>
+                    </x-dialog-footer>
+                </x-dialog-content>
+            </x-dialog>
         </div>
 
         <!-- Filters & Search -->
