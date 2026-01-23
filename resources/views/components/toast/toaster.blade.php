@@ -1,5 +1,5 @@
 @props([
-    'position' => 'bottom-right', 
+    'position' => 'top-right', 
     'expand' => false, 
     'duration' => 4000
 ])

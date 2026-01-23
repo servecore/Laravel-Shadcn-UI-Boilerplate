@@ -11,7 +11,7 @@
         {{ $slot }}
     </div>
 
-    <x-scroll-area.scrollbar :orientation="$orientation" />
+
 
     <div data-slot="scroll-area-corner"></div>
 </div>
