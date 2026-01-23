@@ -15,6 +15,12 @@ A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailw
 -   **Alpine.js**: Lightweight JavaScript framework for interactivity.
 -   **100% Standalone**: No external dependencies for UI components.
 
+## 📚 Documentation
+- [**Getting Started**](docs/GETTING_STARTED.md): Installation & Setup logic.
+- [**Architecture**](docs/ARCHITECTURE.md): Directory structure, modular patterns, and DRY implementation.
+- [**System Resilience**](docs/SYSTEM_RESILIENCE.md): Local Registry, Offline Backup, and Auto-Repair commands.
+
+
 ## 🧩 Available Components
 
 ### Core Components
@@ -78,6 +84,9 @@ php artisan shadcn:add Button Card
 
 # Remove component(s)
 php artisan shadcn:remove Button
+
+# [NEW] Repair System
+php artisan shadcn:repair
 ```
 
 ## 📁 Project Structure
