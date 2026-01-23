@@ -107,7 +107,7 @@
 
         <!-- Users Table -->
         <div class="rounded-md border bg-card text-card-foreground shadow-sm">
-            <x-table.table>
+            <x-table.table class="[&_td]:!p-1 [&_th]:!px-1 [&_th]:!h-8">
                 <x-table.header>
                     <x-table.row>
                         <x-table.head class="w-[50px]"></x-table.head>
@@ -198,7 +198,7 @@
                                 {{ $user['joined'] }}
                             </x-table.cell>
                             <x-table.cell class="text-right">
-                                <x-dropdown.dropdown>
+                                <x-dropdown.dropdown align="end" :side="$loop->last ? 'top' : 'bottom'">
                                     <x-slot:trigger>
                                         <x-button variant="ghost" size="icon" class="size-8">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

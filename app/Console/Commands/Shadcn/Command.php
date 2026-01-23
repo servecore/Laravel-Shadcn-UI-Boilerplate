@@ -106,7 +106,9 @@ abstract class Command extends BaseCommand implements PromptsForMissingInput
         return $this->all()
             ? $this->directories->toArray()
             : $this->directories
-                ->filter(fn (array $component, int $key) => in_array($key, $this->argument('components')) || in_array($component['name'], $this->argument('components')))
+                ->filter(fn (array $component, int $key) => in_array(strtolower($key), array_map('strtolower', $this->argument('components'))) ||
+                    in_array(strtolower($component['name']), array_map('strtolower', $this->argument('components')))
+                )
                 ->toArray();
     }
 
@@ -115,7 +117,7 @@ abstract class Command extends BaseCommand implements PromptsForMissingInput
      */
     private function all(): bool
     {
-        return count(array_intersect($this->argument('components'), ['All', '*'])) > 0;
+        return count(array_intersect(array_map('strtolower', $this->argument('components')), ['all', '*'])) > 0;
     }
 
     /**
@@ -143,9 +145,21 @@ abstract class Command extends BaseCommand implements PromptsForMissingInput
      *
      * @return Collection<int, T>
      */
+    /**
+     * The path to the stubs directory.
+     *
+     * @var string
+     */
+    protected const STUBS_PATH = 'resources/shadcn-stubs/classes';
+
+    /**
+     * Get all component directories.
+     *
+     * @return Collection<int, T>
+     */
     private function directories(): Collection
     {
-        $classPath = base_path(self::CLASS_PATH);
+        $classPath = base_path(self::STUBS_PATH);
 
         if (! $this->fs->exists($classPath)) {
             return collect();

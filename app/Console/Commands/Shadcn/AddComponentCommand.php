@@ -65,13 +65,17 @@ class AddComponentCommand extends Command
         $classPath = base_path(self::CLASS_PATH."/{$name}");
         $viewPath = base_path(self::VIEW_PATH."/{$component['view']}");
         $jsPath = base_path(self::JS_PATH);
+        
+        $stubClassPath = base_path("resources/shadcn-stubs/classes/{$name}");
+        $stubViewPath = base_path("resources/shadcn-stubs/components/{$component['view']}");
+        $stubJsPath = base_path("resources/shadcn-stubs/js");
 
         $this->fs->ensureDirectoryExists($classPath);
         $this->fs->ensureDirectoryExists($viewPath);
 
         // Copy PHP class files
-        if ($this->fs->exists($component['path'])) {
-            foreach ($this->fs->files($component['path']) as $file) {
+        if ($this->fs->exists($stubClassPath)) {
+            foreach ($this->fs->files($stubClassPath) as $file) {
                 $content = $this->fs->get($file->getPathname());
                 $this->fs->put("{$classPath}/{$file->getBasename()}", $content);
             }
@@ -79,15 +83,16 @@ class AddComponentCommand extends Command
         }
 
         // Copy Blade views
-        $sourceViewPath = base_path(self::VIEW_PATH."/{$component['view']}");
-        if ($this->fs->exists($sourceViewPath)) {
+        if ($this->fs->exists($stubViewPath)) {
+            $this->fs->copyDirectory($stubViewPath, $viewPath);
             $this->line("  ✓ Blade views: resources/views/components/{$component['view']}");
         }
 
         // Copy JS file if exists
-        $jsFile = base_path(self::JS_PATH."/{$component['view']}.js");
-        if ($this->fs->exists($jsFile)) {
-            $this->line("  ✓ JS file: resources/js/components/{$component['view']}.js");
+        $stubJsFile = "{$stubJsPath}/{$component['view']}.js";
+        if ($this->fs->exists($stubJsFile)) {
+             $this->fs->copy($stubJsFile, "{$jsPath}/{$component['view']}.js");
+             $this->line("  ✓ JS file: resources/js/components/{$component['view']}.js");
         }
 
         $this->info("  ✅ Added: {$name}");
