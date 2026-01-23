@@ -801,6 +801,29 @@
             </x-scroll-area.scroll-area>
         </section>
 
+        <!-- Toast -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-semibold">Toast</h2>
+            <div class="flex flex-wrap gap-4">
+                <x-button x-data @click="$dispatch('notify', { title: 'Default Toast', description: 'This is a default toast message.' })">
+                    Default
+                </x-button>
+                <x-button variant="destructive" x-data @click="$dispatch('notify', { variant: 'destructive', title: 'Error', description: 'Something went wrong.' })">
+                    Destructive
+                </x-button>
+                <x-button class="!bg-green-600 hover:!bg-green-700 text-white" x-data @click="$dispatch('notify', { variant: 'success', title: 'Success', description: 'Operation completed successfully.' })">
+                    Success
+                </x-button>
+                <x-button class="!bg-yellow-500 hover:!bg-yellow-600 text-black" x-data @click="$dispatch('notify', { variant: 'warning', title: 'Warning', description: 'Please check your input.' })">
+                    Warning
+                </x-button>
+                <x-button variant="outline" x-data @click="$dispatch('notify', { title: 'Long Duration', description: 'This toast stays for 8 seconds.', duration: 8000 })">
+                    Long Duration
+                </x-button>
+            </div>
+        </section>
+
     </div>
+    <x-toast.toaster />
 </body>
 </html>
