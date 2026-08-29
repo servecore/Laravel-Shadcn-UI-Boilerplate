@@ -21,6 +21,7 @@
     <x-card>
         <x-card-content class="pt-6">
             <form class="space-y-4" action="#" method="POST">
+                @csrf
                 {{-- New Password --}}
                 <div class="space-y-2">
                     <x-label for="password">New Password</x-label>

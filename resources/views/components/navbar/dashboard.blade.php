@@ -40,15 +40,15 @@
             <x-dropdown.dropdown align="end">
                 <x-slot:trigger>
                      <div class="size-8 rounded-full bg-muted overflow-hidden border cursor-pointer hover:ring-2 hover:ring-ring hover:ring-offset-2 transition-all">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar" class="h-full w-full object-cover" />
+                        <img src="{{ auth()->user()?->avatar ?? '' }}" alt="{{ auth()->user()->name ?? 'User' }}" class="h-full w-full object-cover" />
                      </div>
                 </x-slot:trigger>
 
                 <div class="w-56">
                     <x-dropdown.label class="font-normal">
                         <div class="flex flex-col space-y-1">
-                            <p class="text-sm font-medium leading-none">Felix</p>
-                            <p class="text-xs leading-none text-muted-foreground">felix@example.com</p>
+                            <p class="text-sm font-medium leading-none">{{ auth()->user()->name ?? 'User' }}</p>
+                            <p class="text-xs leading-none text-muted-foreground">{{ auth()->user()->email ?? '' }}</p>
                         </div>
                     </x-dropdown.label>
                     <x-dropdown.separator />

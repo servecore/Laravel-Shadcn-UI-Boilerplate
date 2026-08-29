@@ -9,9 +9,9 @@
     $attributes = $attributes->merge([
         'x-data' => '{
             open: false,
-            value: "' . ($value ?? '') . '",
-            placeholder: "' . $placeholder . '",
-            disabled: ' . ($disabled ? 'true' : 'false') . '
+            value: ' . json_encode((string) ($value ?? '')) . ',
+            placeholder: ' . json_encode((string) $placeholder) . ',
+            disabled: ' . json_encode((bool) $disabled) . '
         }',
     ]);
 @endphp

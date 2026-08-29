@@ -1,4 +1,6 @@
-import axios from 'axios';
-window.axios = axios;
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+/**
+ * Bootstrap the application.
+ *
+ * This file is loaded before the main application script.
+ * Add any global initialization logic here.
+ */

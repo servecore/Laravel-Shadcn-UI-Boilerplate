@@ -1,62 +1,28 @@
-# Laravel Shadcn UI Boilerplate
+# Laravel Shadcn UI Starter Kit
 
-A modern Laravel starter kit featuring **Shadcn UI** (Blade components), **Tailwind CSS v4**, and **Alpine.js**.
+A modern **Laravel starter kit** featuring **Shadcn UI** (Blade components), **Tailwind CSS v4**, and **Alpine.js**. Designed as a reusable foundation for building Laravel applications.
 
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)
+![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20?style=for-the-badge&logo=laravel)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![Alpine.js](https://img.shields.io/badge/Alpine.js-v3-8BC0D0?style=for-the-badge&logo=alpinedotjs)
 
-## 🚀 Features
+## Features
 
--   **Laravel 12.x**: The latest version of the PHP framework.
--   **Shadcn UI (Blade)**: Pre-built, accessible, and customizable UI components.
--   **Theme System 🌙**: Integrated Dark/Light/System mode with FOUC prevention.
--   **Tailwind CSS v4**: Using the next-generation Tailwind engine.
--   **Alpine.js**: Lightweight JavaScript framework for interactivity.
--   **100% Standalone**: No external dependencies for UI components.
+- **Laravel 13.x** — Latest PHP framework
+- **Shadcn UI (Blade)** — 31 accessible, customizable UI components
+- **Theme System** — Dark/Light/System mode with FOUC prevention
+- **Tailwind CSS v4** — Next-generation Tailwind engine
+- **Alpine.js** — Lightweight client-side interactivity
+- **Authentication** — Login, register, logout, password reset, email verification
+- **Component Management CLI** — Add, remove, repair components via Artisan
+- **100% Standalone** — No external dependencies for UI components
 
-## 📚 Documentation
-- [**Getting Started**](docs/GETTING_STARTED.md): Installation & Setup logic.
-- [**Architecture**](docs/ARCHITECTURE.md): Directory structure, modular patterns, and DRY implementation.
-- [**System Resilience**](docs/SYSTEM_RESILIENCE.md): Local Registry, Offline Backup, and Auto-Repair commands.
-
-
-## 🧩 Available Components
-
-### Core Components
-Button, Card, Avatar, Badge, Alert, Dialog, Select, Tabs, Progress, Input, Label, Checkbox, Radio, Form
-
-### Extended Components 
-| Component | Description |
-|-----------|-------------|
-| **Table** | Full table system with header, body, footer, row, cell |
-| **Skeleton** | Loading placeholder with pulse animation |
-| **Switch** | Toggle switch with Alpine.js state |
-| **Textarea** | Multi-line text input |
-| **Tooltip** | Hover tooltips with positioning |
-| **Pagination** | Complete pagination system |
-| **Dropdown** | Dropdown menu with items, checkboxes, radio groups |
-| **Scroll Area** | Custom scrollbar container |
-| **Toggle** | Toggle button component |
-| **Button Group** | Grouped buttons with separators |
-| **Sidebar** | Full-featured collapsible sidebar (see below) |
-
-### 🎯 Sidebar Component
-A complete sidebar navigation system with:
-- ✅ Collapsible (toggle button + keyboard shortcut ⌘+B)
-- ✅ Cookie persistence for state
-- ✅ Multi-level navigation (3+ levels)
-- ✅ Tooltip on hover when collapsed
-- ✅ Group labels (Platform, Settings, etc.)
-- ✅ Mobile responsive (offcanvas)
-- ✅ Active state highlighting
-
-## 🛠️ Installation
+## Quick Start
 
 ```bash
 # Clone repository
-git clone https://github.com/servecore/laravel-shadcn-project.git
-cd laravel-shadcn-project
+git clone <your-repo-url>
+cd <project-name>
 
 # Install dependencies
 composer install
@@ -66,120 +32,114 @@ bun install
 cp .env.example .env
 php artisan key:generate
 
+# Database setup
+touch database/database.sqlite
+php artisan migrate
+
+# Seed a test user
+php artisan db:seed
+
 # Run development server
-bun run dev          # Terminal 1
-php artisan serve    # Terminal 2
+composer run dev
+# OR manually:
+# php artisan serve (Terminal 1)
+# bun run dev (Terminal 2)
 ```
 
-## 🔧 CLI Commands
+Visit `http://localhost:8000/demo/login` and login with:
+- **Email:** `test@example.com`
+- **Password:** `password`
 
-Manage your components with built-in Artisan commands:
-
-```bash
-# List available components
-php artisan shadcn:add
-
-# Add specific component(s)
-php artisan shadcn:add Button Card
-
-# Remove component(s)
-php artisan shadcn:remove Button
-
-# [NEW] Repair System
-php artisan shadcn:repair
-```
-
-## 📁 Project Structure
+## Architecture
 
 ```
 app/
-├── Console/Commands/Shadcn/    # CLI commands
+├── Console/Commands/Shadcn/    # Component management CLI
+├── Http/Controllers/Auth/      # Authentication controllers
+├── Models/User.php             # User model
+├── Providers/                  # Service providers
 ├── View/
-│   ├── Components/             # Blade component classes
-│   │   ├── Accordion/
-│   │   ├── Button/
-│   │   ├── Card/
-│   │   └── ...
-│   └── Concerns/               # Shared traits
-│       ├── HasID.php
-│       └── SharesData.php
+│   ├── Components/             # Blade component classes (60 files)
+│   └── Concerns/               # Shared traits (HasID, SharesData)
 resources/
-├── views/components/           # Blade templates
-├── js/components/              # Alpine.js logic
-└── css/app.css                 # Tailwind config
+├── views/
+│   ├── components/             # Blade templates (126 files)
+│   ├── layouts/                # App & Guest layouts
+│   └── pages/                  # Dashboard, Users, Settings
+├── js/components/              # Alpine.js logic (6 files)
+├── css/app.css                 # Tailwind v4 config
+└── shadcn-stubs/               # Offline component registry
+routes/
+└── web.php                     # Routes with auth middleware
+tests/
+└── Feature/                    # Auth & dashboard tests (23 tests)
 ```
 
-## 📖 Demo Pages
+## Available Components
 
-| URL | Description |
-|-----|-------------|
-| `/` | All basic components preview |
-| `/sidebar-demo` | Sidebar with all features |
+### Core Components
+Button, Card, Avatar, Badge, Alert, Dialog, Select, Tabs, Progress, Input, Label, Checkbox, Radio, Textarea
 
-## 🎨 Usage Examples
+### Extended Components
+| Component | Description |
+|-----------|-------------|
+| **Table** | Full table system with header, body, footer, row, cell |
+| **Skeleton** | Loading placeholder with pulse animation |
+| **Switch** | Toggle switch with Alpine.js state |
+| **Tooltip** | Hover tooltips with positioning |
+| **Pagination** | Complete pagination system |
+| **Dropdown** | Dropdown menu with items, shortcuts |
+| **Scroll Area** | Custom scrollbar container |
+| **Toggle** | Toggle button component |
+| **Button Group** | Grouped buttons with separators |
+| **Sidebar** | Full-featured collapsible sidebar |
+| **Toast** | Event-driven notification system |
 
-### Theme Toggle
-```html
-<head>
-    <x-theme-script />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
-    <x-theme-toggle />
-</body>
+## CLI Commands
+
+```bash
+# Add components from local registry
+php artisan shadcn:add Button Card
+
+# Remove components
+php artisan shadcn:remove Button
+
+# Repair system files (ShadcnServiceProvider, etc.)
+php artisan shadcn:repair
 ```
 
-### Sidebar Layout
-```html
-<x-sidebar.provider :defaultOpen="true" collapsible="icon">
-    <x-sidebar.sidebar collapsible="icon">
-        <x-sidebar.header>Logo</x-sidebar.header>
-        <x-sidebar.content>
-            <x-sidebar.group>
-                <x-sidebar.group-label>Menu</x-sidebar.group-label>
-                <x-sidebar.menu>
-                    <x-sidebar.menu-item>
-                        <x-sidebar.menu-button :active="true" tooltip="Dashboard">
-                            <x-slot:icon><!-- SVG --></x-slot:icon>
-                            Dashboard
-                        </x-sidebar.menu-button>
-                    </x-sidebar.menu-item>
-                </x-sidebar.menu>
-            </x-sidebar.group>
-        </x-sidebar.content>
-    </x-sidebar.sidebar>
-    <x-sidebar.inset>
-        <x-sidebar.trigger />
-        <!-- Main content -->
-    </x-sidebar.inset>
-</x-sidebar.provider>
+## Testing
+
+```bash
+# Run all tests
+php artisan test
+
+# Run specific test suite
+php artisan test --testsuite=Feature
+
+# Run specific test
+php artisan test --filter=LoginTest
 ```
 
-### Table
-```html
-<x-table.table>
-    <x-table.header>
-        <x-table.row>
-            <x-table.head>Name</x-table.head>
-            <x-table.head>Email</x-table.head>
-        </x-table.row>
-    </x-table.header>
-    <x-table.body>
-        <x-table.row>
-            <x-table.cell>John Doe</x-table.cell>
-            <x-table.cell>john@example.com</x-table.cell>
-        </x-table.row>
-    </x-table.body>
-</x-table.table>
-```
+## Tech Stack
 
-## 📂 Tech Stack
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Backend | Laravel | 13.x |
+| PHP | PHP | 8.2+ |
+| CSS | Tailwind CSS | v4.0+ |
+| JavaScript | Alpine.js | v3.x |
+| Build | Vite | 7.x |
+| Package Mgr | Bun | Latest |
 
--   **Backend**: Laravel Framework 12.x
--   **Frontend**: Blade Templates + Alpine.js
--   **Styling**: Tailwind CSS v4.0+
--   **Bundler**: Vite 7.x
+## Documentation
 
-## 📄 License
+- [Architecture](docs/ARCHITECTURE.md)
+- [Getting Started](docs/GETTING_STARTED.md)
+- [System Resilience](docs/SYSTEM_RESILIENCE.md)
+- [Configuration](docs/CONFIGURATION.md)
+- [Testing](docs/TESTING.md)
+
+## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

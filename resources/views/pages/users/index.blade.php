@@ -119,44 +119,7 @@
                     </x-table.row>
                 </x-table.header>
                 <x-table.body>
-                    @php
-                        $users = [
-                            [
-                                'name' => 'John Doe',
-                                'email' => 'john.doe@example.com',
-                                'role' => 'Administrator',
-                                'status' => 'active',
-                                'joined' => 'Jan 22, 2026',
-                                'avatar' => 'JD'
-                            ],
-                            [
-                                'name' => 'Alice Smith',
-                                'email' => 'alice@company.com',
-                                'role' => 'Manager',
-                                'status' => 'active',
-                                'joined' => 'Dec 15, 2025',
-                                'avatar' => 'AS'
-                            ],
-                            [
-                                'name' => 'Bob Johnson',
-                                'email' => 'bob.j@example.com',
-                                'role' => 'Editor',
-                                'status' => 'inactive',
-                                'joined' => 'Nov 02, 2025',
-                                'avatar' => 'BJ'
-                            ],
-                             [
-                                'name' => 'Charlie Brown',
-                                'email' => 'charlie@example.com',
-                                'role' => 'Viewer',
-                                'status' => 'active',
-                                'joined' => 'Oct 10, 2025',
-                                'avatar' => 'CB'
-                            ],
-                        ];
-                    @endphp
-
-                    @foreach($users as $user)
+                    @forelse(($users ?? []) as $user)
                         <x-table.row>
                             <x-table.cell>
                                 <x-checkbox />
@@ -164,7 +127,7 @@
                             <x-table.cell>
                                 <div class="flex items-center gap-3">
                                     <x-avatar class="size-9">
-                                        <x-avatar-fallback>{{ $user['avatar'] }}</x-avatar-fallback>
+                                        <x-avatar-fallback>{{ $user['avatar'] ?? substr($user['name'] ?? 'U', 0, 2) }}</x-avatar-fallback>
                                     </x-avatar>
                                     <div class="grid gap-0.5">
                                         <p class="text-sm font-medium leading-none">{{ $user['name'] }}</p>
@@ -174,15 +137,15 @@
                             </x-table.cell>
                             <x-table.cell>
                                 <div class="flex items-center">
-                                    @if($user['role'] === 'Administrator')
+                                    @if(($user['role'] ?? '') === 'Administrator')
                                         <x-badge variant="default">{{ $user['role'] }}</x-badge>
                                     @else
-                                        <x-badge variant="outline">{{ $user['role'] }}</x-badge>
+                                        <x-badge variant="outline">{{ $user['role'] ?? 'User' }}</x-badge>
                                     @endif
                                 </div>
                             </x-table.cell>
                             <x-table.cell>
-                                @if($user['status'] === 'active')
+                                @if(($user['status'] ?? 'active') === 'active')
                                     <div class="flex items-center gap-2">
                                         <div class="size-2 rounded-full bg-emerald-500"></div>
                                         <span class="text-sm text-muted-foreground">Active</span>
@@ -195,7 +158,7 @@
                                 @endif
                             </x-table.cell>
                             <x-table.cell class="text-muted-foreground">
-                                {{ $user['joined'] }}
+                                {{ $user['joined'] ?? '' }}
                             </x-table.cell>
                             <x-table.cell class="text-right">
                                 <x-dropdown.dropdown align="end" :side="$loop->last ? 'top' : 'bottom'">
@@ -219,7 +182,18 @@
                                 </x-dropdown.dropdown>
                             </x-table.cell>
                         </x-table.row>
-                    @endforeach
+                    @empty
+                        <x-table.row>
+                            <x-table.cell colspan="6" class="h-24 text-center">
+                                <div class="flex flex-col items-center justify-center space-y-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-8 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                    <p class="text-sm text-muted-foreground">No users found.</p>
+                                </div>
+                            </x-table.cell>
+                        </x-table.row>
+                    @endforelse
                 </x-table.body>
             </x-table.table>
         </div>

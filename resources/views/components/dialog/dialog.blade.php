@@ -1,7 +1,7 @@
 @php
     /* @var Illuminate\View\ComponentAttributeBag $attributes */
     $attributes = $attributes->merge([
-        'x-data' => '{ open: ' . ($open ? 'true' : 'false') . ' }',
+        'x-data' => '{ open: ' . json_encode((bool) $open) . ' }',
         'role' => 'dialog',
         'aria-modal' => 'true',
     ]);

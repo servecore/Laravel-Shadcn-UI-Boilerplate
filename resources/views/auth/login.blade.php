@@ -21,6 +21,7 @@
     <x-card>
         <x-card-content class="pt-6">
             <form class="space-y-4" action="#" method="POST">
+                @csrf
                 {{-- Email --}}
                 <div class="space-y-2">
                     <x-label for="email">Email</x-label>

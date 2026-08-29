@@ -5,7 +5,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            <span>Acme Inc</span>
+            <span>{{ config('app.name', 'Laravel') }}</span>
         </a>
 
         <!-- Desktop Navigation -->
@@ -35,7 +35,7 @@
                 </x-sheet.trigger>
                 <x-sheet.content side="right">
                     <x-sheet.header class="text-left">
-                        <x-sheet.title>Acme Inc</x-sheet.title>
+                        <x-sheet.title>{{ config('app.name', 'Laravel') }}</x-sheet.title>
                         <x-sheet.description>Navigate through our application.</x-sheet.description>
                     </x-sheet.header>
                     <div class="flex flex-col gap-4 mt-8">

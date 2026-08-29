@@ -2,7 +2,7 @@
     /* @var Illuminate\View\ComponentAttributeBag $attributes */
     $attributes = $attributes->merge([
         'x-data' => '{
-            activeTab: "' . $defaultValue . '"
+            activeTab: ' . json_encode((string) $defaultValue) . '
         }',
     ]);
 @endphp
