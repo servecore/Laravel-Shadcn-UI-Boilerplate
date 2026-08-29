@@ -162,6 +162,13 @@
                 },
                 body: JSON.stringify(data),
             });
+
+            if (!res.ok) {
+                resultEl.textContent = '\u2717 Server returned HTTP ' + res.status;
+                resultEl.className = 'text-sm text-red-600 dark:text-red-400';
+                return;
+            }
+
             const json = await res.json();
             if (json.success) {
                 resultEl.textContent = '\u2713 ' + json.message;
@@ -171,7 +178,7 @@
                 resultEl.className = 'text-sm text-red-600 dark:text-red-400';
             }
         } catch (e) {
-            resultEl.textContent = '\u2717 Connection test failed';
+            resultEl.textContent = '\u2717 Network error: ' + e.message;
             resultEl.className = 'text-sm text-red-600 dark:text-red-400';
         } finally {
             btn.disabled = false;

@@ -115,26 +115,34 @@ class SetupWizardController extends Controller
 
     public function testConnection(Request $request): JsonResponse
     {
-        $driver = $request->input('driver', 'sqlite');
+        try {
+            $driver = $request->input('driver');
 
-        // Validate required fields for server databases
-        if (in_array($driver, ['mysql', 'pgsql'])) {
-            $validator = Validator::make($request->all(), [
-                'host' => ['required', 'string'],
-                'port' => ['required', 'integer', 'min:1', 'max:65535'],
-                'database' => ['required', 'string'],
-                'username' => ['required', 'string'],
-            ]);
-
-            if ($validator->fails()) {
+            // Reject if driver is missing or not supported
+            if (! in_array($driver, ['sqlite', 'mysql', 'pgsql'])) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Please fill in all required fields: '.implode(', ', array_keys($validator->errors()->toArray())),
+                    'message' => 'Invalid database driver selected.',
                 ]);
             }
-        }
 
-        try {
+            // Validate required fields for server databases
+            if (in_array($driver, ['mysql', 'pgsql'])) {
+                $validator = Validator::make($request->all(), [
+                    'host' => ['required', 'string'],
+                    'port' => ['required', 'integer', 'min:1', 'max:65535'],
+                    'database' => ['required', 'string'],
+                    'username' => ['required', 'string'],
+                ]);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Please fill in all required fields: '.implode(', ', array_keys($validator->errors()->toArray())),
+                    ]);
+                }
+            }
+
             $config = $this->dbConfig->buildFromRequest($request, $driver);
 
             // Override runtime config only (do NOT write .env) so the test stays read-only.
@@ -151,23 +159,52 @@ class SetupWizardController extends Controller
                 'success' => true,
                 'message' => 'Database connection successful!',
             ]);
+        } catch (\PDOException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Connection failed: '.$this->humanizePdoError($e),
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Connection failed: '.$this->sanitizeErrorMessage($e->getMessage()),
+                'message' => 'Error: '.$e->getMessage(),
             ]);
         }
     }
 
     /**
-     * Sanitize error message to remove sensitive connection details.
+     * Convert PDO exception to a user-friendly message.
      */
-    private function sanitizeErrorMessage(string $message): string
+    private function humanizePdoError(\PDOException $e): string
     {
-        $message = preg_replace('/SQLSTATE\[[\w]+\]:\s*/', '', $message);
-        $message = preg_replace('/\d+ [\w\s]+:\s*/', '', $message);
+        $msg = $e->getMessage();
+        $code = $e->getCode();
 
-        return $message;
+        // Common PDO error patterns
+        if (str_contains($msg, 'SQLSTATE[HY000]') && str_contains($msg, '2002')) {
+            return 'Could not connect to database server. Check host and port.';
+        }
+
+        if (str_contains($msg, 'SQLSTATE[HY000]') && str_contains($msg, '1045')) {
+            return 'Access denied. Check username and password.';
+        }
+
+        if (str_contains($msg, 'SQLSTATE[HY000]') && str_contains($msg, '1049')) {
+            return 'Unknown database. Check database name.';
+        }
+
+        if (str_contains($msg, 'SQLSTATE[08006]')) {
+            return 'Could not connect to PostgreSQL server. Check host and port.';
+        }
+
+        if (str_contains($msg, 'SQLSTATE[08001]') || str_contains($msg, 'SQLSTATE[08004]')) {
+            return 'Connection rejected. Check host, port, and credentials.';
+        }
+
+        // Fallback: strip SQLSTATE prefix for readability
+        $msg = preg_replace('/SQLSTATE\[[\w]+\]:\s*/', '', $msg);
+
+        return $msg;
     }
 
     public function saveDatabaseConfig(SetupDatabaseRequest $request): RedirectResponse

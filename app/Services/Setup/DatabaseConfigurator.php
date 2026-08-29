@@ -18,11 +18,12 @@ class DatabaseConfigurator
             return $this->buildSqliteConfig($request->input('sqlite_path'));
         }
 
+        // Use raw input without defaults — caller must validate fields exist.
         return $this->buildServerConfig([
-            'host' => $request->input('host', '127.0.0.1'),
-            'port' => $request->input('port', $driver === 'mysql' ? '3306' : '5432'),
-            'database' => $request->input('database', ''),
-            'username' => $request->input('username', ''),
+            'host' => $request->input('host'),
+            'port' => $request->input('port'),
+            'database' => $request->input('database'),
+            'username' => $request->input('username'),
             'password' => $request->input('password', ''),
         ], $driver);
     }
