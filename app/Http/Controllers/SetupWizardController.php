@@ -144,16 +144,11 @@ class SetupWizardController extends Controller
             }
 
             $config = $this->dbConfig->buildFromRequest($request, $driver);
+            $conn = $config['connections'][$driver];
 
-            // Override runtime config only (do NOT write .env) so the test stays read-only.
-            config([
-                'database.default' => $driver,
-                'database.connections.'.$driver => $config['connections'][$driver],
-            ]);
-
-            DB::purge($driver);
-
-            DB::connection($driver)->getPdo();
+            // Test with a direct PDO connection (5s timeout)
+            $pdo = $this->createTestPdo($driver, $conn);
+            $pdo = null; // Close connection
 
             return response()->json([
                 'success' => true,
@@ -170,6 +165,28 @@ class SetupWizardController extends Controller
                 'message' => 'Error: '.$e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Create a PDO connection for testing with a timeout.
+     */
+    private function createTestPdo(string $driver, array $config): \PDO
+    {
+        $timeout = 5; // seconds
+
+        if ($driver === 'sqlite') {
+            return new \PDO('sqlite:'.$config['database'], null, null, [
+                \PDO::ATTR_TIMEOUT => $timeout,
+            ]);
+        }
+
+        $dsn = "$driver:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+        $options = [
+            \PDO::ATTR_TIMEOUT => $timeout,
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        ];
+
+        return new \PDO($dsn, $config['username'], $config['password'] ?? '', $options);
     }
 
     /**

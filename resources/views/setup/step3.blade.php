@@ -153,6 +153,9 @@
         });
 
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s frontend timeout
+
             const res = await fetch('{{ route("setup.test-connection") }}', {
                 method: 'POST',
                 headers: {
@@ -161,7 +164,10 @@
                     'Accept': 'application/json',
                 },
                 body: JSON.stringify(data),
+                signal: controller.signal,
             });
+
+            clearTimeout(timeoutId);
 
             if (!res.ok) {
                 resultEl.textContent = '\u2717 Server returned HTTP ' + res.status;
@@ -178,7 +184,11 @@
                 resultEl.className = 'text-sm text-red-600 dark:text-red-400';
             }
         } catch (e) {
-            resultEl.textContent = '\u2717 Network error: ' + e.message;
+            if (e.name === 'AbortError') {
+                resultEl.textContent = '\u2717 Connection timed out (10s). Server may be unreachable.';
+            } else {
+                resultEl.textContent = '\u2717 Network error: ' + e.message;
+            }
             resultEl.className = 'text-sm text-red-600 dark:text-red-400';
         } finally {
             btn.disabled = false;
