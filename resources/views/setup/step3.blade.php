@@ -26,7 +26,7 @@
             @csrf
 
             {{-- Database Driver Selection --}}
-            <div class="space-y-3">
+            <div class="space-y-3" x-data="{ driver: '{{ old('driver', $currentDriver) }}' }">
                 <x-label>Database Driver</x-label>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     @foreach($databases as $key => $db)
@@ -36,8 +36,7 @@
                                 name="driver"
                                 value="{{ $key }}"
                                 class="peer sr-only"
-                                {{ $key === $currentDriver ? 'checked' : '' }}
-                                onchange="toggleDatabaseFields('{{ $key }}')"
+                                x-model="driver"
                             />
                             <div class="flex flex-col items-center gap-2 rounded-lg border-2 border-border p-4 transition-all hover:border-primary/50 peer-checked:border-primary peer-checked:bg-primary/5">
                                 <div class="flex size-10 items-center justify-center rounded-lg bg-muted peer-checked:bg-primary/10">
@@ -59,91 +58,47 @@
                         </label>
                     @endforeach
                 </div>
-            </div>
 
-            {{-- SQL Server Config (hidden by default, shown for MySQL/PostgreSQL) --}}
-            @php $isSql = in_array($currentDriver, ['mysql', 'pgsql']); @endphp
-            <div id="sqlConfig" class="space-y-4 {{ $isSql ? '' : 'hidden' }}">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {{-- Host --}}
-                    <div class="space-y-2">
-                        <x-label for="host">Host</x-label>
-                        <x-input
-                            type="text"
-                            id="host"
-                            name="host"
-                            value="{{ old('host', '127.0.0.1') }}"
-                            placeholder="127.0.0.1"
-                            {{ $isSql ? '' : 'disabled' }}
-                        />
+                {{-- SQL Server Config (shown only for MySQL/PostgreSQL) --}}
+                <div x-show="driver !== 'sqlite'" x-cloak class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <x-label for="host">Host</x-label>
+                            <x-input type="text" id="host" name="host" value="{{ old('host', '127.0.0.1') }}" placeholder="127.0.0.1" />
+                        </div>
+                        <div class="space-y-2">
+                            <x-label for="port">Port</x-label>
+                            <x-input type="number" id="port" name="port" value="{{ old('port', '5432') }}" placeholder="3306" />
+                        </div>
                     </div>
 
-                    {{-- Port --}}
-                    <div class="space-y-2">
-                        <x-label for="port">Port</x-label>
-                        <x-input
-                            type="number"
-                            id="port"
-                            name="port"
-                            value="{{ old('port', '5432') }}"
-                            placeholder="3306"
-                            {{ $isSql ? '' : 'disabled' }}
-                        />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {{-- Database Name --}}
-                    <div class="space-y-2">
-                        <x-label for="database">Database Name</x-label>
-                        <x-input
-                            type="text"
-                            id="database"
-                            name="database"
-                            value="{{ old('database') }}"
-                            placeholder="my_database"
-                            {{ $isSql ? '' : 'disabled' }}
-                        />
-                        @error('database')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <x-label for="database">Database Name</x-label>
+                            <x-input type="text" id="database" name="database" value="{{ old('database') }}" placeholder="my_database" />
+                            @error('database')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="space-y-2">
+                            <x-label for="username">Username</x-label>
+                            <x-input type="text" id="username" name="username" value="{{ old('username') }}" placeholder="root" />
+                            @error('username')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                        </div>
                     </div>
 
-                    {{-- Username --}}
                     <div class="space-y-2">
-                        <x-label for="username">Username</x-label>
-                        <x-input
-                            type="text"
-                            id="username"
-                            name="username"
-                            value="{{ old('username') }}"
-                            placeholder="root"
-                            {{ $isSql ? '' : 'disabled' }}
-                        />
-                        @error('username')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                        <x-label for="password">Password</x-label>
+                        <x-input type="password" id="password" name="password" value="{{ old('password') }}" placeholder="••••••••" />
                     </div>
-                </div>
 
-                {{-- Password --}}
-                <div class="space-y-2">
-                    <x-label for="password">Password</x-label>
-                    <x-input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value="{{ old('password') }}"
-                        placeholder="••••••••"
-                        {{ $isSql ? '' : 'disabled' }}
-                    />
-                </div>
-
-                {{-- Test Connection Button --}}
-                <div class="flex items-center gap-3">
-                    <x-button type="button" variant="outline" onclick="testConnection(event)">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Test Connection
-                    </x-button>
-                    <span id="connectionResult" class="text-sm"></span>
+                    <div class="flex items-center gap-3">
+                        <button type="button" id="testBtn" onclick="testDbConnection()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Test Connection
+                        </button>
+                        <span id="connectionResult" class="text-sm"></span>
+                    </div>
                 </div>
             </div>
 
@@ -171,42 +126,34 @@
 
 @push('scripts')
 <script>
-    const defaultPorts = { mysql: '3306', pgsql: '5432' };
-
-    function toggleDatabaseFields(driver) {
-        const sqlConfig = document.getElementById('sqlConfig');
-        const portInput = document.getElementById('port');
-        const isSql = driver !== 'sqlite';
-
-        sqlConfig.classList.toggle('hidden', !isSql);
-        sqlConfig.querySelectorAll('input').forEach(input => {
-            input.disabled = !isSql;
-        });
-
-        // Update port to match selected driver
-        if (isSql && defaultPorts[driver]) {
-            portInput.value = defaultPorts[driver];
-        }
-    }
-
-    async function testConnection(event) {
+    async function testDbConnection() {
         const resultEl = document.getElementById('connectionResult');
-        const btn = event.currentTarget;
+        const btn = document.getElementById('testBtn');
+
+        // Validate required fields before testing
+        const host = document.getElementById('host').value.trim();
+        const port = document.getElementById('port').value.trim();
+        const database = document.getElementById('database').value.trim();
+        const username = document.getElementById('username').value.trim();
+
+        if (!host || !port || !database || !username) {
+            resultEl.textContent = '\u2717 Please fill in all fields (Host, Port, Database, Username)';
+            resultEl.className = 'text-sm text-red-600 dark:text-red-400';
+            return;
+        }
+
         btn.disabled = true;
-        resultEl.textContent = 'Testing...';
+        btn.textContent = 'Testing...';
+        resultEl.textContent = '';
         resultEl.className = 'text-sm text-muted-foreground';
 
-        // Build data from enabled inputs only
-        const form = document.getElementById('databaseForm');
-        const data = {};
-        form.querySelectorAll('input:not([disabled])').forEach(input => {
-            if (input.name) {
-                data[input.name] = input.value;
-            }
+        const data = { driver: document.querySelector('input[name=driver]:checked').value };
+        document.querySelectorAll('#databaseForm input:not([disabled]):not([type=radio])').forEach(el => {
+            if (el.name) data[el.name] = el.value;
         });
 
         try {
-            const response = await fetch('{{ route("setup.test-connection") }}', {
+            const res = await fetch('{{ route("setup.test-connection") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -215,21 +162,20 @@
                 },
                 body: JSON.stringify(data),
             });
-
-            const data = await response.json();
-
-            if (data.success) {
-                resultEl.textContent = '✓ ' + data.message;
+            const json = await res.json();
+            if (json.success) {
+                resultEl.textContent = '\u2713 ' + json.message;
                 resultEl.className = 'text-sm text-green-600 dark:text-green-400';
             } else {
-                resultEl.textContent = '✗ ' + data.message;
+                resultEl.textContent = '\u2717 ' + json.message;
                 resultEl.className = 'text-sm text-red-600 dark:text-red-400';
             }
-        } catch (error) {
-            resultEl.textContent = '✗ Connection test failed';
+        } catch (e) {
+            resultEl.textContent = '\u2717 Connection test failed';
             resultEl.className = 'text-sm text-red-600 dark:text-red-400';
         } finally {
             btn.disabled = false;
+            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> Test Connection';
         }
     }
 </script>

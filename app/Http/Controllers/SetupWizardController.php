@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class SetupWizardController extends Controller
@@ -116,6 +117,23 @@ class SetupWizardController extends Controller
     {
         $driver = $request->input('driver', 'sqlite');
 
+        // Validate required fields for server databases
+        if (in_array($driver, ['mysql', 'pgsql'])) {
+            $validator = Validator::make($request->all(), [
+                'host' => ['required', 'string'],
+                'port' => ['required', 'integer', 'min:1', 'max:65535'],
+                'database' => ['required', 'string'],
+                'username' => ['required', 'string'],
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please fill in all required fields: '.implode(', ', array_keys($validator->errors()->toArray())),
+                ]);
+            }
+        }
+
         try {
             $config = $this->dbConfig->buildFromRequest($request, $driver);
 
@@ -161,10 +179,7 @@ class SetupWizardController extends Controller
         $this->envFile->updateDatabaseConfig($driver, $config['connections'][$driver]);
 
         try {
-            // Reload config from the freshly written .env and drop any cached connection
-            // so that migrate runs against the NEW database, not the request-start config.
-            Artisan::call('config:clear');
-
+            // Override runtime config so migrate runs against the NEW database.
             config([
                 'database.default' => $driver,
                 'database.connections.'.$driver => $config['connections'][$driver],
@@ -177,16 +192,19 @@ class SetupWizardController extends Controller
                 '--no-interaction' => true,
             ]);
 
-            // Tables now exist, so switch session/cache/queue to the database drivers.
-            $this->envFile->update([
-                'CACHE_STORE' => 'database',
-                'SESSION_DRIVER' => 'database',
-                'QUEUE_CONNECTION' => 'database',
-            ]);
-
-            Artisan::call('config:clear');
-
             $this->state->setFlag('setup_migrated', true);
+
+            // Defer env updates for session/cache/queue until after the response
+            // is sent. Changing SESSION_DRIVER mid-request breaks the current session.
+            app()->terminating(function () {
+                $this->envFile->update([
+                    'CACHE_STORE' => 'database',
+                    'SESSION_DRIVER' => 'database',
+                    'QUEUE_CONNECTION' => 'database',
+                ]);
+
+                Artisan::call('config:clear');
+            });
         } catch (\Exception $e) {
             return back()->withErrors([
                 'database' => 'Migration failed: '.$e->getMessage(),
