@@ -85,7 +85,7 @@
                             type="number"
                             id="port"
                             name="port"
-                            value="{{ old('port', $currentDriver === 'mysql' ? '3306' : '5432') }}"
+                            value="{{ old('port', '5432') }}"
                             placeholder="3306"
                             {{ $isSql ? '' : 'disabled' }}
                         />
@@ -104,6 +104,7 @@
                             placeholder="my_database"
                             {{ $isSql ? '' : 'disabled' }}
                         />
+                        @error('database')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                     </div>
 
                     {{-- Username --}}
@@ -117,6 +118,7 @@
                             placeholder="root"
                             {{ $isSql ? '' : 'disabled' }}
                         />
+                        @error('username')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                     </div>
                 </div>
 
@@ -135,7 +137,7 @@
 
                 {{-- Test Connection Button --}}
                 <div class="flex items-center gap-3">
-                    <x-button type="button" variant="outline" onclick="testConnection()">
+                    <x-button type="button" variant="outline" onclick="testConnection(event)">
                         <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
@@ -169,23 +171,39 @@
 
 @push('scripts')
 <script>
+    const defaultPorts = { mysql: '3306', pgsql: '5432' };
+
     function toggleDatabaseFields(driver) {
         const sqlConfig = document.getElementById('sqlConfig');
+        const portInput = document.getElementById('port');
         const isSql = driver !== 'sqlite';
+
         sqlConfig.classList.toggle('hidden', !isSql);
         sqlConfig.querySelectorAll('input').forEach(input => {
             input.disabled = !isSql;
         });
+
+        // Update port to match selected driver
+        if (isSql && defaultPorts[driver]) {
+            portInput.value = defaultPorts[driver];
+        }
     }
 
-    async function testConnection() {
+    async function testConnection(event) {
         const resultEl = document.getElementById('connectionResult');
-        const btn = event.target;
+        const btn = event.currentTarget;
         btn.disabled = true;
         resultEl.textContent = 'Testing...';
         resultEl.className = 'text-sm text-muted-foreground';
 
-        const formData = new FormData(document.getElementById('databaseForm'));
+        // Build data from enabled inputs only
+        const form = document.getElementById('databaseForm');
+        const data = {};
+        form.querySelectorAll('input:not([disabled])').forEach(input => {
+            if (input.name) {
+                data[input.name] = input.value;
+            }
+        });
 
         try {
             const response = await fetch('{{ route("setup.test-connection") }}', {
@@ -195,7 +213,7 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify(Object.fromEntries(formData)),
+                body: JSON.stringify(data),
             });
 
             const data = await response.json();

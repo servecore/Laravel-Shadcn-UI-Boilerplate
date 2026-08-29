@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Setup;
 
-use App\Http\Controllers\SetupWizardController;
+use App\Services\Setup\SetupState;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +13,7 @@ class SetupAdminRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return ! app(SetupWizardController::class)::isSetup();
+        return ! app(SetupState::class)->isSetup();
     }
 
     /**

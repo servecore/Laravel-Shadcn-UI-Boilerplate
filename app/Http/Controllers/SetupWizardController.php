@@ -15,7 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class SetupWizardController extends Controller
@@ -118,11 +118,16 @@ class SetupWizardController extends Controller
 
         try {
             $config = $this->dbConfig->buildFromRequest($request, $driver);
-            $this->envFile->updateDatabaseConfig($driver, $config['connections'][$driver]);
 
-            Artisan::call('config:clear');
+            // Override runtime config only (do NOT write .env) so the test stays read-only.
+            config([
+                'database.default' => $driver,
+                'database.connections.'.$driver => $config['connections'][$driver],
+            ]);
 
-            Schema::getConnection()->getPdo();
+            DB::purge($driver);
+
+            DB::connection($driver)->getPdo();
 
             return response()->json([
                 'success' => true,
@@ -131,9 +136,20 @@ class SetupWizardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Connection failed: '.$e->getMessage(),
+                'message' => 'Connection failed: '.$this->sanitizeErrorMessage($e->getMessage()),
             ]);
         }
+    }
+
+    /**
+     * Sanitize error message to remove sensitive connection details.
+     */
+    private function sanitizeErrorMessage(string $message): string
+    {
+        $message = preg_replace('/SQLSTATE\[[\w]+\]:\s*/', '', $message);
+        $message = preg_replace('/\d+ [\w\s]+:\s*/', '', $message);
+
+        return $message;
     }
 
     public function saveDatabaseConfig(SetupDatabaseRequest $request): RedirectResponse
@@ -145,10 +161,30 @@ class SetupWizardController extends Controller
         $this->envFile->updateDatabaseConfig($driver, $config['connections'][$driver]);
 
         try {
+            // Reload config from the freshly written .env and drop any cached connection
+            // so that migrate runs against the NEW database, not the request-start config.
+            Artisan::call('config:clear');
+
+            config([
+                'database.default' => $driver,
+                'database.connections.'.$driver => $config['connections'][$driver],
+            ]);
+
+            DB::purge($driver);
+
             Artisan::call('migrate', [
                 '--force' => true,
                 '--no-interaction' => true,
             ]);
+
+            // Tables now exist, so switch session/cache/queue to the database drivers.
+            $this->envFile->update([
+                'CACHE_STORE' => 'database',
+                'SESSION_DRIVER' => 'database',
+                'QUEUE_CONNECTION' => 'database',
+            ]);
+
+            Artisan::call('config:clear');
 
             $this->state->setFlag('setup_migrated', true);
         } catch (\Exception $e) {
@@ -166,7 +202,7 @@ class SetupWizardController extends Controller
 
     public function step4(): View|RedirectResponse
     {
-        if (! $this->state->setFlag('setup_migrated', true)) {
+        if (! $this->state->getFlag('setup_migrated')) {
             return redirect()->route('setup.step3');
         }
 

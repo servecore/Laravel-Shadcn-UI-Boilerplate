@@ -45,12 +45,17 @@ class EnvFileManager
 
         if ($driver !== 'sqlite') {
             $envVars['DB_HOST'] = $connectionConfig['host'] ?? '127.0.0.1';
-            $envVars['DB_PORT'] = $connectionConfig['port'] ?? ($driver === 'mysql' ? '3306' : '5432');
+            $envVars['DB_PORT'] = (string) ($connectionConfig['port'] ?? ($driver === 'mysql' ? '3306' : '5432'));
             $envVars['DB_DATABASE'] = $connectionConfig['database'] ?? '';
             $envVars['DB_USERNAME'] = $connectionConfig['username'] ?? '';
             $envVars['DB_PASSWORD'] = $connectionConfig['password'] ?? '';
         } else {
             $envVars['DB_DATABASE'] = $connectionConfig['database'] ?? database_path('database.sqlite');
+            // Clear server DB vars so they don't leak from a previous config
+            $envVars['DB_HOST'] = '';
+            $envVars['DB_PORT'] = '';
+            $envVars['DB_USERNAME'] = '';
+            $envVars['DB_PASSWORD'] = '';
         }
 
         $this->update($envVars);
