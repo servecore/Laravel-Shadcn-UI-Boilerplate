@@ -5,7 +5,7 @@ Welcome to the **Laravel Shadcn UI Boilerplate**. This guide will help you set u
 ## Prerequisites
 - PHP 8.2+
 - Composer
-- Node.js & NPM
+- Bun (or Node.js & NPM)
 
 ## Installation
 
@@ -22,7 +22,7 @@ Welcome to the **Laravel Shadcn UI Boilerplate**. This guide will help you set u
 
 3. **Install Frontend Dependencies**
    ```bash
-   npm install
+   bun install
    ```
 
 4. **Environment Setup**
@@ -40,7 +40,7 @@ composer run dev
 *Or manually:*
 ```bash
 php artisan serve
-npm run dev
+bun run dev
 ```
 
 ## Accessing Demos

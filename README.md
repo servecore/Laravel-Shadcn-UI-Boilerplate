@@ -60,14 +60,14 @@ cd laravel-shadcn-project
 
 # Install dependencies
 composer install
-npm install
+bun install
 
 # Environment setup
 cp .env.example .env
 php artisan key:generate
 
 # Run development server
-npm run dev          # Terminal 1
+bun run dev          # Terminal 1
 php artisan serve    # Terminal 2
 ```
 
