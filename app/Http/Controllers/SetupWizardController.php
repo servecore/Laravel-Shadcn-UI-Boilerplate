@@ -148,11 +148,25 @@ class SetupWizardController extends Controller
 
             // Test with a direct PDO connection (5s timeout)
             $pdo = $this->createTestPdo($driver, $conn);
+
+            // Check if database already has tables (reinstall scenario)
+            $existingTables = $this->checkExistingTables($pdo, $driver);
             $pdo = null; // Close connection
+
+            if ($existingTables > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Connection successful! Database already has {$existingTables} table(s). Running migration will add missing tables and update existing ones.",
+                    'has_data' => true,
+                    'table_count' => $existingTables,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Database connection successful!',
+                'message' => 'Connection successful! Database is empty and ready for setup.',
+                'has_data' => false,
+                'table_count' => 0,
             ]);
         } catch (\PDOException $e) {
             return response()->json([
@@ -165,6 +179,22 @@ class SetupWizardController extends Controller
                 'message' => 'Error: '.$e->getMessage(),
             ]);
         }
+    }
+
+    /**
+     * Check how many tables exist in the database.
+     */
+    private function checkExistingTables(\PDO $pdo, string $driver): int
+    {
+        $sql = match ($driver) {
+            'mysql' => 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_type = "BASE TABLE"',
+            'pgsql' => "SELECT COUNT(*) FROM information_schema.tables WHERE table_catalog = current_database() AND table_schema = 'public' AND table_type = 'BASE TABLE'",
+            'sqlite' => "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'",
+        };
+
+        $stmt = $pdo->query($sql);
+
+        return (int) $stmt->fetchColumn();
     }
 
     /**

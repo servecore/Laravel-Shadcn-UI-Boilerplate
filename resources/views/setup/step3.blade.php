@@ -177,8 +177,13 @@
 
             const json = await res.json();
             if (json.success) {
-                resultEl.textContent = '\u2713 ' + json.message;
-                resultEl.className = 'text-sm text-green-600 dark:text-green-400';
+                if (json.has_data) {
+                    resultEl.innerHTML = '\u26A0\uFE0F ' + json.message;
+                    resultEl.className = 'text-sm text-amber-600 dark:text-amber-400';
+                } else {
+                    resultEl.textContent = '\u2713 ' + json.message;
+                    resultEl.className = 'text-sm text-green-600 dark:text-green-400';
+                }
             } else {
                 resultEl.textContent = '\u2717 ' + json.message;
                 resultEl.className = 'text-sm text-red-600 dark:text-red-400';
