@@ -62,7 +62,8 @@
             </div>
 
             {{-- SQL Server Config (hidden by default, shown for MySQL/PostgreSQL) --}}
-            <div id="sqlConfig" class="space-y-4 {{ in_array($currentDriver, ['mysql', 'pgsql']) ? '' : 'hidden' }}">
+            @php $isSql = in_array($currentDriver, ['mysql', 'pgsql']); @endphp
+            <div id="sqlConfig" class="space-y-4 {{ $isSql ? '' : 'hidden' }}">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {{-- Host --}}
                     <div class="space-y-2">
@@ -73,6 +74,7 @@
                             name="host"
                             value="{{ old('host', '127.0.0.1') }}"
                             placeholder="127.0.0.1"
+                            {{ $isSql ? '' : 'disabled' }}
                         />
                     </div>
 
@@ -85,6 +87,7 @@
                             name="port"
                             value="{{ old('port', $currentDriver === 'mysql' ? '3306' : '5432') }}"
                             placeholder="3306"
+                            {{ $isSql ? '' : 'disabled' }}
                         />
                     </div>
                 </div>
@@ -99,6 +102,7 @@
                             name="database"
                             value="{{ old('database') }}"
                             placeholder="my_database"
+                            {{ $isSql ? '' : 'disabled' }}
                         />
                     </div>
 
@@ -111,6 +115,7 @@
                             name="username"
                             value="{{ old('username') }}"
                             placeholder="root"
+                            {{ $isSql ? '' : 'disabled' }}
                         />
                     </div>
                 </div>
@@ -124,6 +129,7 @@
                         name="password"
                         value="{{ old('password') }}"
                         placeholder="••••••••"
+                        {{ $isSql ? '' : 'disabled' }}
                     />
                 </div>
 
@@ -165,11 +171,11 @@
 <script>
     function toggleDatabaseFields(driver) {
         const sqlConfig = document.getElementById('sqlConfig');
-        if (driver === 'sqlite') {
-            sqlConfig.classList.add('hidden');
-        } else {
-            sqlConfig.classList.remove('hidden');
-        }
+        const isSql = driver !== 'sqlite';
+        sqlConfig.classList.toggle('hidden', !isSql);
+        sqlConfig.querySelectorAll('input').forEach(input => {
+            input.disabled = !isSql;
+        });
     }
 
     async function testConnection() {

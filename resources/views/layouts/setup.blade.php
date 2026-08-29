@@ -33,5 +33,7 @@
     <footer class="py-4 text-center text-sm text-muted-foreground">
         <p>&copy; {{ date('Y') }} {{ config('app.name', 'Laravel') }}. All rights reserved.</p>
     </footer>
+
+    @stack('scripts')
 </body>
 </html>

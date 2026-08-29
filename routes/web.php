@@ -7,7 +7,9 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SetupWizardController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -121,13 +123,19 @@ Route::middleware('setup')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
 
-        Route::get('/settings', fn () => view('pages.settings.index'))
+        Route::get('/settings', [SettingsController::class, 'index'])
             ->name('settings');
 
+        Route::put('/settings', [SettingsController::class, 'update'])
+            ->name('settings.update');
+
         Route::prefix('users')->name('users.')->group(function () {
-            Route::get('/', fn () => view('pages.users.index'))->name('index');
-            Route::get('/create', fn () => view('pages.users.form'))->name('create');
-            Route::get('/{id}/edit', fn () => view('pages.users.form'))->name('edit');
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::post('/', [UserController::class, 'store'])->name('store');
+            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('/{user}', [UserController::class, 'update'])->name('update');
+            Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
             Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
             Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
         });

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', request()->routeIs('users.create') ? 'Create User' : 'Edit User')
-@section('header', request()->routeIs('users.create') ? 'Create User' : 'Edit User')
+@section('title', $user ? 'Edit User' : 'Create User')
+@section('header', $user ? 'Edit User' : 'Create User')
 
 @section('content')
     <div class="max-w-3xl mx-auto space-y-6">
@@ -17,97 +17,59 @@
                 </x-breadcrumb-item>
                 <x-breadcrumb-separator />
                 <x-breadcrumb-item>
-                    <x-breadcrumb-page>{{ request()->routeIs('users.create') ? 'Create' : 'Edit' }}</x-breadcrumb-page>
+                    <x-breadcrumb-page>{{ $user ? 'Edit' : 'Create' }}</x-breadcrumb-page>
                 </x-breadcrumb-item>
             </x-breadcrumb-list>
         </x-breadcrumb>
 
-        <form class="space-y-8">
+        <form class="space-y-8" method="POST" action="{{ $user ? route('users.update', $user) : route('users.store') }}">
+            @csrf
+            @if($user)
+                @method('PUT')
+            @endif
+
             <x-card>
                 <x-card-header>
                     <x-card-title>User Information</x-card-title>
                     <x-card-description>Basic details about the user.</x-card-description>
                 </x-card-header>
                 <x-card-content class="space-y-6">
-                    <!-- Avatar Upload -->
-                    <div class="flex items-center gap-6">
-                        <x-avatar class="size-20">
-                            <x-avatar-image src="https://github.com/shadcn.png" alt="Avatar" />
-                            <x-avatar-fallback>JD</x-avatar-fallback>
-                        </x-avatar>
-                        <div class="space-y-2">
-                            <x-label>Profile Picture</x-label>
-                            <div class="flex gap-2">
-                                <x-button type="button" variant="outline" size="sm">Change</x-button>
-                                <x-button type="button" variant="ghost" size="sm" class="text-destructive">Remove</x-button>
-                            </div>
-                            <p class="text-xs text-muted-foreground">JPG, GIF or PNG. 1MB Max.</p>
-                        </div>
-                    </div>
-
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="space-y-2">
-                            <x-label for="first_name">First Name</x-label>
-                            <x-input id="first_name" placeholder="John" value="{{ request()->routeIs('users.edit') ? 'John' : '' }}" />
+                            <x-label for="name">Name</x-label>
+                            <x-input id="name" name="name" placeholder="John" value="{{ old('name', $user->name ?? '') }}" required />
+                            @error('name')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                         </div>
                         <div class="space-y-2">
-                            <x-label for="last_name">Last Name</x-label>
-                            <x-input id="last_name" placeholder="Doe" value="{{ request()->routeIs('users.edit') ? 'Doe' : '' }}" />
+                            <x-label for="username">Username</x-label>
+                            <x-input id="username" name="username" placeholder="johndoe" value="{{ old('username', $user->username ?? '') }}" required />
+                            @error('username')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                         </div>
                     </div>
 
                     <div class="space-y-2">
                         <x-label for="email">Email Address</x-label>
-                        <x-input id="email" type="email" placeholder="john.doe@example.com" value="{{ request()->routeIs('users.edit') ? 'john.doe@example.com' : '' }}" />
-                    </div>
-                </x-card-content>
-            </x-card>
-
-            <x-card>
-                <x-card-header>
-                    <x-card-title>Role & Permissions</x-card-title>
-                    <x-card-description>Assign roles and manage access status.</x-card-description>
-                </x-card-header>
-                <x-card-content class="space-y-6">
-                    <div class="grid gap-4 md:grid-cols-2">
-                        <div class="space-y-2">
-                            <x-label>Role</x-label>
-                            <x-select.select>
-                                <x-select.trigger>
-                                    <x-select.value placeholder="Select a role" />
-                                </x-select.trigger>
-                                <x-select.content>
-                                    <x-select.item value="admin">Administrator</x-select.item>
-                                    <x-select.item value="manager">Manager</x-select.item>
-                                    <x-select.item value="editor">Editor</x-select.item>
-                                    <x-select.item value="viewer">Viewer</x-select.item>
-                                </x-select.content>
-                            </x-select.select>
-                        </div>
-                        <div class="space-y-2">
-                            <x-label>Status</x-label>
-                            <x-select.select>
-                                <x-select.trigger>
-                                    <x-select.value placeholder="Select status" />
-                                </x-select.trigger>
-                                <x-select.content>
-                                    <x-select.item value="active">Active</x-select.item>
-                                    <x-select.item value="inactive">Inactive</x-select.item>
-                                    <x-select.item value="suspended">Suspended</x-select.item>
-                                </x-select.content>
-                            </x-select.select>
-                        </div>
+                        <x-input id="email" name="email" type="email" placeholder="john.doe@example.com" value="{{ old('email', $user->email ?? '') }}" required />
+                        @error('email')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                     </div>
 
-                    <div class="flex items-center space-x-2">
-                        <x-switch.switch id="mfa" />
-                        <x-label for="mfa">Require Two-Factor Authentication</x-label>
-                    </div>
+                    @if(! $user)
+                        <div class="space-y-2">
+                            <x-label for="password">Password</x-label>
+                            <x-input id="password" name="password" type="password" placeholder="Enter password" required />
+                            @error('password')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div class="space-y-2">
+                            <x-label for="password_confirmation">Confirm Password</x-label>
+                            <x-input id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm password" required />
+                        </div>
+                    @endif
                 </x-card-content>
                 <x-card-footer class="border-t bg-muted/50 px-6 py-4">
                     <div class="flex items-center justify-end gap-2 w-full">
                         <x-button type="button" variant="ghost" href="{{ route('users.index') }}">Cancel</x-button>
-                        <x-button type="submit">Save Changes</x-button>
+                        <x-button type="submit">{{ $user ? 'Save Changes' : 'Create User' }}</x-button>
                     </div>
                 </x-card-footer>
             </x-card>

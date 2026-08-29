@@ -9,7 +9,7 @@
 <div x-data="{ on: {{ $checked ? 'true' : 'false' }} }" data-slot="switch-wrapper" class="inline-flex items-center">
 
     @if ($name)
-        <input type="hidden" name="{{ $name }}" x-model="on" :value="on ? '{{ $value }}' : ''">
+        <input type="hidden" name="{{ $name }}" :value="on ? '1' : '0'">
     @endif
 
     {{-- Switch --}}

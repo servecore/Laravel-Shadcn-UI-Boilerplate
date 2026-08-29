@@ -19,68 +19,12 @@
                 </x-breadcrumb-list>
             </x-breadcrumb>
 
-            <x-dialog>
-                <x-dialog-trigger>
-                    <x-button>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                        </svg>
-                        Add User
-                    </x-button>
-                </x-dialog-trigger>
-                <x-dialog-content>
-                    <x-dialog-header>
-                        <x-dialog-title>Add New User</x-dialog-title>
-                        <x-dialog-description>
-                            Fill in the details below to create a new user account.
-                        </x-dialog-description>
-                    </x-dialog-header>
-                    
-                    <form class="space-y-4 py-4">
-                        <div class="space-y-2">
-                            <x-label for="name">Full Name</x-label>
-                            <x-input id="name" placeholder="Enter full name" />
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <x-label for="email">Email Address</x-label>
-                            <x-input id="email" type="email" placeholder="Enter email address" />
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <x-label for="role">Role</x-label>
-                            <x-select.select>
-                                <x-select.trigger class="w-full">
-                                    <x-select.value placeholder="Select a role" />
-                                </x-select.trigger>
-                                <x-select.content>
-                                    <x-select.item value="admin">Administrator</x-select.item>
-                                    <x-select.item value="manager">Manager</x-select.item>
-                                    <x-select.item value="editor">Editor</x-select.item>
-                                    <x-select.item value="viewer">Viewer</x-select.item>
-                                </x-select.content>
-                            </x-select.select>
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <x-label for="password">Password</x-label>
-                            <x-input id="password" type="password" placeholder="Enter password" />
-                        </div>
-                        
-                        <div class="flex items-center gap-2">
-                            <x-checkbox id="send-email" />
-                            <x-label for="send-email" class="text-sm font-normal">Send welcome email to user</x-label>
-                        </div>
-                    </form>
-                    
-                    <x-dialog-footer>
-                        <x-dialog-close>
-                            <x-button variant="outline">Cancel</x-button>
-                        </x-dialog-close>
-                        <x-button type="submit">Create User</x-button>
-                    </x-dialog-footer>
-                </x-dialog-content>
-            </x-dialog>
+            <x-button href="{{ route('users.create') }}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Add User
+            </x-button>
         </div>
 
         <!-- Filters & Search -->
@@ -119,7 +63,7 @@
                     </x-table.row>
                 </x-table.header>
                 <x-table.body>
-                    @forelse(($users ?? []) as $user)
+                    @forelse($users as $user)
                         <x-table.row>
                             <x-table.cell>
                                 <x-checkbox />
@@ -127,25 +71,19 @@
                             <x-table.cell>
                                 <div class="flex items-center gap-3">
                                     <x-avatar class="size-9">
-                                        <x-avatar-fallback>{{ $user['avatar'] ?? substr($user['name'] ?? 'U', 0, 2) }}</x-avatar-fallback>
+                                        <x-avatar-fallback>{{ substr($user->name, 0, 2) }}</x-avatar-fallback>
                                     </x-avatar>
                                     <div class="grid gap-0.5">
-                                        <p class="text-sm font-medium leading-none">{{ $user['name'] }}</p>
-                                        <p class="text-xs text-muted-foreground">{{ $user['email'] }}</p>
+                                        <p class="text-sm font-medium leading-none">{{ $user->name }}</p>
+                                        <p class="text-xs text-muted-foreground">{{ $user->email }}</p>
                                     </div>
                                 </div>
                             </x-table.cell>
                             <x-table.cell>
-                                <div class="flex items-center">
-                                    @if(($user['role'] ?? '') === 'Administrator')
-                                        <x-badge variant="default">{{ $user['role'] }}</x-badge>
-                                    @else
-                                        <x-badge variant="outline">{{ $user['role'] ?? 'User' }}</x-badge>
-                                    @endif
-                                </div>
+                                <x-badge variant="outline">User</x-badge>
                             </x-table.cell>
                             <x-table.cell>
-                                @if(($user['status'] ?? 'active') === 'active')
+                                @if($user->is_active)
                                     <div class="flex items-center gap-2">
                                         <div class="size-2 rounded-full bg-emerald-500"></div>
                                         <span class="text-sm text-muted-foreground">Active</span>
@@ -158,7 +96,7 @@
                                 @endif
                             </x-table.cell>
                             <x-table.cell class="text-muted-foreground">
-                                {{ $user['joined'] ?? '' }}
+                                {{ $user->created_at->diffForHumans() }}
                             </x-table.cell>
                             <x-table.cell class="text-right">
                                 <x-dropdown.dropdown align="end" :side="$loop->last ? 'top' : 'bottom'">
@@ -170,14 +108,17 @@
                                         </x-button>
                                     </x-slot:trigger>
                                     <div class="w-40">
-                                        <x-dropdown.item href="{{ route('users.edit', 1) }}">
+                                        <x-dropdown.item href="{{ route('users.edit', $user) }}">
                                             Edit Details
                                         </x-dropdown.item>
-                                        <x-dropdown.item>Change Role</x-dropdown.item>
                                         <x-dropdown.separator />
-                                        <x-dropdown.item variant="destructive">
-                                            Delete User
-                                        </x-dropdown.item>
+                                        <form method="POST" action="{{ route('users.destroy', $user) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <x-dropdown.item variant="destructive" as="button">
+                                                Delete User
+                                            </x-dropdown.item>
+                                        </form>
                                     </div>
                                 </x-dropdown.dropdown>
                             </x-table.cell>
@@ -199,26 +140,10 @@
         </div>
 
         <!-- Pagination -->
-        <x-pagination.pagination>
-             <x-pagination.content>
-                <x-pagination.item>
-                    <x-pagination.previous href="#" />
-                </x-pagination.item>
-                <x-pagination.item>
-                    <x-pagination.link href="#" :isActive="true">1</x-pagination.link>
-                </x-pagination.item>
-                <x-pagination.item>
-                    <x-pagination.link href="#">2</x-pagination.link>
-                </x-pagination.item>
-                <x-pagination.item>
-                    <x-pagination.item>
-                        <x-pagination.ellipsis />
-                    </x-pagination.item>
-                </x-pagination.item>
-                <x-pagination.item>
-                    <x-pagination.next href="#" />
-                </x-pagination.item>
-            </x-pagination.content>
-        </x-pagination.pagination>
+        @if($users->hasPages())
+            <div class="flex justify-center">
+                {{ $users->links() }}
+            </div>
+        @endif
     </div>
 @endsection

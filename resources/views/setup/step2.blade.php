@@ -57,24 +57,69 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-2">
                     <x-label for="timezone">Timezone</x-label>
-                    <x-select id="timezone" name="timezone">
-                        @foreach(timezone_identifiers_list() as $tz)
-                            <option value="{{ $tz }}" {{ old('timezone', $timezone) === $tz ? 'selected' : '' }}>
-                                {{ $tz }}
-                            </option>
-                        @endforeach
-                    </x-select>
+                    @php
+                        $commonTimezones = [
+                            'UTC' => 'UTC (Coordinated Universal Time)',
+                            'GMT' => 'GMT (Greenwich Mean Time)',
+                            'Asia/Jakarta' => 'Asia/Jakarta (WIB, GMT+7)',
+                            'Asia/Makassar' => 'Asia/Makassar (WITA, GMT+8)',
+                            'Asia/Jayapura' => 'Asia/Jayapura (WIT, GMT+9)',
+                            'Asia/Shanghai' => 'Asia/Shanghai (CST, GMT+8)',
+                            'Asia/Tokyo' => 'Asia/Tokyo (JST, GMT+9)',
+                            'Asia/Seoul' => 'Asia/Seoul (KST, GMT+9)',
+                            'Asia/Singapore' => 'Asia/Singapore (SGT, GMT+8)',
+                            'Asia/Kolkata' => 'Asia/Kolkata (IST, GMT+5:30)',
+                            'Europe/London' => 'Europe/London (GMT/BST)',
+                            'Europe/Paris' => 'Europe/Paris (CET/CEST)',
+                            'Europe/Berlin' => 'Europe/Berlin (CET/CEST)',
+                            'America/New_York' => 'America/New_York (EST/EDT)',
+                            'America/Chicago' => 'America/Chicago (CST/CDT)',
+                            'America/Denver' => 'America/Denver (MST/MDT)',
+                            'America/Los_Angeles' => 'America/Los_Angeles (PST/PDT)',
+                            'Australia/Sydney' => 'Australia/Sydney (AEST/AEDT)',
+                        ];
+                        $allTimezones = timezone_identifiers_list();
+                        $currentTimezone = old('timezone', $timezone);
+                    @endphp
+                    <select
+                        id="timezone"
+                        name="timezone"
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        <optgroup label="Common Timezones">
+                            @foreach($commonTimezones as $tz => $label)
+                                <option value="{{ $tz }}" {{ $currentTimezone === $tz ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                        <optgroup label="All Timezones">
+                            @foreach($allTimezones as $tz)
+                                @if(! array_key_exists($tz, $commonTimezones))
+                                    <option value="{{ $tz }}" {{ $currentTimezone === $tz ? 'selected' : '' }}>
+                                        {{ $tz }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </optgroup>
+                    </select>
+                    <p class="text-xs text-muted-foreground">Used for scheduling and timestamps.</p>
                 </div>
 
                 <div class="space-y-2">
                     <x-label for="locale">Locale</x-label>
-                    <x-select id="locale" name="locale">
+                    <select
+                        id="locale"
+                        name="locale"
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
                         @foreach(['en' => 'English', 'id' => 'Indonesian', 'ms' => 'Malay', 'es' => 'Spanish', 'fr' => 'French', 'de' => 'German', 'ja' => 'Japanese', 'zh' => 'Chinese'] as $code => $name)
                             <option value="{{ $code }}" {{ old('locale', $locale) === $code ? 'selected' : '' }}>
                                 {{ $name }}
                             </option>
                         @endforeach
-                    </x-select>
+                    </select>
+                    <p class="text-xs text-muted-foreground">Default language for the application.</p>
                 </div>
             </div>
 

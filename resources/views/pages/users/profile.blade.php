@@ -40,45 +40,22 @@
                 
                 <x-separator.separator />
 
-                <form class="space-y-8">
-                    {{-- Username --}}
+                <form class="space-y-8" method="POST" action="{{ route('users.profile.update') }}">
+                    @csrf
+                    @method('PUT')
+
+                    {{-- Name --}}
                     <div class="space-y-2">
-                        <x-label for="username">Username</x-label>
-                        <x-input id="username" placeholder="shadcn" value="shadcn" />
-                        <p class="text-[0.8rem] text-muted-foreground">This is your public display name.</p>
+                        <x-label for="name">Name</x-label>
+                        <x-input id="name" name="name" placeholder="Your name" value="{{ auth()->user()->name }}" required />
+                        @error('name')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                     </div>
 
                     {{-- Email --}}
                     <div class="space-y-2">
                         <x-label for="email">Email</x-label>
-                        <x-select.select>
-                            <x-select.trigger class="w-[300px]">
-                                <x-select.value placeholder="Select a verified email" />
-                            </x-select.trigger>
-                            <x-select.content>
-                                <x-select.item value="m@example.com">m@example.com</x-select.item>
-                                <x-select.item value="m@google.com">m@google.com</x-select.item>
-                                <x-select.item value="m@support.com">m@support.com</x-select.item>
-                            </x-select.content>
-                        </x-select.select>
-                        <p class="text-[0.8rem] text-muted-foreground">You can manage verified email addresses in your <a href="#" class="text-primary hover:underline">email settings</a>.</p>
-                    </div>
-
-                    {{-- Bio --}}
-                    <div class="space-y-2">
-                        <x-label for="bio">Bio</x-label>
-                        <x-textarea.textarea id="bio" placeholder="Tell us a little bit about yourself" class="resize-none" />
-                        <p class="text-[0.8rem] text-muted-foreground">You can <span>@mention</span> other users and organizations.</p>
-                    </div>
-
-                    {{-- URLs --}}
-                    <div class="space-y-2">
-                        <x-label for="url">URLs</x-label>
-                        <div class="space-y-2">
-                            <x-input id="url" value="https://shadcn.com" />
-                            <x-input id="url-2" value="http://twitter.com/shadcn" />
-                        </div>
-                        <p class="text-[0.8rem] text-muted-foreground">Add links to your website, blog, or social media profiles.</p>
+                        <x-input id="email" name="email" type="email" placeholder="your@email.com" value="{{ auth()->user()->email }}" required />
+                        @error('email')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                     </div>
 
                     <x-button type="submit">Update profile</x-button>

@@ -22,7 +22,7 @@
                 </svg>
             </x-card-header>
             <x-card-content>
-                <div class="text-2xl font-bold">{{ \App\Models\User::count() }}</div>
+                <div class="text-2xl font-bold">{{ $totalUsers }}</div>
                 <p class="text-xs text-muted-foreground">Registered users</p>
             </x-card-content>
         </x-card>
