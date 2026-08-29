@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Shadcn;
 
+use App\Providers\ShadcnServiceProvider;
+
 class AddComponentCommand extends Command
 {
     /**
@@ -39,9 +41,19 @@ class AddComponentCommand extends Command
         }
 
         $this->newLine();
+        $this->rebuildComponentCache();
         $this->info('✅ Done! Don\'t forget to register your components in AppServiceProvider if needed.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Rebuild the cached component aliases after adding components.
+     */
+    protected function rebuildComponentCache(): void
+    {
+        ShadcnServiceProvider::clearCache();
+        ShadcnServiceProvider::writeCache(ShadcnServiceProvider::buildComponentAliases());
     }
 
     /**
@@ -65,10 +77,10 @@ class AddComponentCommand extends Command
         $classPath = base_path(self::CLASS_PATH."/{$name}");
         $viewPath = base_path(self::VIEW_PATH."/{$component['view']}");
         $jsPath = base_path(self::JS_PATH);
-        
+
         $stubClassPath = base_path("resources/shadcn-stubs/classes/{$name}");
         $stubViewPath = base_path("resources/shadcn-stubs/components/{$component['view']}");
-        $stubJsPath = base_path("resources/shadcn-stubs/js");
+        $stubJsPath = base_path('resources/shadcn-stubs/js');
 
         $this->fs->ensureDirectoryExists($classPath);
         $this->fs->ensureDirectoryExists($viewPath);
@@ -91,8 +103,8 @@ class AddComponentCommand extends Command
         // Copy JS file if exists
         $stubJsFile = "{$stubJsPath}/{$component['view']}.js";
         if ($this->fs->exists($stubJsFile)) {
-             $this->fs->copy($stubJsFile, "{$jsPath}/{$component['view']}.js");
-             $this->line("  ✓ JS file: resources/js/components/{$component['view']}.js");
+            $this->fs->copy($stubJsFile, "{$jsPath}/{$component['view']}.js");
+            $this->line("  ✓ JS file: resources/js/components/{$component['view']}.js");
         }
 
         $this->info("  ✅ Added: {$name}");

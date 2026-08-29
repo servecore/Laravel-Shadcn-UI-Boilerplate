@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Shadcn;
 
+use App\Providers\ShadcnServiceProvider;
+
 class RemoveComponentCommand extends Command
 {
     /**
@@ -20,8 +22,6 @@ class RemoveComponentCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
@@ -32,6 +32,7 @@ class RemoveComponentCommand extends Command
 
         if (empty($components)) {
             $this->warn('No components found to remove.');
+
             return self::SUCCESS;
         }
 
@@ -40,17 +41,25 @@ class RemoveComponentCommand extends Command
         }
 
         $this->newLine();
+        $this->rebuildComponentCache();
         $this->info('✅ Done!');
 
         return self::SUCCESS;
     }
 
     /**
+     * Rebuild the cached component aliases after removing components.
+     */
+    protected function rebuildComponentCache(): void
+    {
+        ShadcnServiceProvider::clearCache();
+        ShadcnServiceProvider::writeCache(ShadcnServiceProvider::buildComponentAliases());
+    }
+
+    /**
      * Remove a component from the project.
      *
-     * @param array{name: string, path: string, view: string} $component
-     *
-     * @return void
+     * @param  array{name: string, path: string, view: string}  $component
      */
     protected function removeComponent(array $component): void
     {
@@ -58,32 +67,34 @@ class RemoveComponentCommand extends Command
 
         if ($this->componentDoesNotExist($component)) {
             $this->line("  ⏭️  Not found: {$name}");
+
             return;
         }
 
-        if (!$this->option('force')) {
-            if (!$this->confirm("Are you sure you want to remove {$name} component?")) {
-                $this->line("  ⏭️  Skipped: {$name}");
+        if (! $this->option('force')) {
+            if (! $this->confirm("Are you sure you want to remove {$name} component?")) {
+                $this->line("  Skipped: {$name}");
+
                 return;
             }
         }
 
         // Remove PHP class files
-        $classPath = base_path(self::CLASS_PATH . "/{$name}");
+        $classPath = base_path(self::CLASS_PATH."/{$name}");
         if ($this->fs->exists($classPath)) {
             $this->fs->deleteDirectory($classPath);
             $this->line("  ✓ Removed: app/View/Components/{$name}");
         }
 
         // Remove Blade views
-        $viewPath = base_path(self::VIEW_PATH . "/{$component['view']}");
+        $viewPath = base_path(self::VIEW_PATH."/{$component['view']}");
         if ($this->fs->exists($viewPath)) {
             $this->fs->deleteDirectory($viewPath);
             $this->line("  ✓ Removed: resources/views/components/{$component['view']}");
         }
 
         // Remove JS file if exists
-        $jsFile = base_path(self::JS_PATH . "/{$component['view']}.js");
+        $jsFile = base_path(self::JS_PATH."/{$component['view']}.js");
         if ($this->fs->exists($jsFile)) {
             $this->fs->delete($jsFile);
             $this->line("  ✓ Removed: resources/js/components/{$component['view']}.js");
