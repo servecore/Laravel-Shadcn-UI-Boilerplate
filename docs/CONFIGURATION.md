@@ -1,5 +1,16 @@
 # Configuration
 
+## Setup Wizard
+
+The setup wizard configures most environment variables automatically through the browser. After completing the wizard, a `.setup-complete` marker file is created.
+
+**To re-run the wizard:**
+```bash
+rm .setup-complete
+```
+
+You can also configure settings manually by editing `.env` directly.
+
 ## Environment Variables
 
 ### Application

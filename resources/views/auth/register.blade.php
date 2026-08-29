@@ -20,16 +20,28 @@
     {{-- Register Form Card --}}
     <x-card>
         <x-card-content class="pt-6">
-            <form class="space-y-4" action="#" method="POST">
+            <form class="space-y-4" action="{{ route('register.store') }}" method="POST">
                 @csrf
                 {{-- Name --}}
                 <div class="space-y-2">
                     <x-label for="name">Full Name</x-label>
-                    <x-input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
+                    <x-input
+                        type="text"
+                        id="name"
+                        name="name"
                         placeholder="John Doe"
+                        required
+                    />
+                </div>
+
+                {{-- Username --}}
+                <div class="space-y-2">
+                    <x-label for="username">Username</x-label>
+                    <x-input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="johndoe"
                         required
                     />
                 </div>
@@ -119,7 +131,7 @@
     {{-- Login Link --}}
     <p class="text-center text-sm text-muted-foreground">
         Already have an account?
-        <a href="{{ route('demo.login') }}" class="text-primary hover:underline font-medium">
+        <a href="{{ route('login') }}" class="text-primary hover:underline font-medium">
             Sign in
         </a>
     </p>

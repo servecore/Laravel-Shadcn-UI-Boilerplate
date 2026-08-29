@@ -12,7 +12,7 @@ class PasswordResetTest extends TestCase
 
     public function test_forgot_password_form_is_displayed(): void
     {
-        $response = $this->get(route('demo.forgot-password'));
+        $response = $this->get(route('forgot-password'));
 
         $response->assertStatus(200);
         $response->assertSee('Forgot password');
@@ -21,7 +21,7 @@ class PasswordResetTest extends TestCase
 
     public function test_email_is_required_for_password_reset(): void
     {
-        $response = $this->post(route('demo.forgot-password.store'), [
+        $response = $this->post(route('forgot-password.store'), [
             'email' => '',
         ]);
 
@@ -30,7 +30,7 @@ class PasswordResetTest extends TestCase
 
     public function test_email_must_be_valid_format(): void
     {
-        $response = $this->post(route('demo.forgot-password.store'), [
+        $response = $this->post(route('forgot-password.store'), [
             'email' => 'not-an-email',
         ]);
 
@@ -41,7 +41,7 @@ class PasswordResetTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post(route('demo.forgot-password.store'), [
+        $response = $this->post(route('forgot-password.store'), [
             'email' => $user->email,
         ]);
 
@@ -52,7 +52,7 @@ class PasswordResetTest extends TestCase
     public function test_nonexistent_email_returns_response(): void
     {
         // Laravel intentionally returns same response for security
-        $response = $this->post(route('demo.forgot-password.store'), [
+        $response = $this->post(route('forgot-password.store'), [
             'email' => 'nonexistent@example.com',
         ]);
 
@@ -64,23 +64,24 @@ class PasswordResetTest extends TestCase
 
     public function test_guest_can_access_forgot_password_form(): void
     {
-        $response = $this->get(route('demo.forgot-password'));
+        $response = $this->get(route('forgot-password'));
 
         $response->assertStatus(200);
     }
 
-    public function test_authenticated_user_can_access_forgot_password_form(): void
+    public function test_authenticated_user_is_redirected_from_forgot_password(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('demo.forgot-password'));
+        $response = $this->actingAs($user)->get(route('forgot-password'));
 
-        $response->assertStatus(200);
+        // Auth users are redirected by guest middleware
+        $response->assertRedirect();
     }
 
     public function test_reset_password_form_is_displayed(): void
     {
-        $response = $this->get(route('demo.password.reset', [
+        $response = $this->get(route('password.reset', [
             'token' => 'fake-token',
             'email' => 'test@example.com',
         ]));
@@ -91,7 +92,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_requires_token(): void
     {
-        $response = $this->post(route('demo.password.store'), [
+        $response = $this->post(route('password.store'), [
             'token' => '',
             'email' => 'test@example.com',
             'password' => 'new-password',
@@ -103,7 +104,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_requires_email(): void
     {
-        $response = $this->post(route('demo.password.store'), [
+        $response = $this->post(route('password.store'), [
             'token' => 'fake-token',
             'email' => '',
             'password' => 'new-password',
@@ -115,7 +116,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_requires_password(): void
     {
-        $response = $this->post(route('demo.password.store'), [
+        $response = $this->post(route('password.store'), [
             'token' => 'fake-token',
             'email' => 'test@example.com',
             'password' => '',
@@ -127,7 +128,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_requires_password_confirmation(): void
     {
-        $response = $this->post(route('demo.password.store'), [
+        $response = $this->post(route('password.store'), [
             'token' => 'fake-token',
             'email' => 'test@example.com',
             'password' => 'new-password',
@@ -139,7 +140,7 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_email_must_be_valid_format(): void
     {
-        $response = $this->post(route('demo.password.store'), [
+        $response = $this->post(route('password.store'), [
             'token' => 'fake-token',
             'email' => 'not-an-email',
             'password' => 'new-password',

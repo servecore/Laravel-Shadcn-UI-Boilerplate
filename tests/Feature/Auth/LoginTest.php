@@ -12,7 +12,7 @@ class LoginTest extends TestCase
 
     public function test_login_form_is_displayed(): void
     {
-        $response = $this->get(route('demo.login'));
+        $response = $this->get(route('login'));
 
         $response->assertStatus(200);
         $response->assertSee('Sign in');
@@ -24,12 +24,12 @@ class LoginTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
-        $response->assertRedirect(route('demo.dashboard'));
+        $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
     }
 
@@ -39,7 +39,7 @@ class LoginTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -50,7 +50,7 @@ class LoginTest extends TestCase
 
     public function test_user_cannot_login_with_nonexistent_email(): void
     {
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => 'nonexistent@example.com',
             'password' => 'password',
         ]);
@@ -61,7 +61,7 @@ class LoginTest extends TestCase
 
     public function test_email_is_required(): void
     {
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => '',
             'password' => 'password',
         ]);
@@ -71,7 +71,7 @@ class LoginTest extends TestCase
 
     public function test_password_is_required(): void
     {
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => 'test@example.com',
             'password' => '',
         ]);

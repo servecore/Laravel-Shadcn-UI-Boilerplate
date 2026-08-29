@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', request()->routeIs('demo.users.create') ? 'Create User' : 'Edit User')
-@section('header', request()->routeIs('demo.users.create') ? 'Create User' : 'Edit User')
+@section('title', request()->routeIs('users.create') ? 'Create User' : 'Edit User')
+@section('header', request()->routeIs('users.create') ? 'Create User' : 'Edit User')
 
 @section('content')
     <div class="max-w-3xl mx-auto space-y-6">
@@ -9,15 +9,15 @@
         <x-breadcrumb>
             <x-breadcrumb-list>
                 <x-breadcrumb-item>
-                    <x-breadcrumb-link href="{{ route('demo.dashboard') }}">Dashboard</x-breadcrumb-link>
+                    <x-breadcrumb-link href="{{ route('dashboard') }}">Dashboard</x-breadcrumb-link>
                 </x-breadcrumb-item>
                 <x-breadcrumb-separator />
                 <x-breadcrumb-item>
-                    <x-breadcrumb-link href="{{ route('demo.users.index') }}">Users</x-breadcrumb-link>
+                    <x-breadcrumb-link href="{{ route('users.index') }}">Users</x-breadcrumb-link>
                 </x-breadcrumb-item>
                 <x-breadcrumb-separator />
                 <x-breadcrumb-item>
-                    <x-breadcrumb-page>{{ request()->routeIs('demo.users.create') ? 'Create' : 'Edit' }}</x-breadcrumb-page>
+                    <x-breadcrumb-page>{{ request()->routeIs('users.create') ? 'Create' : 'Edit' }}</x-breadcrumb-page>
                 </x-breadcrumb-item>
             </x-breadcrumb-list>
         </x-breadcrumb>
@@ -48,17 +48,17 @@
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="space-y-2">
                             <x-label for="first_name">First Name</x-label>
-                            <x-input id="first_name" placeholder="John" value="{{ request()->routeIs('demo.users.edit') ? 'John' : '' }}" />
+                            <x-input id="first_name" placeholder="John" value="{{ request()->routeIs('users.edit') ? 'John' : '' }}" />
                         </div>
                         <div class="space-y-2">
                             <x-label for="last_name">Last Name</x-label>
-                            <x-input id="last_name" placeholder="Doe" value="{{ request()->routeIs('demo.users.edit') ? 'Doe' : '' }}" />
+                            <x-input id="last_name" placeholder="Doe" value="{{ request()->routeIs('users.edit') ? 'Doe' : '' }}" />
                         </div>
                     </div>
 
                     <div class="space-y-2">
                         <x-label for="email">Email Address</x-label>
-                        <x-input id="email" type="email" placeholder="john.doe@example.com" value="{{ request()->routeIs('demo.users.edit') ? 'john.doe@example.com' : '' }}" />
+                        <x-input id="email" type="email" placeholder="john.doe@example.com" value="{{ request()->routeIs('users.edit') ? 'john.doe@example.com' : '' }}" />
                     </div>
                 </x-card-content>
             </x-card>
@@ -106,7 +106,7 @@
                 </x-card-content>
                 <x-card-footer class="border-t bg-muted/50 px-6 py-4">
                     <div class="flex items-center justify-end gap-2 w-full">
-                        <x-button type="button" variant="ghost" href="{{ route('demo.users.index') }}">Cancel</x-button>
+                        <x-button type="button" variant="ghost" href="{{ route('users.index') }}">Cancel</x-button>
                         <x-button type="submit">Save Changes</x-button>
                     </div>
                 </x-card-footer>

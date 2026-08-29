@@ -20,7 +20,7 @@
     {{-- Login Form Card --}}
     <x-card>
         <x-card-content class="pt-6">
-            <form class="space-y-4" action="#" method="POST">
+            <form class="space-y-4" action="{{ route('login.store') }}" method="POST">
                 @csrf
                 {{-- Email --}}
                 <div class="space-y-2">
@@ -38,7 +38,7 @@
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <x-label for="password">Password</x-label>
-                        <a href="{{ route('demo.forgot-password') }}" class="text-sm text-primary hover:underline">
+                        <a href="{{ route('forgot-password') }}" class="text-sm text-primary hover:underline">
                             Forgot password?
                         </a>
                     </div>
@@ -96,7 +96,7 @@
     {{-- Register Link --}}
     <p class="text-center text-sm text-muted-foreground">
         Don't have an account?
-        <a href="{{ route('demo.register') }}" class="text-primary hover:underline font-medium">
+        <a href="{{ route('register') }}" class="text-primary hover:underline font-medium">
             Sign up
         </a>
     </p>

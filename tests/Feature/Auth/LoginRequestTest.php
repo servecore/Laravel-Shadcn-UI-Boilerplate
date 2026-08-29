@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\RateLimiter;
 use Tests\TestCase;
 
 class LoginRequestTest extends TestCase
@@ -13,7 +12,7 @@ class LoginRequestTest extends TestCase
 
     public function test_email_is_required(): void
     {
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => '',
             'password' => 'password',
         ]);
@@ -23,7 +22,7 @@ class LoginRequestTest extends TestCase
 
     public function test_email_must_be_valid_format(): void
     {
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => 'not-an-email',
             'password' => 'password',
         ]);
@@ -33,7 +32,7 @@ class LoginRequestTest extends TestCase
 
     public function test_password_is_required(): void
     {
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => 'test@example.com',
             'password' => '',
         ]);
@@ -47,12 +46,12 @@ class LoginRequestTest extends TestCase
             'password' => bcrypt('secret-password'),
         ]);
 
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'secret-password',
         ]);
 
-        $response->assertRedirect(route('demo.dashboard'));
+        $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
     }
 
@@ -62,7 +61,7 @@ class LoginRequestTest extends TestCase
             'password' => bcrypt('correct-password'),
         ]);
 
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -73,7 +72,7 @@ class LoginRequestTest extends TestCase
 
     public function test_nonexistent_email_returns_error(): void
     {
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => 'nobody@example.com',
             'password' => 'password',
         ]);
@@ -88,13 +87,13 @@ class LoginRequestTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'password',
             'remember' => 'on',
         ]);
 
-        $response->assertRedirect(route('demo.dashboard'));
+        $response->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($user);
     }
 
@@ -106,14 +105,14 @@ class LoginRequestTest extends TestCase
 
         // Make 5 failed attempts
         for ($i = 0; $i < 5; $i++) {
-            $this->post(route('demo.login.store'), [
+            $this->post(route('login.store'), [
                 'email' => $user->email,
                 'password' => 'wrong-password',
             ]);
         }
 
         // 6th attempt should be rate limited
-        $response = $this->post(route('demo.login.store'), [
+        $response = $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -127,7 +126,7 @@ class LoginRequestTest extends TestCase
             'password' => bcrypt('password'),
         ]);
 
-        $this->post(route('demo.login.store'), [
+        $this->post(route('login.store'), [
             'email' => $user->email,
             'password' => 'password',
         ]);
@@ -137,7 +136,7 @@ class LoginRequestTest extends TestCase
 
     public function test_guest_cannot_access_authenticated_routes(): void
     {
-        $response = $this->get(route('demo.dashboard'));
+        $response = $this->get(route('dashboard'));
 
         $this->assertNotTrue($response->isOk());
     }
@@ -146,7 +145,7 @@ class LoginRequestTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('demo.dashboard'));
+        $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertStatus(200);
     }

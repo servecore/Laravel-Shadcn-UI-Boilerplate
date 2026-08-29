@@ -14,7 +14,7 @@ class DashboardTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('demo.dashboard'));
+        $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertStatus(200);
         $response->assertSee('Dashboard');
@@ -22,7 +22,7 @@ class DashboardTest extends TestCase
 
     public function test_guest_cannot_access_dashboard(): void
     {
-        $response = $this->get(route('demo.dashboard'));
+        $response = $this->get(route('dashboard'));
 
         // Auth middleware blocks unauthenticated access
         $this->assertNotTrue($response->isOk());
@@ -32,7 +32,7 @@ class DashboardTest extends TestCase
     {
         $user = User::factory()->create(['name' => 'John Doe']);
 
-        $response = $this->actingAs($user)->get(route('demo.dashboard'));
+        $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertSee('John Doe');
     }

@@ -37,14 +37,14 @@ class VerifyEmailController extends Controller
         }
 
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('demo.dashboard'));
+            return redirect()->intended(route('dashboard'));
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route('demo.dashboard'));
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
@@ -53,7 +53,7 @@ class VerifyEmailController extends Controller
     public function sendVerification(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('demo.dashboard'));
+            return redirect()->intended(route('dashboard'));
         }
 
         $request->user()->sendEmailVerificationNotification();

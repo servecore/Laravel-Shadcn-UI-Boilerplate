@@ -70,7 +70,7 @@ class ExampleTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('demo.dashboard'));
+        $response = $this->actingAs($user)->get(route('dashboard'));
 
         $response->assertStatus(200);
         $response->assertSee('Dashboard');
@@ -105,7 +105,7 @@ $this->assertGuest();
 ### Testing Validation
 
 ```php
-$response = $this->post(route('demo.login.store'), [
+$response = $this->post(route('login.store'), [
     'email' => '',
     'password' => '',
 ]);

@@ -10,7 +10,7 @@
             <x-breadcrumb>
                 <x-breadcrumb-list>
                     <x-breadcrumb-item>
-                        <x-breadcrumb-link href="{{ route('demo.dashboard') }}">Dashboard</x-breadcrumb-link>
+                        <x-breadcrumb-link href="{{ route('dashboard') }}">Dashboard</x-breadcrumb-link>
                     </x-breadcrumb-item>
                     <x-breadcrumb-separator />
                     <x-breadcrumb-item>
@@ -170,7 +170,7 @@
                                         </x-button>
                                     </x-slot:trigger>
                                     <div class="w-40">
-                                        <x-dropdown.item href="{{ route('demo.users.edit', 1) }}">
+                                        <x-dropdown.item href="{{ route('users.edit', 1) }}">
                                             Edit Details
                                         </x-dropdown.item>
                                         <x-dropdown.item>Change Role</x-dropdown.item>

@@ -14,15 +14,15 @@ class LogoutTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post(route('demo.logout'));
+        $response = $this->actingAs($user)->post(route('logout'));
 
-        $response->assertRedirect(route('demo.login'));
+        $response->assertRedirect(route('login'));
         $this->assertGuest();
     }
 
     public function test_guest_cannot_access_logout(): void
     {
-        $response = $this->post(route('demo.logout'));
+        $response = $this->post(route('logout'));
 
         // Auth middleware blocks unauthenticated access
         $this->assertNotTrue($response->isOk());

@@ -28,7 +28,7 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('demo.dashboard'));
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
@@ -41,6 +41,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('demo.login');
+        return redirect()->route('login');
     }
 }

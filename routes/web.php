@@ -7,94 +7,130 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SetupWizardController;
 use Illuminate\Support\Facades\Route;
 
 /*
-|--------------------------------------------------------------------------
+|--------------------------------------------------------------------------|
 | Web Routes
-|--------------------------------------------------------------------------
+|--------------------------------------------------------------------------|
 |
-| Routes for the application. All routes are prefixed with "demo" for
-| the starter kit demo mode. In production, rename or restructure
-| these routes as needed.
+| The "setup" middleware redirects to /setup if setup is not complete.
+| Setup wizard routes are excluded from this check.
 |
 */
-
-// Component preview page
-Route::get('/', fn () => view('test'));
 
 /*
-|--------------------------------------------------------------------------
-| Authentication Routes (Guest)
-|--------------------------------------------------------------------------
+|--------------------------------------------------------------------------|
+| Setup Wizard Routes (Guest, no setup check)
+|--------------------------------------------------------------------------|
 */
-Route::middleware('guest')->group(function () {
-    Route::get('/demo/login', [LoginController::class, 'showLoginForm'])
-        ->name('demo.login');
+Route::middleware('guest')->prefix('setup')->name('setup.')->group(function () {
+    Route::get('/', [SetupWizardController::class, 'step1'])
+        ->name('step1');
 
-    Route::post('/demo/login', [LoginController::class, 'login'])
-        ->name('demo.login.store');
+    Route::get('/step-2', [SetupWizardController::class, 'step2'])
+        ->name('step2');
 
-    Route::get('/demo/register', [RegisterController::class, 'showRegistrationForm'])
-        ->name('demo.register');
+    Route::post('/step-2', [SetupWizardController::class, 'saveAppConfig'])
+        ->name('save-app-config');
 
-    Route::post('/demo/register', [RegisterController::class, 'register'])
-        ->name('demo.register.store');
+    Route::get('/step-3', [SetupWizardController::class, 'step3'])
+        ->name('step3');
 
-    Route::get('/demo/forgot-password', [PasswordResetLinkController::class, 'showForgotPasswordForm'])
-        ->name('demo.forgot-password');
+    Route::post('/step-3', [SetupWizardController::class, 'saveDatabaseConfig'])
+        ->name('save-database');
 
-    Route::post('/demo/forgot-password', [PasswordResetLinkController::class, 'sendResetLink'])
-        ->name('demo.forgot-password.store');
+    Route::post('/test-connection', [SetupWizardController::class, 'testConnection'])
+        ->name('test-connection');
 
-    Route::get('/demo/reset-password/{token}', [NewPasswordController::class, 'showResetForm'])
-        ->name('demo.password.reset');
+    Route::get('/step-4', [SetupWizardController::class, 'step4'])
+        ->name('step4');
 
-    Route::post('/demo/reset-password', [NewPasswordController::class, 'reset'])
-        ->name('demo.password.store');
+    Route::post('/complete', [SetupWizardController::class, 'complete'])
+        ->name('complete');
 });
 
 /*
-|--------------------------------------------------------------------------
-| Email Verification Routes
-|--------------------------------------------------------------------------
+|--------------------------------------------------------------------------|
+| Application Routes (with setup check)
+|--------------------------------------------------------------------------|
 */
-Route::get('/demo/verify-email', [VerifyEmailController::class, 'showVerificationForm'])
-    ->middleware('auth')
-    ->name('demo.verification.notice');
+Route::middleware('setup')->group(function () {
 
-Route::get('/demo/verify-email/{id}/{hash}', [VerifyEmailController::class, 'verify'])
-    ->middleware(['auth', 'signed'])
-    ->name('demo.verification.verify');
+    // Component preview page
+    Route::get('/', fn () => view('test'));
 
-Route::post('/demo/verify-email/resend', [VerifyEmailController::class, 'sendVerification'])
-    ->middleware(['auth', 'throttle:6,1'])
-    ->name('demo.verification.send');
+    /*
+    |--------------------------------------------------------------------------|
+    | Authentication Routes (Guest)
+    |--------------------------------------------------------------------------|
+    */
+    Route::middleware('guest')->group(function () {
+        Route::get('/login', [LoginController::class, 'showLoginForm'])
+            ->name('login');
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth')->group(function () {
-    // Logout
-    Route::post('/demo/logout', [LoginController::class, 'logout'])
-        ->name('demo.logout');
+        Route::post('/login', [LoginController::class, 'login'])
+            ->name('login.store');
 
-    // Dashboard
-    Route::get('/demo', [DashboardController::class, 'index'])
-        ->name('demo.dashboard');
+        Route::get('/register', [RegisterController::class, 'showRegistrationForm'])
+            ->name('register');
 
-    // Settings (static demo page)
-    Route::get('/demo/settings', fn () => view('pages.settings.index'))
-        ->name('demo.settings');
+        Route::post('/register', [RegisterController::class, 'register'])
+            ->name('register.store');
 
-    // User Management
-    Route::prefix('demo/users')->name('demo.users.')->group(function () {
-        Route::get('/', fn () => view('pages.users.index'))->name('index');
-        Route::get('/create', fn () => view('pages.users.form'))->name('create');
-        Route::get('/{id}/edit', fn () => view('pages.users.form'))->name('edit');
-        Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::get('/forgot-password', [PasswordResetLinkController::class, 'showForgotPasswordForm'])
+            ->name('forgot-password');
+
+        Route::post('/forgot-password', [PasswordResetLinkController::class, 'sendResetLink'])
+            ->name('forgot-password.store');
+
+        Route::get('/reset-password/{token}', [NewPasswordController::class, 'showResetForm'])
+            ->name('password.reset');
+
+        Route::post('/reset-password', [NewPasswordController::class, 'reset'])
+            ->name('password.store');
     });
+
+    /*
+    |--------------------------------------------------------------------------|
+    | Email Verification Routes
+    |--------------------------------------------------------------------------|
+    */
+    Route::get('/verify-email', [VerifyEmailController::class, 'showVerificationForm'])
+        ->middleware('auth')
+        ->name('verification.notice');
+
+    Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, 'verify'])
+        ->middleware(['auth', 'signed'])
+        ->name('verification.verify');
+
+    Route::post('/verify-email/resend', [VerifyEmailController::class, 'sendVerification'])
+        ->middleware(['auth', 'throttle:6,1'])
+        ->name('verification.send');
+
+    /*
+    |--------------------------------------------------------------------------|
+    | Authenticated Routes
+    |--------------------------------------------------------------------------|
+    */
+    Route::middleware('auth')->group(function () {
+        Route::post('/logout', [LoginController::class, 'logout'])
+            ->name('logout');
+
+        Route::get('/dashboard', [DashboardController::class, 'index'])
+            ->name('dashboard');
+
+        Route::get('/settings', fn () => view('pages.settings.index'))
+            ->name('settings');
+
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', fn () => view('pages.users.index'))->name('index');
+            Route::get('/create', fn () => view('pages.users.form'))->name('create');
+            Route::get('/{id}/edit', fn () => view('pages.users.form'))->name('edit');
+            Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+            Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        });
+    });
+
 });

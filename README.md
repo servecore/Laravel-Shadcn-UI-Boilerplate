@@ -13,6 +13,7 @@ A modern **Laravel starter kit** featuring **Shadcn UI** (Blade components), **T
 - **Theme System** — Dark/Light/System mode with FOUC prevention
 - **Tailwind CSS v4** — Next-generation Tailwind engine
 - **Alpine.js** — Lightweight client-side interactivity
+- **Setup Wizard** — Browser-based installation for app config, database, and admin account
 - **Authentication** — Login, register, logout, password reset, email verification
 - **Component Management CLI** — Add, remove, repair components via Artisan
 - **100% Standalone** — No external dependencies for UI components
@@ -32,13 +33,6 @@ bun install
 cp .env.example .env
 php artisan key:generate
 
-# Database setup
-touch database/database.sqlite
-php artisan migrate
-
-# Seed a test user
-php artisan db:seed
-
 # Run development server
 composer run dev
 # OR manually:
@@ -46,33 +40,49 @@ composer run dev
 # bun run dev (Terminal 2)
 ```
 
-Visit `http://localhost:8000/demo/login` and login with:
-- **Email:** `test@example.com`
-- **Password:** `password`
+Open `http://localhost:8000` in your browser. The **setup wizard** will guide you through:
+
+1. ✅ Environment check
+2. ⚙️ App configuration (name, URL, timezone)
+3. 🗄️ Database setup (SQLite/MySQL/PostgreSQL)
+4. 👤 Admin account creation
+
+After setup, you'll be logged in and redirected to the dashboard.
 
 ## Architecture
 
 ```
 app/
 ├── Console/Commands/Shadcn/    # Component management CLI
-├── Http/Controllers/Auth/      # Authentication controllers
-├── Models/User.php             # User model
+├── Http/
+│   ├── Controllers/
+│   │   ├── Auth/               # Authentication controllers
+│   │   ├── DashboardController.php
+│   │   └── SetupWizardController.php
+│   ├── Middleware/
+│   │   └── RedirectIfNotSetup.php
+│   └── Requests/
+│       ├── Auth/               # Form request validation
+│       └── Setup/              # Setup wizard validation
+├── Models/User.php             # User model (UUID primary key)
 ├── Providers/                  # Service providers
 ├── View/
 │   ├── Components/             # Blade component classes (60 files)
 │   └── Concerns/               # Shared traits (HasID, SharesData)
 resources/
 ├── views/
+│   ├── auth/                   # Login, register, password views
 │   ├── components/             # Blade templates (126 files)
 │   ├── layouts/                # App & Guest layouts
-│   └── pages/                  # Dashboard, Users, Settings
+│   ├── pages/                  # Dashboard, Users, Settings
+│   └── setup/                  # Setup wizard views (4 steps)
 ├── js/components/              # Alpine.js logic (6 files)
 ├── css/app.css                 # Tailwind v4 config
 └── shadcn-stubs/               # Offline component registry
 routes/
-└── web.php                     # Routes with auth middleware
+└── web.php                     # Routes with auth + setup middleware
 tests/
-└── Feature/                    # Auth & dashboard tests (23 tests)
+└── Feature/                    # Auth, dashboard, wizard tests
 ```
 
 ## Available Components

@@ -7,11 +7,16 @@ This project follows a **flat Blade component architecture** optimized for Larav
 ```
 ┌──────────────────────────────────────────────────────┐
 │                     ROUTES                           │
-│  web.php → Controllers (Auth, Dashboard)             │
-│           → Middleware (auth, guest, csrf)            │
+│  web.php → Controllers (Auth, Dashboard, Setup)      │
+│           → Middleware (auth, guest, csrf, setup)     │
+├──────────────────────────────────────────────────────┤
+│                   MIDDLEWARE                         │
+│  RedirectIfNotSetup → Redirects to /setup if needed  │
+│  PreventRequestForgery → CSRF protection             │
 ├──────────────────────────────────────────────────────┤
 │                   CONTROLLERS                        │
 │  Auth/ → Login, Register, Password, Verify, Profile  │
+│  Setup/ → 4-step installation wizard                 │
 │  Dashboard → Index                                   │
 ├──────────────────────────────────────────────────────┤
 │              BLADE COMPONENTS                        │
@@ -25,7 +30,57 @@ This project follows a **flat Blade component architecture** optimized for Larav
 └──────────────────────────────────────────────────────┘
 ```
 
-## 2. Component System
+## 2. Setup Wizard
+
+### Flow
+
+```
+User opens app
+     ↓
+┌─ .setup-complete exists? ─┐
+│                            │
+YES                          NO
+│                            │
+↓                            ↓
+Normal app flow         /setup wizard
+                              │
+                    ┌─────────┼─────────┐
+                    │         │         │
+                 Step 1    Step 2    Step 3
+                 Welcome   Config    Database
+                    │         │         │
+                    └─────────┼─────────┘
+                              │
+                         Step 4
+                         Admin
+                              │
+                              ↓
+                        .setup-complete created
+                        Auto-login → Dashboard
+```
+
+### Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| Controller | `SetupWizardController.php` | Handles all 4 wizard steps |
+| Middleware | `RedirectIfNotSetup.php` | Checks `.setup-complete` marker |
+| Form Requests | `Setup/*.php` | Validation for each step |
+| Views | `resources/views/setup/` | 4 step views + layout |
+
+### Marker File
+
+`.setup-complete` (JSON) marks setup as done:
+```json
+{
+    "completed_at": "2026-08-29T04:00:00+00:00",
+    "version": "1.0.0"
+}
+```
+
+To re-run wizard: `rm .setup-complete`
+
+## 3. Component System
 
 ### Component Lifecycle
 
@@ -81,7 +136,7 @@ The `CompileAsChild` component enables the "asChild" pattern — passing attribu
 @endif
 ```
 
-## 3. Theme System
+## 4. Theme System
 
 - **Tech:** Alpine.js + Tailwind CSS v4 CSS variables
 - **Files:** `resources/js/theme.js`, `resources/js/init-theme.js`
@@ -89,7 +144,7 @@ The `CompileAsChild` component enables the "asChild" pattern — passing attribu
 - **Persistence:** localStorage
 - **FOUC Prevention:** Inline `<script>` in `<head>` via `<x-theme-script />`
 
-## 4. Directory Structure
+## 5. Directory Structure
 
 ### Core Directories
 
@@ -111,30 +166,44 @@ The `CompileAsChild` component enables the "asChild" pattern — passing attribu
 | `layouts/guest.blade.php` | Guest layout for auth pages |
 | `layouts/partials/sidebar/` | Sidebar header, menu, footer |
 
-## 5. Routing
+## 6. Routing
 
-### Route Groups
+### Setup Wizard Routes
+
+```
+/setup (GET)                → Environment check
+/setup/step-2 (GET)         → App configuration form
+/setup/step-2 (POST)        → Save app config
+/setup/step-3 (GET)         → Database configuration form
+/setup/step-3 (POST)        → Save database config + migrate
+/setup/test-connection (POST) → Test database connection
+/setup/step-4 (GET)         → Admin account form
+/setup/complete (POST)      → Create admin + finish setup
+```
+
+### Application Routes
 
 ```
 / (GET)                    → Component preview page
-/demo/login (GET/POST)     → Authentication (guest)
-/demo/register (GET/POST)  → Registration (guest)
-/demo/forgot-password      → Password reset request (guest)
-/demo/reset-password       → Password reset form (guest)
-/demo (GET)                → Dashboard (auth)
-/demo/users/*              → User management (auth)
-/demo/logout (POST)        → Logout (auth)
+/login (GET/POST)          → Authentication (guest)
+/register (GET/POST)       → Registration (guest)
+/forgot-password           → Password reset request (guest)
+/reset-password            → Password reset form (guest)
+/dashboard (GET)           → Dashboard (auth)
+/users/*                   → User management (auth)
+/logout (POST)             → Logout (auth)
 ```
 
 ### Middleware Stack
 
 - `web` → Session, CSRF, etc.
+- `setup` → Redirects to `/setup` if `.setup-complete` marker is missing
 - `auth` → Requires authenticated user
 - `guest` → Requires unauthenticated user
 - `signed` → Requires valid signature (email verification)
 - `throttle` → Rate limiting (email verification resend)
 
-## 6. Database
+## 7. Database
 
 ### Default Tables
 
@@ -151,7 +220,7 @@ The `CompileAsChild` component enables the "asChild" pattern — passing attribu
 - **Cache Store:** Database
 - **Queue Driver:** Database
 
-## 7. Security
+## 8. Security
 
 - CSRF protection via `PreventRequestForgery` middleware
 - Password hashing via bcrypt (User model cast)
