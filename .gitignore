@@ -24,3 +24,4 @@ Homestead.yaml
 Thumbs.db
 /bootstrap/cache/components.php
 .setup-complete
+.setup-state

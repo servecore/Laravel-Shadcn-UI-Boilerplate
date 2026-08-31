@@ -22,11 +22,12 @@
             </div>
         @endif
 
-        <form action="{{ route('setup.save-database') }}" method="POST" id="databaseForm" class="space-y-6">
+        <form action="{{ route('setup.save-database') }}" method="POST" id="databaseForm" class="space-y-6"
+              x-data="{ driver: '{{ old('driver', $currentDriver) }}' }">
             @csrf
 
             {{-- Database Driver Selection --}}
-            <div class="space-y-3" x-data="{ driver: '{{ old('driver', $currentDriver) }}' }">
+            <div class="space-y-3">
                 <x-label>Database Driver</x-label>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     @foreach($databases as $key => $db)

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Controllers\SetupWizardController;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,7 +21,38 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->generateAppKeyIfNeeded();
         $this->forceFileSessionDuringSetup();
+    }
+
+    /**
+     * Auto-generate APP_KEY if not set during setup wizard.
+     *
+     * Laravel 13 requires APP_KEY for session, CSRF, etc.
+     * Without it, the setup wizard cannot even load.
+     */
+    private function generateAppKeyIfNeeded(): void
+    {
+        if (! SetupWizardController::isSetup() && empty(config('app.key'))) {
+            $envPath = base_path('.env');
+
+            if (file_exists($envPath)) {
+                $content = file_get_contents($envPath);
+                $key = 'base64:'.base64_encode(Str::random(32));
+
+                // Replace empty APP_KEY or append if not found
+                if (preg_match('/^APP_KEY=.*$/m', $content)) {
+                    $content = preg_replace('/^APP_KEY=.*$/m', "APP_KEY=\"{$key}\"", $content);
+                } else {
+                    $content .= "\nAPP_KEY=\"{$key}\"";
+                }
+
+                file_put_contents($envPath, $content);
+
+                // Reload config with new key
+                config(['app.key' => $key]);
+            }
+        }
     }
 
     /**

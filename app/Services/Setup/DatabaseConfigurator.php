@@ -54,6 +54,9 @@ class DatabaseConfigurator
             touch($dbPath);
         }
 
+        // Normalize to forward slashes for cross-platform compatibility
+        $dbPath = str_replace('\\', '/', $dbPath);
+
         return [
             'default' => 'sqlite',
             'connections' => [
@@ -69,19 +72,26 @@ class DatabaseConfigurator
 
     private function buildServerConfig(array $params, string $driver): array
     {
+        $connection = [
+            'driver' => $driver,
+            'host' => $params['host'],
+            'port' => $params['port'],
+            'database' => $params['database'],
+            'username' => $params['username'],
+            'password' => $params['password'],
+            'charset' => $driver === 'mysql' ? 'utf8mb4' : 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ];
+
+        if ($driver === 'pgsql') {
+            $connection['search_path'] = 'public';
+        }
+
         return [
             'default' => $driver,
             'connections' => [
-                $driver => [
-                    'driver' => $driver,
-                    'host' => $params['host'],
-                    'port' => $params['port'],
-                    'database' => $params['database'],
-                    'username' => $params['username'],
-                    'password' => $params['password'],
-                    'charset' => $driver === 'mysql' ? 'utf8mb4' : 'utf8',
-                    'prefix' => '',
-                ],
+                $driver => $connection,
             ],
         ];
     }

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\Setup\DatabaseConfigurator;
 use App\Services\Setup\EnvFileManager;
 use App\Services\Setup\EnvironmentChecker;
+use App\Services\Setup\PermissionChecker;
 use App\Services\Setup\SetupState;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -26,6 +27,7 @@ class SetupWizardController extends Controller
         private readonly EnvironmentChecker $envChecker,
         private readonly EnvFileManager $envFile,
         private readonly DatabaseConfigurator $dbConfig,
+        private readonly PermissionChecker $permissionChecker,
     ) {}
 
     /**
@@ -81,6 +83,9 @@ class SetupWizardController extends Controller
             'APP_LOCALE' => $validated['locale'],
             'APP_DEBUG' => $validated['debug_mode'] ? 'true' : 'false',
         ]);
+
+        // Auto-generate APP_KEY if not set (adopted from InstallerErag)
+        $this->envFile->generateAppKey();
 
         return redirect()->route('setup.step3');
     }
@@ -169,6 +174,17 @@ class SetupWizardController extends Controller
                 'table_count' => 0,
             ]);
         } catch (\PDOException $e) {
+            \Log::error('Database test connection failed', [
+                'driver' => $driver ?? 'unknown',
+                'host' => $conn['host'] ?? 'unknown',
+                'port' => $conn['port'] ?? 'unknown',
+                'database' => $conn['database'] ?? 'unknown',
+                'username' => $conn['username'] ?? 'unknown',
+                'password_empty' => empty($conn['password'] ?? ''),
+                'error_code' => $e->getCode(),
+                'error_message' => $e->getMessage(),
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Connection failed: '.$this->humanizePdoError($e),
@@ -241,7 +257,16 @@ class SetupWizardController extends Controller
         }
 
         if (str_contains($msg, 'SQLSTATE[08006]')) {
-            return 'Could not connect to PostgreSQL server. Check host and port.';
+            // PostgreSQL 08006 covers multiple failure types — differentiate them.
+            if (str_contains($msg, 'no password supplied') || str_contains($msg, 'password authentication failed')) {
+                return 'Authentication failed. Check username and password.';
+            }
+
+            if (str_contains($msg, 'does not exist') || str_contains($msg, 'tidak ada')) {
+                return 'Database not found. Check database name.';
+            }
+
+            return 'Could not connect to PostgreSQL server. Check host, port, and ensure PostgreSQL is running.';
         }
 
         if (str_contains($msg, 'SQLSTATE[08001]') || str_contains($msg, 'SQLSTATE[08004]')) {
@@ -260,36 +285,55 @@ class SetupWizardController extends Controller
         $driver = $validated['driver'];
 
         $config = $this->dbConfig->buildFromValidated($validated, $driver);
-        $this->envFile->updateDatabaseConfig($driver, $config['connections'][$driver]);
+        $connConfig = $config['connections'][$driver];
+
+        // Test connection FIRST before writing .env.
+        // Prevents leaving .env in a broken state if connection fails.
+        if ($driver !== 'sqlite') {
+            try {
+                $pdo = $this->createTestPdo($driver, $connConfig);
+                $existingTables = $this->checkExistingTables($pdo, $driver);
+                $pdo = null;
+            } catch (\PDOException $e) {
+                \Log::error('Database save config failed', [
+                    'driver' => $driver,
+                    'host' => $connConfig['host'] ?? 'unknown',
+                    'port' => $connConfig['port'] ?? 'unknown',
+                    'database' => $connConfig['database'] ?? 'unknown',
+                    'username' => $connConfig['username'] ?? 'unknown',
+                    'password_empty' => empty($connConfig['password'] ?? ''),
+                    'error_code' => $e->getCode(),
+                    'error_message' => $e->getMessage(),
+                ]);
+
+                return back()->withErrors([
+                    'database' => 'Connection failed: '.$this->humanizePdoError($e),
+                ]);
+            }
+        }
+
+        $this->envFile->updateDatabaseConfig($driver, $connConfig);
 
         try {
             // Override runtime config so migrate runs against the NEW database.
             config([
                 'database.default' => $driver,
-                'database.connections.'.$driver => $config['connections'][$driver],
+                'database.connections.'.$driver => $connConfig,
             ]);
 
             DB::purge($driver);
 
             Artisan::call('migrate', [
                 '--force' => true,
-                '--no-interaction' => true,
             ]);
 
             $this->state->setFlag('setup_migrated', true);
-
-            // Defer env updates for session/cache/queue until after the response
-            // is sent. Changing SESSION_DRIVER mid-request breaks the current session.
-            app()->terminating(function () {
-                $this->envFile->update([
-                    'CACHE_STORE' => 'database',
-                    'SESSION_DRIVER' => 'database',
-                    'QUEUE_CONNECTION' => 'database',
-                ]);
-
-                Artisan::call('config:clear');
-            });
         } catch (\Exception $e) {
+            \Log::error('Database migration failed', [
+                'driver' => $driver,
+                'error_message' => $e->getMessage(),
+            ]);
+
             return back()->withErrors([
                 'database' => 'Migration failed: '.$e->getMessage(),
             ]);
@@ -329,6 +373,15 @@ class SetupWizardController extends Controller
             Auth::login($user);
 
             $this->state->markComplete();
+
+            // Switch session/cache/queue to database after the admin is logged in.
+            // Doing this mid-wizard would wipe the session flags (setup_migrated)
+            // needed to reach step 4, so it's deferred until setup is fully done.
+            $this->envFile->update([
+                'CACHE_STORE' => 'database',
+                'SESSION_DRIVER' => 'database',
+                'QUEUE_CONNECTION' => 'database',
+            ]);
 
             Artisan::call('config:clear');
             Artisan::call('route:clear');

@@ -4,9 +4,18 @@ namespace App\Services\Setup;
 
 /**
  * Checks whether the server environment meets the application's requirements.
+ *
+ * Requirements are now configurable via config/setup.php (adopted from InstallerErag).
  */
 class EnvironmentChecker
 {
+    private PermissionChecker $permissionChecker;
+
+    public function __construct(PermissionChecker $permissionChecker)
+    {
+        $this->permissionChecker = $permissionChecker;
+    }
+
     /**
      * Run all environment requirement checks.
      *
@@ -23,6 +32,13 @@ class EnvironmentChecker
         $checks['cache'] = $this->checkCacheWritable();
         $checks['env_file'] = $this->checkEnvFile();
         $checks['app_key'] = $this->checkAppKey();
+
+        // Folder permission checks (adopted from InstallerErag)
+        $permissionResults = $this->permissionChecker->run();
+        foreach ($permissionResults as $permission) {
+            $key = 'perm_'.md5($permission['folder']);
+            $checks[$key] = $permission;
+        }
 
         return $checks;
     }
@@ -45,9 +61,12 @@ class EnvironmentChecker
 
     private function checkPhpVersion(): array
     {
+        $minVersion = config('setup.core.minPhpVersion', '8.2.0');
+        $passed = version_compare(PHP_VERSION, $minVersion, '>=');
+
         return [
-            'label' => 'PHP Version (≥ 8.2)',
-            'passed' => version_compare(PHP_VERSION, '8.2.0', '>='),
+            'label' => "PHP Version (≥ {$minVersion})",
+            'passed' => $passed,
             'message' => 'PHP '.PHP_VERSION,
         ];
     }
@@ -57,7 +76,7 @@ class EnvironmentChecker
      */
     private function checkExtensions(): array
     {
-        $required = ['mbstring', 'openssl', 'pdo', 'tokenizer', 'xml', 'curl', 'json', 'bcmath', 'fileinfo'];
+        $required = config('setup.requirements.php', []);
         $checks = [];
 
         foreach ($required as $ext) {
