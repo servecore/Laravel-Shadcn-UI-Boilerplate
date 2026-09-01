@@ -13,6 +13,7 @@
 @endphp
 
 <div
+    x-cloak
     x-data="{
         open: {{ $defaultOpen ? 'true' : 'false' }},
         openMobile: false,
