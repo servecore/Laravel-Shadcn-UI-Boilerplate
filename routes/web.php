@@ -81,6 +81,12 @@ Route::middleware('setup')->group(function () {
         Route::post('/register', [RegisterController::class, 'register'])
             ->name('register.store');
 
+        Route::get('/register/{token}', [RegisterController::class, 'showCompletionForm'])
+            ->name('register.complete');
+
+        Route::post('/register/{token}', [RegisterController::class, 'complete'])
+            ->name('register.complete.store');
+
         Route::get('/forgot-password', [PasswordResetLinkController::class, 'showForgotPasswordForm'])
             ->name('forgot-password');
 

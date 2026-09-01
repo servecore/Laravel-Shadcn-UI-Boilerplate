@@ -42,13 +42,37 @@
                             Forgot password?
                         </a>
                     </div>
-                    <x-input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        placeholder="••••••••"
-                        required
-                    />
+                    <div class="relative" x-data="{ show: false }">
+                        <x-input
+                            class="pr-10"
+                            type="password"
+                            x-bind:type="show ? 'text' : 'password'"
+                            id="password"
+                            name="password"
+                            placeholder="••••••••"
+                            required
+                        />
+                        <button
+                            type="button"
+                            x-on:click="show = !show"
+                            :aria-label="show ? 'Hide password' : 'Show password'"
+                            x-bind:aria-pressed="show"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground focus:outline-none"
+                        >
+                            {{-- Eye --}}
+                            <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            {{-- Eye off --}}
+                            <svg x-show="show" x-cloak xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
+                                <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+                                <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
+                                <path d="m2 2 20 20" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 {{-- Remember Me --}}
