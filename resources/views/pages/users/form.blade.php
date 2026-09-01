@@ -64,6 +64,17 @@
                             <x-label for="password_confirmation">Confirm Password</x-label>
                             <x-input id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm password" required />
                         </div>
+                    @else
+                        <div class="space-y-2">
+                            <x-label for="password">New Password</x-label>
+                            <x-input id="password" name="password" type="password" placeholder="Leave blank to keep current password" />
+                            @error('password')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div class="space-y-2">
+                            <x-label for="password_confirmation">Confirm New Password</x-label>
+                            <x-input id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm new password" />
+                        </div>
                     @endif
                 </x-card-content>
                 <x-card-footer class="border-t bg-muted/50 px-6 py-4">

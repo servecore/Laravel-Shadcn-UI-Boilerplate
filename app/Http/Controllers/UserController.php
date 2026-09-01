@@ -67,9 +67,19 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'username' => ['required', 'string', 'max:255', 'unique:users,username,'.$user->id],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user->update($validated);
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'username' => $validated['username'],
+        ]);
+
+        // Only change the password when a non-blank value was provided.
+        if (! empty($validated['password'])) {
+            $user->update(['password' => $validated['password']]);
+        }
 
         return redirect()->route('users.index')
             ->with('success', 'User updated successfully.');
@@ -80,6 +90,13 @@ class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
+        // Prevent an admin from deleting their own account.
+        if ($user->is(auth()->user())) {
+            return back()->withErrors([
+                'user' => 'You cannot delete your own account.',
+            ]);
+        }
+
         $user->delete();
 
         return redirect()->route('users.index')

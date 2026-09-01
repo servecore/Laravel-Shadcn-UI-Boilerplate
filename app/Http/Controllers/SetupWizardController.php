@@ -11,14 +11,18 @@ use App\Services\Setup\EnvFileManager;
 use App\Services\Setup\EnvironmentChecker;
 use App\Services\Setup\PermissionChecker;
 use App\Services\Setup\SetupState;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+
+use function collect;
 
 class SetupWizardController extends Controller
 {
@@ -174,7 +178,7 @@ class SetupWizardController extends Controller
                 'table_count' => 0,
             ]);
         } catch (\PDOException $e) {
-            \Log::error('Database test connection failed', [
+            Log::error('Database test connection failed', [
                 'driver' => $driver ?? 'unknown',
                 'host' => $conn['host'] ?? 'unknown',
                 'port' => $conn['port'] ?? 'unknown',
@@ -295,7 +299,7 @@ class SetupWizardController extends Controller
                 $existingTables = $this->checkExistingTables($pdo, $driver);
                 $pdo = null;
             } catch (\PDOException $e) {
-                \Log::error('Database save config failed', [
+                Log::error('Database save config failed', [
                     'driver' => $driver,
                     'host' => $connConfig['host'] ?? 'unknown',
                     'port' => $connConfig['port'] ?? 'unknown',
@@ -315,7 +319,7 @@ class SetupWizardController extends Controller
         $this->envFile->updateDatabaseConfig($driver, $connConfig);
 
         try {
-            // Override runtime config so migrate runs against the NEW database.
+            // Override runtime config so the rest of this request uses the NEW database.
             config([
                 'database.default' => $driver,
                 'database.connections.'.$driver => $connConfig,
@@ -323,15 +327,24 @@ class SetupWizardController extends Controller
 
             DB::purge($driver);
 
-            Artisan::call('migrate', [
-                '--force' => true,
-            ]);
+            // Use Migrator directly instead of Artisan::call('migrate').
+            // Artisan::call() crashes the `artisan serve` built-in PHP web server
+            // when invoked from within a request handler — the server resets the
+            // TCP connection (curl errno 56 / NS_ERROR_NET_EMPTY_RESPONSE).
+            // The Migrator runs the same migration logic without CLI bootstrapping.
+            $migrator = app('migrator');
+            $path = database_path('migrations');
+            $migrator->usingConnection($driver, function () use ($migrator, $path) {
+                $migrator->run($path);
+            });
 
             $this->state->setFlag('setup_migrated', true);
-        } catch (\Exception $e) {
-            \Log::error('Database migration failed', [
+        } catch (\Throwable $e) {
+            Log::error('Database migration failed', [
                 'driver' => $driver,
                 'error_message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ]);
 
             return back()->withErrors([
@@ -369,6 +382,12 @@ class SetupWizardController extends Controller
                 'is_active' => true,
                 'created_by' => 'Setup Wizard',
             ]);
+
+            // Ensure the admin role and its permissions exist, then assign them
+            // to the newly created admin account. (The setup wizard only runs
+            // migrations, not seeders, so the role tree is created here.)
+            (new RolePermissionSeeder)->run();
+            $user->assignRole('admin');
 
             Auth::login($user);
 

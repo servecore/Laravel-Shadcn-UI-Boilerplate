@@ -45,5 +45,11 @@ class UserSeeder extends Seeder
         foreach ($users as $user) {
             User::create($user);
         }
+
+        $superadmin = User::where('username', 'superadmin')->first();
+        $superadmin?->assignRole('admin');
+
+        $johndoe = User::where('username', 'johndoe')->first();
+        $johndoe?->assignRole('user');
     }
 }

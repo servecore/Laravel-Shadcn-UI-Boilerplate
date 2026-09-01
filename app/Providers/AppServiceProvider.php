@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\Controllers\SetupWizardController;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Spatie\Permission\PermissionRegistrar;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->generateAppKeyIfNeeded();
         $this->forceFileSessionDuringSetup();
+
+        // Permissions are cached by Spatie; flush whenever the app boots so
+        // role changes are picked up immediately after seeding/permission edits.
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 
     /**
