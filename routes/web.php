@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 | Setup Wizard Routes (Guest, no setup check)
 |--------------------------------------------------------------------------|
 */
-Route::middleware('guest')->prefix('setup')->name('setup.')->group(function () {
+Route::middleware(['guest', 'setup'])->prefix('setup')->name('setup.')->group(function () {
     Route::get('/', [SetupWizardController::class, 'step1'])
         ->name('step1');
 

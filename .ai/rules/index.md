@@ -5,4 +5,6 @@ Before planning or editing, find the row whose globs match the file's path and r
 | Applies to | Rule file |
 | --- | --- |
 | bootstrap/app.php | .ai/rules/bootstrap.md |
+| app/Http/Middleware/RedirectIfNotSetup.php | .ai/rules/middleware.md |
 | database/migrations/** | .ai/rules/migrations.md |
+| routes/web.php | .ai/rules/routes.md |
