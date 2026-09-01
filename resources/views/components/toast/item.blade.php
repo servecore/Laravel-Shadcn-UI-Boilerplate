@@ -1,21 +1,28 @@
 <div
     x-data="{
+        toast: toast ?? {
+            id: Date.now(),
+            title: 'Notification',
+            description: '',
+            variant: 'default',
+            duration: 4000
+        },
         show: false,
         init() {
             setTimeout(() => {
                 this.show = true;
             }, 10);
 
-            if (toast.duration > 0) {
+            if (this.toast && this.toast.duration > 0) {
                 setTimeout(() => {
                     this.close();
-                }, toast.duration);
+                }, this.toast.duration);
             }
         },
         close() {
             this.show = false;
             setTimeout(() => {
-                this.remove(toast.id);
+                this.$dispatch('toast-close', { id: this.toast.id });
             }, 300); // Wait for transition
         }
     }"

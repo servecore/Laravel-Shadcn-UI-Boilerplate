@@ -42,19 +42,6 @@
                 <form class="space-y-4" action="{{ route('register.store') }}" method="POST">
                     @csrf
 
-                    @if ($errors->any())
-                        <x-alert variant="destructive">
-                            <x-alert-title>Unable to continue</x-alert-title>
-                            <x-alert-description>
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </x-alert-description>
-                        </x-alert>
-                    @endif
-
                     {{-- Email --}}
                     <div class="space-y-2">
                         <x-label for="email">Email</x-label>

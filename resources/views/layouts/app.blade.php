@@ -75,6 +75,8 @@
         </x-sidebar.inset>
     </x-sidebar.provider>
     
+    <x-toast.toaster position="top-right" />
+
     @stack('scripts')
     {{-- put your javascript dynamic ini here--}}
     

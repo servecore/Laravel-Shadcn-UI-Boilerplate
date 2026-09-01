@@ -4,7 +4,7 @@
         'x-ref' => 'image',
         'hidden' => ''
     ])
-    ->class(['aspect-square h-full w-full']);
+    ->class(['aspect-square h-full w-full object-cover']);
 @endphp
 
 @if($asChild)

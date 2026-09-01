@@ -4,7 +4,7 @@
         'x-ref' => 'fallback',
     ])
     ->class([
-        'flex h-full w-full items-center justify-center rounded-full bg-muted',
+        'flex h-full w-full items-center justify-center rounded-full bg-muted text-[0.65rem] font-medium text-foreground ring-1 ring-border/60',
         'hidden' => $delay !== 0,
     ]);
 @endphp

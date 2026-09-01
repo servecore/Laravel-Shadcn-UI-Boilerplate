@@ -24,5 +24,8 @@
     <footer class="py-4 text-center text-sm text-muted-foreground">
         <p>&copy; {{ date('Y') }} {{ config('app.name', 'Laravel') }}. All rights reserved.</p>
     </footer>
+
+    {{-- Toast Notifications --}}
+    <x-toast.toaster position="top-right" />
 </body>
 </html>

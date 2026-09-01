@@ -21,6 +21,14 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm(): View
     {
+        if ($errors = session('errors')) {
+            $messages = $errors->all();
+
+            if (! empty($messages)) {
+                toast()->error($messages[0], 'Unable to continue');
+            }
+        }
+
         return view('auth.register', [
             'invitationSent' => session('invitation_email'),
         ]);
@@ -36,6 +44,8 @@ class RegisterController extends Controller
 
         Mail::to($invite->email)->send(new RegistrationInviteMail($invite));
 
+        toast()->success('We sent a registration link to '.$invite->email.'. Click it to finish setting up your account.', 'Check your email');
+
         return redirect()->route('register')
             ->with('invitation_email', $invite->email);
     }
@@ -48,8 +58,9 @@ class RegisterController extends Controller
         $invite = RegistrationInvite::findByToken($token);
 
         if (! $invite || $invite->isRedeemed()) {
-            return redirect()->route('register')
-                ->withErrors('The registration link is invalid or has expired. Please request a new one.');
+            toast()->error('The registration link is invalid or has expired. Please request a new one.', 'Unable to continue');
+
+            return redirect()->route('register');
         }
 
         return view('auth.register-complete', [
@@ -66,8 +77,9 @@ class RegisterController extends Controller
         $invite = RegistrationInvite::findByToken($token);
 
         if (! $invite || $invite->isRedeemed()) {
-            return redirect()->route('register')
-                ->withErrors('The registration link is invalid or has expired. Please request a new one.');
+            toast()->error('The registration link is invalid or has expired. Please request a new one.', 'Unable to continue');
+
+            return redirect()->route('register');
         }
 
         $user = User::create([

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Http\Controllers\SetupWizardController;
+use App\Support\ToastFactory;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
@@ -14,7 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        require_once app_path('Support/helpers.php');
+        $this->app->singleton(ToastFactory::class, fn () => new ToastFactory);
     }
 
     /**
