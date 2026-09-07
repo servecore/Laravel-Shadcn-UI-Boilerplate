@@ -23,3 +23,15 @@ Alpine.data('radiogroup', radiogroup);
 Alpine.data('theme', theme);
 
 Alpine.start();
+
+// Entity modules — auto-discover and load per-entity CRUD modules.
+// Uses the entity registry (modules/index.js) as Single Source of Truth.
+// Each page declares data-entity="entityName"; app.js loads only what's needed.
+import { entityRegistry } from './modules/index.js';
+
+document.querySelectorAll('[data-entity]').forEach((container) => {
+    const loader = entityRegistry[container.dataset.entity];
+    if (loader) {
+        loader(); // dynamic import — module self-initializes on load
+    }
+});

@@ -4,7 +4,7 @@
 @section('header', 'Users')
 
 @section('content')
-    <div class="space-y-6">
+    <div class="space-y-6" data-entity="users" data-fetch-url="{{ route('users.index') }}">
         <!-- Page Header -->
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <x-breadcrumb>
@@ -19,7 +19,7 @@
                 </x-breadcrumb-list>
             </x-breadcrumb>
 
-            <x-button href="{{ route('users.create') }}">
+            <x-button id="btn-create-user" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="size-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -62,7 +62,7 @@
                         <x-table.head class="text-right">Actions</x-table.head>
                     </x-table.row>
                 </x-table.header>
-                <x-table.body>
+                <x-table.body id="users-table-body">
                     @forelse($users as $user)
                         <x-table.row>
                             <x-table.cell>
@@ -108,17 +108,21 @@
                                         </x-button>
                                     </x-slot:trigger>
                                     <div class="w-40">
-                                        <x-dropdown.item href="{{ route('users.edit', $user) }}">
+                                        <x-dropdown.item
+                                            href="#"
+                                            data-action="edit"
+                                            data-user-id="{{ $user->id }}">
                                             Edit Details
                                         </x-dropdown.item>
                                         <x-dropdown.separator />
-                                        <form method="POST" action="{{ route('users.destroy', $user) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <x-dropdown.item variant="destructive" as="button">
-                                                Delete User
-                                            </x-dropdown.item>
-                                        </form>
+                                        <x-dropdown.item
+                                            variant="destructive"
+                                            as="button"
+                                            type="button"
+                                            data-action="delete"
+                                            data-user-id="{{ $user->id }}">
+                                            Delete User
+                                        </x-dropdown.item>
                                     </div>
                                 </x-dropdown.dropdown>
                             </x-table.cell>
