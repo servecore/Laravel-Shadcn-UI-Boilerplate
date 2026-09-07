@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'servecore',
                 'username' => 'superadmin', // Kolom unik wajib diisi
-                'email' => 'phpserve@outlookcom', // Kolom unik wajib diisi
+                'email' => 'phpserve@outlook.com', // Kolom unik wajib diisi
                 'email_verified_at' => now(),
                 'phone' => '081234567890', // Kolom unik wajib diisi
                 'phone_verified_at' => now(),
