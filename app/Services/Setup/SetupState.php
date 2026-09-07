@@ -128,4 +128,18 @@ class SetupState
             unlink($path);
         }
     }
+
+    /**
+     * Remove the setup marker and state files so the wizard becomes accessible again.
+     */
+    public function reset(): void
+    {
+        $markerPath = base_path(self::SETUP_MARKER);
+
+        if (file_exists($markerPath)) {
+            unlink($markerPath);
+        }
+
+        $this->clearState();
+    }
 }
