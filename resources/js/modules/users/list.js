@@ -26,11 +26,23 @@ export class UserList {
         if (this.createBtn) {
             this.createBtn.addEventListener('click', () => this.openCreateModal());
         }
+    }
 
-        // Listen for custom events from other modules
-        window.addEventListener('user:created', () => this.reload());
-        window.addEventListener('user:updated', () => this.reload());
-        window.addEventListener('user:deleted', () => this.reload());
+    async reload() {
+        try {
+            const container = document.querySelector('[data-entity="users"]');
+            const fetchUrl = container?.dataset.fetchUrl || userRoutes.index;
+            const response = await http.get(fetchUrl);
+            const html = typeof response.data === 'string' ? response.data : '';
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newBody = doc.querySelector('#users-table-body');
+            if (newBody && this.tableBody) {
+                this.tableBody.innerHTML = newBody.innerHTML;
+            }
+        } catch {
+            // Silent fail — keep existing table
+        }
     }
 
     handleAction(e) {
@@ -53,7 +65,7 @@ export class UserList {
             formAction: userRoutes.store,
             method: 'POST',
             fields: this.getFormFields(),
-            onSubmit: (formData) => this.store(formData),
+            onSubmit: (formData) => this.storeUser(formData),
         });
         this.modal.open();
     }
@@ -68,7 +80,7 @@ export class UserList {
                     formAction: userRoutes.update(userId),
                     method: 'PUT',
                     fields: this.getFormFields(user),
-                    onSubmit: (formData) => this.update(userId, formData),
+                    onSubmit: (formData) => this.updateUser(userId, formData),
                 });
                 this.modal.open();
             })
@@ -82,9 +94,56 @@ export class UserList {
             confirmText: 'Delete',
             cancelText: 'Cancel',
             variant: 'destructive',
-            onConfirm: () => this.destroy(userId),
+            onConfirm: () => this.destroyUser(userId),
         });
         this.modal.open();
+    }
+
+    async storeUser(formData) {
+        try {
+            const response = await http.post(userRoutes.store, formData);
+            toast.success(response.data?.message || 'User created successfully');
+            this.modal?.close();
+            this.reload();
+            return response;
+        } catch (error) {
+            if (error.errors) {
+                this.modal?.showErrors(error.errors);
+            } else {
+                toast.error(error.message || 'Failed to create user');
+            }
+            throw error;
+        }
+    }
+
+    async updateUser(userId, formData) {
+        try {
+            const response = await http.post(userRoutes.update(userId), formData);
+            toast.success(response.data?.message || 'User updated successfully');
+            this.modal?.close();
+            this.reload();
+            return response;
+        } catch (error) {
+            if (error.errors) {
+                this.modal?.showErrors(error.errors);
+            } else {
+                toast.error(error.message || 'Failed to update user');
+            }
+            throw error;
+        }
+    }
+
+    async destroyUser(userId) {
+        try {
+            const response = await http.delete(userRoutes.destroy(userId));
+            toast.success(response.data?.message || 'User deleted successfully');
+            this.modal?.close();
+            this.reload();
+            return response;
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete user');
+            throw error;
+        }
     }
 
     getFormFields(user = null) {
@@ -101,53 +160,6 @@ export class UserList {
     }
 }
 
-/**
- * Store user (called from modal onSubmit).
- */
-export async function storeUser(formData) {
-    try {
-        const response = await http.post(userRoutes.store, formData);
-        toast.success('User created successfully');
-        window.dispatchEvent(new CustomEvent('user:created'));
-        return response;
-    } catch (error) {
-        if (error.errors) {
-            throw error;
-        }
-        throw error;
-    }
-}
-
-/**
- * Update user.
- */
-export async function updateUser(userId, formData) {
-    try {
-        const response = await http.post(userRoutes.update(userId), formData);
-        toast.success('User updated successfully');
-        window.dispatchEvent(new CustomEvent('user:updated'));
-        return response;
-    } catch (error) {
-        if (error.errors) {
-            throw error;
-        }
-        throw error;
-    }
-}
-
-/**
- * Delete user.
- */
-export async function destroyUser(userId) {
-    try {
-        const response = await http.post(userRoutes.destroy(userId), {});
-        toast.success('User deleted successfully');
-        window.dispatchEvent(new CustomEvent('user:deleted'));
-        return response;
-    } catch (error) {
-        throw error;
-    }
-}
 
 // Auto-initialize when module is loaded on a page that declares this entity.
 // app.js dynamically imports this module only when [data-entity="users"] exists,
