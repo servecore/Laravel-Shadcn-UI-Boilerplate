@@ -10,6 +10,7 @@ class Toaster extends Component
 {
     public array $initialToasts;
     public string $positionClasses;
+    public string $position;
 
     private const POSITIONS = [
         'top-left'      => 'top-0 left-0',
@@ -24,14 +25,17 @@ class Toaster extends Component
      * Create a new component instance.
      */
     public function __construct(
-        public string $position = 'top-right',
+        ?string $position = null,
         public bool $expand = false,
         public int $duration = 4000,
     ) {
         $this->initialToasts = session()->pull('toast', []);
 
+        $this->position = $position
+            ?? \App\Models\Setting::get('toast.position', 'top-right');
+
         $this->positionClasses = self::POSITIONS[$this->position]
-            ?? self::POSITIONS['bottom-right'];
+            ?? self::POSITIONS['top-right'];
     }
 
     /**

@@ -1,9 +1,3 @@
-@php
-    $initialToasts = $initialToasts ?? session('toast', []);
-    $positionClasses = $positionClasses ?? 'top-0 right-0';
-    $duration = $duration ?? 4000;
-@endphp
-
 <div
     x-data='{
         toasts: [],

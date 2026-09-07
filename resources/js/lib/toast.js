@@ -1,78 +1,39 @@
 /**
  * Toast notification service.
- * Reads position from window.appConfig and dispatches toast events
- * consumed by the Blade-toast component.
+ * Dispatches Alpine.js 'notify' window event consumed by <x-toast.toaster />.
+ *
+ * Alpine x-on:notify.window="add($event)" in toaster.blade.php expects:
+ *   { title, description, variant, duration }
  */
 
-/**
- * Resolve toast position from appConfig.
- * Tries appConfig.settings.toast.position first, then appConfig.toastPosition,
- * then falls back to 'top-right'.
- */
-function getToastPosition() {
-    return (
-        window.appConfig?.settings?.toast?.position ||
-        window.appConfig?.toastPosition ||
-        'top-right'
-    );
-}
-
-const position = getToastPosition();
-
-/**
- * Map a toast type to the corresponding CSS class and icon.
- */
-const TYPE_MAP = {
-    success: { icon: '✓', cls: 'bg-green-500' },
-    error:   { icon: '✕', cls: 'bg-red-500' },
-    warning: { icon: '⚠', cls: 'bg-yellow-500' },
-    info:    { icon: 'ℹ', cls: 'bg-blue-500' },
+const VARIANT_MAP = {
+    success: 'success',
+    error: 'destructive',
+    warning: 'warning',
+    info: 'default',
 };
 
-/**
- * Dispatch a toast event to the DOM.
- *
- * @param {'success'|'error'|'warning'|'info'} type
- * @param {string} message
- * @param {string} [title]
- */
-function emitToast(type, message, title = '') {
-    const event = new CustomEvent(`toast:${type}`, {
-        detail: { message, title, position },
-    });
-
-    window.dispatchEvent(event);
+function dispatch(type, description, title = '') {
+    const variant = VARIANT_MAP[type] ?? 'default';
+    window.dispatchEvent(new CustomEvent('notify', {
+        detail: { title, description, variant },
+    }));
 }
 
-/**
- * Show a success toast.
- */
-export function success(message, title = '') {
-    emitToast('success', message, title);
+export function success(description, title = '') {
+    dispatch('success', description, title);
 }
 
-/**
- * Show an error toast.
- */
-export function error(message, title = '') {
-    emitToast('error', message, title);
+export function error(description, title = '') {
+    dispatch('error', description, title);
 }
 
-/**
- * Show a warning toast.
- */
-export function warning(message, title = '') {
-    emitToast('warning', message, title);
+export function warning(description, title = '') {
+    dispatch('warning', description, title);
 }
 
-/**
- * Show an info toast.
- */
-export function info(message, title = '') {
-    emitToast('info', message, title);
+export function info(description, title = '') {
+    dispatch('info', description, title);
 }
 
-/**
- * Named export object so consumers can `import { toast } from '...'`.
- */
 export const toast = { success, error, warning, info };

@@ -20,7 +20,7 @@ export async function updateUser(userId, formData) {
     }
 
     try {
-        const response = await http.post(userRoutes.update(userId), formData);
+        const response = await http.put(userRoutes.update(userId), formData);
         toast.success(response.data?.message || 'User updated successfully');
         window.dispatchEvent(new CustomEvent('user:updated'));
     } catch (error) {

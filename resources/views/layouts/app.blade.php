@@ -5,18 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - {{ config('app.name', 'Laravel') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script id="app-config" type="application/json"><?= json_encode([
-        'baseUrl' => url('/'),
-        'locale' => app()->getLocale(),
-        'settings' => [
-            'toast' => ['position' => (\App\Models\Setting::get('toast.position') ?? 'top-right')],
-            'theme' => ['default' => (\App\Models\Setting::get('theme.default') ?? 'system')],
-        ],
-        'routes' => [
-            'users.index' => route('users.index'),
-            'users.store' => route('users.store'),
-        ],
-    ], JSON_UNESCAPED_SLASHES) ?></script>
+    <script id="app-config" type="application/json"><?= json_encode($appConfig, JSON_UNESCAPED_SLASHES) ?></script>
     <x-theme-script />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -88,7 +77,7 @@
         </x-sidebar.inset>
     </x-sidebar.provider>
     
-    <x-toast.toaster position="top-right" />
+    <x-toast.toaster />
 
     @stack('scripts')
     {{-- put your javascript dynamic ini here--}}

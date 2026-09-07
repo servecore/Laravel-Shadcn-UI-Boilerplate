@@ -30,5 +30,7 @@ window.route = function route(name, ...params) {
  * @returns {*}
  */
 window.getSetting = function getSetting(key, fallback) {
-    return (window.appConfig.settings && window.appConfig.settings[key]) ?? fallback;
+    const value = key.split('.').reduce((acc, part) => (acc && acc[part] !== undefined ? acc[part] : undefined), window.appConfig);
+
+    return value ?? fallback;
 };

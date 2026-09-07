@@ -60,7 +60,21 @@ class Setting extends Model
         return Cache::remember(
             self::CACHE_PREFIX.$key,
             3600,
-            fn () => static::where('key', $key)->first()?->value ?? $default
+            function () use ($key, $default) {
+                $record = static::where('key', $key)->first();
+                $value = $record?->value;
+
+                if ($value === null) {
+                    return $default;
+                }
+
+                $decoded = json_decode($value, true);
+                if ($decoded === null && ! is_array($record?->value)) {
+                    return $record?->value ?? $default;
+                }
+
+                return $decoded ?? $default;
+            }
         );
     }
 

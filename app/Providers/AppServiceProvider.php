@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Controllers\SetupWizardController;
 use App\Support\ToastFactory;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -25,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->generateAppKeyIfNeeded();
         $this->forceFileSessionDuringSetup();
+        View::creator('layouts.app', \App\Http\View\Creators\AppConfigCreator::class);
     }
 
     /**
