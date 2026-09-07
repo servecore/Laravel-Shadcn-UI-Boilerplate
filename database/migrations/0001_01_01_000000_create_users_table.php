@@ -21,6 +21,7 @@ return new class extends Migration
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_active')->default(true);
+            $table->json('preferences')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->string('created_by')->nullable();
