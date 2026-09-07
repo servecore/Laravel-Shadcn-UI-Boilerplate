@@ -50,11 +50,9 @@
         </div>
 
         <!-- Users Table -->
-        <div class="rounded-md border bg-card text-card-foreground shadow-sm">
-            <x-table.table class="[&_td]:!p-1 [&_th]:!px-1 [&_th]:!h-8">
+        <x-table.table>
                 <x-table.header>
                     <x-table.row>
-                        <x-table.head class="w-[50px]"></x-table.head>
                         <x-table.head>User</x-table.head>
                         <x-table.head>Role</x-table.head>
                         <x-table.head>Status</x-table.head>
@@ -64,10 +62,7 @@
                 </x-table.header>
                 <x-table.body id="users-table-body">
                     @forelse($users as $user)
-                        <x-table.row>
-                            <x-table.cell>
-                                <x-checkbox />
-                            </x-table.cell>
+                        <x-table.row class="hover:bg-muted/50 transition-colors">
                             <x-table.cell>
                                 <div class="flex items-center gap-3">
                                     <x-avatar class="size-9">
@@ -107,12 +102,12 @@
                                             </svg>
                                         </x-button>
                                     </x-slot:trigger>
-                                    <div class="w-40">
+                                    <div class="w-44">
                                         <x-dropdown.item
                                             href="#"
                                             data-action="edit"
                                             data-user-id="{{ $user->id }}">
-                                            Edit Details
+    Edit
                                         </x-dropdown.item>
                                         <x-dropdown.separator />
                                         <x-dropdown.item
@@ -129,7 +124,7 @@
                         </x-table.row>
                     @empty
                         <x-table.row>
-                            <x-table.cell colspan="6" class="h-24 text-center">
+                            <x-table.cell colspan="5" class="h-24 text-center">
                                 <div class="flex flex-col items-center justify-center space-y-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="size-8 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -141,7 +136,6 @@
                     @endforelse
                 </x-table.body>
             </x-table.table>
-        </div>
 
         <!-- Pagination -->
         @if($users->hasPages())

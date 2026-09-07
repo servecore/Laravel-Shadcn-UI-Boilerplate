@@ -100,6 +100,7 @@ export class UserList {
     }
 
     async storeUser(formData) {
+        this.modal?.setLoading(true);
         try {
             const response = await http.post(userRoutes.store, formData);
             toast.success(response.data?.message || 'User created successfully');
@@ -107,6 +108,7 @@ export class UserList {
             this.reload();
             return response;
         } catch (error) {
+            this.modal?.setLoading(false);
             if (error.errors) {
                 this.modal?.showErrors(error.errors);
             } else {
@@ -117,6 +119,7 @@ export class UserList {
     }
 
     async updateUser(userId, formData) {
+        this.modal?.setLoading(true);
         try {
             const response = await http.put(userRoutes.update(userId), formData);
             toast.success(response.data?.message || 'User updated successfully');
@@ -124,6 +127,7 @@ export class UserList {
             this.reload();
             return response;
         } catch (error) {
+            this.modal?.setLoading(false);
             if (error.errors) {
                 this.modal?.showErrors(error.errors);
             } else {
@@ -134,6 +138,7 @@ export class UserList {
     }
 
     async destroyUser(userId) {
+        this.modal?.setLoading(true);
         try {
             const response = await http.delete(userRoutes.destroy(userId));
             toast.success(response.data?.message || 'User deleted successfully');
@@ -141,26 +146,13 @@ export class UserList {
             this.reload();
             return response;
         } catch (error) {
+            this.modal?.setLoading(false);
             toast.error(error.message || 'Failed to delete user');
             throw error;
         }
     }
 
-    getFormFields(user = null) {
-        const isEdit = !!user;
-        return [
-            { name: 'name', label: 'Name', type: 'text', value: user?.name ?? '', required: true, placeholder: 'Enter full name' },
-            { name: 'username', label: 'Username', type: 'text', value: user?.username ?? '', required: true, placeholder: 'Enter username', disabled: isEdit },
-            { name: 'email', label: 'Email', type: 'email', value: user?.email ?? '', required: true, placeholder: 'Enter email address' },
-            { name: 'password', label: isEdit ? 'New Password' : 'Password', type: 'password', value: '', required: !isEdit, placeholder: isEdit ? 'Leave blank to keep current' : 'Enter password', autocomplete: 'new-password' },
-            { name: 'password_confirmation', label: 'Confirm Password', type: 'password', value: '', required: !isEdit, placeholder: 'Confirm password', autocomplete: 'new-password' },
-            { name: 'role', label: 'Role', type: 'select', value: user?.role ?? 'user', required: true, options: [{ value: 'user', label: 'User' }, { value: 'admin', label: 'Admin' }] },
-            { name: 'is_active', label: 'Status', type: 'checkbox', value: user?.is_active ?? true, checkboxLabel: 'Active' },
-        ];
-    }
 }
-
-
 // Auto-initialize when module is loaded on a page that declares this entity.
 // app.js dynamically imports this module only when [data-entity="users"] exists,
 // so no DOM sniffing is needed here — safe to instantiate directly.
@@ -170,6 +162,4 @@ const ENTITY = 'users';
 if (document.querySelector(`[data-entity="${ENTITY}"]`)) {
     new UserList();
 }
-
-
 

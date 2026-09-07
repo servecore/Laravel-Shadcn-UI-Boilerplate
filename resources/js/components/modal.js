@@ -58,8 +58,15 @@ export class AppModal {
         if (!this._overlay) return;
         const btn = this._overlay.querySelector('[data-modal-confirm]');
         if (!btn) return;
-        btn.disabled = loading;
-        btn.textContent = loading ? 'Processing...' : this.config.confirmText;
+        if (loading && !btn.disabled) {
+            this._btnOriginalLabel = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="mr-2 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Processing...';
+        } else if (!loading && this._btnOriginalLabel) {
+            btn.disabled = false;
+            btn.innerHTML = this._btnOriginalLabel;
+            this._btnOriginalLabel = null;
+        }
     }
 
     showErrors(errors) {

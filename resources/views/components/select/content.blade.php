@@ -1,7 +1,7 @@
 @php
     /* @var Illuminate\View\ComponentAttributeBag $attributes */
     $attributes = $attributes->class([
-        'relative z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md',
+        'absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md mt-1',
     ])->merge([
         'x-show' => 'open',
         'x-transition:enter' => 'transition ease-out duration-100',
