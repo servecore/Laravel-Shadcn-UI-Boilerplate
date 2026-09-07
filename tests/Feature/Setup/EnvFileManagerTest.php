@@ -89,4 +89,39 @@ class EnvFileManagerTest extends TestCase
             file_put_contents($envPath, $backup);
         }
     }
+
+    public function test_update_escapes_quotes_backslashes_and_newlines(): void
+    {
+        $envPath = base_path('.env');
+        $backup = file_get_contents($envPath);
+
+        try {
+            $this->manager->update(['TEST_ESCAPE' => "a\"b\nc\\d"]);
+
+            $content = file_get_contents($envPath);
+            $this->assertStringContainsString('TEST_ESCAPE="a\"b\nc\\\\d"', $content);
+        } finally {
+            file_put_contents($envPath, $backup);
+        }
+    }
+
+    public function test_update_does_not_inject_new_env_lines(): void
+    {
+        $envPath = base_path('.env');
+        $backup = file_get_contents($envPath);
+
+        try {
+            $evilValue = "legit\n#INJECTED_KEY=1";
+            $this->manager->update(['TEST_INJECT' => $evilValue]);
+
+            $content = file_get_contents($envPath);
+
+            // The whole value stays on one line inside quotes — no standalone
+            // comment/injection line is ever created.
+            $this->assertStringNotContainsString("\n#INJECTED_KEY=1", $content);
+            $this->assertStringContainsString('TEST_INJECT="legit\n#INJECTED_KEY=1"', $content);
+        } finally {
+            file_put_contents($envPath, $backup);
+        }
+    }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -16,7 +17,9 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        app()['cache']->forget('spatie.permission.cache');
+        // Flush Spatie's permission cache so freshly seeded roles/permissions
+        // are visible immediately (especially in long-running processes).
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $permissions = [
             'view users',

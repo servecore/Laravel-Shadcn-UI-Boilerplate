@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Spatie\Permission\PermissionRegistrar;
 
 use function collect;
 
@@ -387,6 +388,7 @@ class SetupWizardController extends Controller
             // to the newly created admin account. (The setup wizard only runs
             // migrations, not seeders, so the role tree is created here.)
             (new RolePermissionSeeder)->run();
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
             $user->assignRole('admin');
 
             Auth::login($user);
@@ -406,8 +408,22 @@ class SetupWizardController extends Controller
             Artisan::call('route:clear');
             Artisan::call('view:clear');
 
-            return redirect()->route('dashboard')
-                ->with('success', 'Application setup completed successfully!');
+            // The admin is already authenticated with the file session driver,
+            // which was in effect before the switch above. Persist the current
+            // session into the database driver under the same ID so the admin
+            // stays logged in on the next request (otherwise the DB session
+            // would start empty and the admin would get bounced to /login).
+            $dbSession = app('session')->driver('database');
+            $dbSession->setId(session()->getId());
+
+            foreach (session()->all() as $key => $value) {
+                $dbSession->put($key, $value);
+            }
+
+            $dbSession->flash('success', 'Application setup completed successfully!');
+            $dbSession->save();
+
+            return redirect()->route('dashboard');
         } catch (\Exception $e) {
             return back()->withErrors([
                 'admin' => 'Failed to create admin account: '.$e->getMessage(),

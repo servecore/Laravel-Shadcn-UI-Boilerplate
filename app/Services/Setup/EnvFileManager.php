@@ -26,7 +26,14 @@ class EnvFileManager
         $content = file_get_contents($envPath);
 
         foreach ($values as $key => $value) {
-            $escaped = str_replace('"', '\\"', $value);
+            // Escape .env special characters. Backslash must be escaped first so
+            // the backslashes added by later escapes are not doubled. Newlines are
+            // converted to a literal "\n" so a value can never inject new .env lines.
+            $escaped = str_replace(
+                ['\\', '"', "\r\n", "\r", "\n"],
+                ['\\\\', '\\"', '\n', '\n', '\n'],
+                $value
+            );
             $replacement = "{$key}=\"{$escaped}\"";
 
             // Match active "KEY=..." OR commented-out "# KEY=..." or "#KEY=..."
