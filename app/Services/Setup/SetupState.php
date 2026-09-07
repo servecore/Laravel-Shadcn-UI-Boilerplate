@@ -2,6 +2,8 @@
 
 namespace App\Services\Setup;
 
+use Illuminate\Support\Facades\Auth;
+
 /**
  * Manages the setup wizard's completion state.
  *
@@ -34,7 +36,7 @@ class SetupState
         $data = [
             'completed_at' => now()->toIso8601String(),
             'version' => '1.0.0',
-            'installed_by' => auth()->user()?->name ?? 'Unknown',
+            'installed_by' => Auth::user()?->name ?? 'Unknown',
         ];
 
         file_put_contents(
