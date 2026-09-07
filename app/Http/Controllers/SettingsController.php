@@ -13,7 +13,9 @@ class SettingsController extends Controller
      */
     public function index(): View
     {
-        return view('pages.settings.index');
+        return view('pages.settings.index', [
+            'preferences' => auth()->user()->preferences ?? [],
+        ]);
     }
 
     /**
@@ -27,11 +29,15 @@ class SettingsController extends Controller
             'social_emails' => ['boolean'],
         ]);
 
-        session()->put('settings', [
-            'comm_emails' => $request->boolean('comm_emails'),
-            'marketing_emails' => $request->boolean('marketing_emails'),
-            'social_emails' => $request->boolean('social_emails'),
-            'security_emails' => true,
+        // Persist on the user record instead of the session so preferences
+        // survive logout/login (and multiple devices).
+        auth()->user()->update([
+            'preferences' => [
+                'comm_emails' => $request->boolean('comm_emails'),
+                'marketing_emails' => $request->boolean('marketing_emails'),
+                'social_emails' => $request->boolean('social_emails'),
+                'security_emails' => true,
+            ],
         ]);
 
         return back()->with('status', 'Notification preferences saved.');

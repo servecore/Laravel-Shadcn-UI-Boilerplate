@@ -101,6 +101,59 @@ class UserManagementTest extends TestCase
         $response->assertSessionHasErrors('password');
     }
 
+    public function test_admin_can_create_user(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->post(route('users.store'), [
+                'name' => 'Jane Doe',
+                'username' => 'jane',
+                'email' => 'jane@example.com',
+                'password' => 'secret-password',
+                'password_confirmation' => 'secret-password',
+            ]);
+
+        $response->assertRedirect(route('users.index'));
+
+        $this->assertDatabaseHas('users', [
+            'username' => 'jane',
+            'email' => 'jane@example.com',
+        ]);
+    }
+
+    public function test_create_user_rejects_duplicate_username(): void
+    {
+        User::factory()->create(['username' => 'taken']);
+
+        $response = $this->actingAs($this->admin)
+            ->post(route('users.store'), [
+                'name' => 'Jane Doe',
+                'username' => 'taken',
+                'email' => 'jane@example.com',
+                'password' => 'secret-password',
+                'password_confirmation' => 'secret-password',
+            ]);
+
+        $response->assertSessionHasErrors('username');
+
+        $this->assertDatabaseMissing('users', ['email' => 'jane@example.com']);
+    }
+
+    public function test_create_user_requires_password(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->post(route('users.store'), [
+                'name' => 'Jane Doe',
+                'username' => 'jane',
+                'email' => 'jane@example.com',
+                'password' => '',
+                'password_confirmation' => '',
+            ]);
+
+        $response->assertSessionHasErrors('password');
+
+        $this->assertDatabaseMissing('users', ['email' => 'jane@example.com']);
+    }
+
     public function test_user_cannot_delete_own_account(): void
     {
         $response = $this->actingAs($this->admin)

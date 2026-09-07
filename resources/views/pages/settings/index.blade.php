@@ -30,7 +30,7 @@
                         <x-label class="text-base" for="comm_emails">Communication emails</x-label>
                         <p class="text-sm text-muted-foreground">Receive emails about your account activity.</p>
                     </div>
-                    <x-switch.switch id="comm_emails" name="comm_emails" :checked="session('settings.comm_emails', true)" />
+                    <x-switch.switch id="comm_emails" name="comm_emails" :checked="$preferences['comm_emails'] ?? true" />
                 </div>
                 
                 <div class="flex items-center justify-between rounded-lg border p-4">
@@ -38,7 +38,7 @@
                         <x-label class="text-base" for="marketing_emails">Marketing emails</x-label>
                         <p class="text-sm text-muted-foreground">Receive emails about new products, features, and more.</p>
                     </div>
-                    <x-switch.switch id="marketing_emails" name="marketing_emails" :checked="session('settings.marketing_emails', false)" />
+                    <x-switch.switch id="marketing_emails" name="marketing_emails" :checked="$preferences['marketing_emails'] ?? false" />
                 </div>
 
                 <div class="flex items-center justify-between rounded-lg border p-4">
@@ -46,7 +46,7 @@
                         <x-label class="text-base" for="social_emails">Social emails</x-label>
                         <p class="text-sm text-muted-foreground">Receive emails for friend requests, follows, and more.</p>
                     </div>
-                    <x-switch.switch id="social_emails" name="social_emails" :checked="session('settings.social_emails', true)" />
+                    <x-switch.switch id="social_emails" name="social_emails" :checked="$preferences['social_emails'] ?? true" />
                 </div>
 
                 <div class="flex items-center justify-between rounded-lg border p-4">

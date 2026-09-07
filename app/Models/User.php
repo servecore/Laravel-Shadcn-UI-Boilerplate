@@ -28,6 +28,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'password',
         'is_active',
+        'preferences',
+    ];
+
+    /**
+     * Attribute defaults applied when no value is provided.
+     *
+     * @var array<string, string>
+     */
+    protected $attributes = [
+        'preferences' => '[]',
     ];
 
     protected $keyType = 'string';
@@ -60,6 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'updated_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'preferences' => 'array',
         ];
     }
 }
