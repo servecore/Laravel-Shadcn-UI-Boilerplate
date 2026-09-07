@@ -99,6 +99,18 @@ export class UserList {
         this.modal.open();
     }
 
+    getFormFields(user = null) {
+        const isEdit = !!user;
+        return [
+            { name: 'name', label: 'Name', type: 'text', value: user?.name ?? '', required: true, placeholder: 'Enter full name' },
+            { name: 'username', label: 'Username', type: 'text', value: user?.username ?? '', required: true, placeholder: 'Enter username', disabled: isEdit },
+            { name: 'email', label: 'Email', type: 'email', value: user?.email ?? '', required: true, placeholder: 'Enter email address' },
+            { name: 'password', label: isEdit ? 'New Password' : 'Password', type: 'password', value: '', required: !isEdit, placeholder: isEdit ? 'Leave blank to keep current' : 'Enter password', autocomplete: 'new-password' },
+            { name: 'password_confirmation', label: 'Confirm Password', type: 'password', value: '', required: !isEdit, placeholder: 'Confirm password', autocomplete: 'new-password' },
+            { name: 'role', label: 'Role', type: 'select', value: user?.role ?? 'user', required: true, options: [{ value: 'user', label: 'User' }, { value: 'admin', label: 'Admin' }] },
+            { name: 'is_active', label: 'Status', type: 'checkbox', value: user?.is_active ?? true, checkboxLabel: 'Active' },
+        ];
+    }
     async storeUser(formData) {
         this.modal?.setLoading(true);
         try {
