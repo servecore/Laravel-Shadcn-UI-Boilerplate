@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Settings\UpdateSettingsRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -22,14 +22,8 @@ class SettingsController extends Controller
     /**
      * Update the user's notification preferences.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(UpdateSettingsRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'comm_emails' => ['boolean'],
-            'marketing_emails' => ['boolean'],
-            'social_emails' => ['boolean'],
-        ]);
-
         // Persist on the user record instead of the session so preferences
         // survive logout/login (and multiple devices).
         Auth::user()->update([
