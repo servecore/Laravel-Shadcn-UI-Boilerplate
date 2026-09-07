@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class SettingsController extends Controller
@@ -14,7 +15,7 @@ class SettingsController extends Controller
     public function index(): View
     {
         return view('pages.settings.index', [
-            'preferences' => auth()->user()->preferences ?? [],
+            'preferences' => Auth::user()->preferences ?? [],
         ]);
     }
 
@@ -31,7 +32,7 @@ class SettingsController extends Controller
 
         // Persist on the user record instead of the session so preferences
         // survive logout/login (and multiple devices).
-        auth()->user()->update([
+        Auth::user()->update([
             'preferences' => [
                 'comm_emails' => $request->boolean('comm_emails'),
                 'marketing_emails' => $request->boolean('marketing_emails'),

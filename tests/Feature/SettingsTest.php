@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class SettingsTest extends TestCase
@@ -49,7 +50,7 @@ class SettingsTest extends TestCase
 
         // Simulate logout/login: preferences must come from the user record,
         // never from a cleared session.
-        auth()->logout();
+       Auth::logout();
         $this->actingAs($user->fresh());
 
         $this->assertSame(true, $user->fresh()->preferences['marketing_emails']);
