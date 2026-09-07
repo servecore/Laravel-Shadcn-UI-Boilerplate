@@ -11,6 +11,13 @@ use Illuminate\Support\Str;
 class ShadcnServiceProvider extends ServiceProvider
 {
     /**
+     * The path to the cached component alias manifest.
+     *
+     * @var string
+     */
+    private const CACHE_PATH = 'bootstrap/cache/components.php';
+
+    /**
      * Register any application services.
      */
     public function register(): void
@@ -38,10 +45,14 @@ class ShadcnServiceProvider extends ServiceProvider
     /**
      * Auto-register all Blade component aliases from app/View/Components.
      *
-     * Uses a cached manifest at bootstrap/cache/components.php to avoid
-     * scanning the filesystem and autoloading every component class on
-     * every request. Run `php artisan shadcn:cache` to rebuild after
-     * adding or removing components.
+     * Uses a cached manifest at bootstrap/cache/components.php so the
+     * filesystem is not scanned and every component class is not autoloaded on
+     * each request. Run `php artisan shadcn:cache` to rebuild the manifest
+     * after adding or removing components (e.g. during deployment).
+     *
+     * In the local environment the manifest is rebuilt from disk on every
+     * request, so newly created components are registered immediately without
+     * needing to run the cache command manually.
      */
     protected function registerComponentAliases(): void
     {
@@ -55,25 +66,28 @@ class ShadcnServiceProvider extends ServiceProvider
     /**
      * Load the component alias map from cache, or build it on first run.
      *
+     * In local development the cache is intentionally ignored so components
+     * added or removed while developing are always picked up right away.
+     *
      * @return array<string, string>
      */
     protected function loadCachedAliases(): array
     {
-        $cachePath = base_path('bootstrap/cache/components.php');
+        $cachePath = base_path(self::CACHE_PATH);
 
-        if (file_exists($cachePath)) {
-            return require $cachePath;
+        if ($this->app->environment('local') || ! file_exists($cachePath)) {
+            return $this->buildComponentAliases();
         }
 
-        $aliases = $this->buildComponentAliases();
-
-        $this->writeCache($aliases);
-
-        return $aliases;
+        return require $cachePath;
     }
 
     /**
      * Scan app/View/Components and build the alias => class mapping.
+     *
+     * CompileAsChild is skipped here because it is registered explicitly in
+     * registerCompileAsChild(). PHP files without a loadable class are skipped,
+     * and aliases are sorted so the generated manifest is deterministic.
      *
      * @return array<string, string>
      */
@@ -93,8 +107,14 @@ class ShadcnServiceProvider extends ServiceProvider
             $name = $file->getFilenameWithoutExtension();
             $alias = Str::kebab($name);
 
+            if ($alias === 'compile-as-child' || ! class_exists($class)) {
+                continue;
+            }
+
             $aliases[$alias] = $class;
         }
+
+        ksort($aliases);
 
         return $aliases;
     }
@@ -106,8 +126,9 @@ class ShadcnServiceProvider extends ServiceProvider
      */
     public static function writeCache(array $aliases): void
     {
-        $cachePath = base_path('bootstrap/cache/components.php');
+        $cachePath = base_path(self::CACHE_PATH);
 
+        File::ensureDirectoryExists(dirname($cachePath));
         File::put($cachePath, "<?php\n\nreturn ".var_export($aliases, true).";\n");
     }
 
@@ -116,7 +137,7 @@ class ShadcnServiceProvider extends ServiceProvider
      */
     public static function clearCache(): void
     {
-        $cachePath = base_path('bootstrap/cache/components.php');
+        $cachePath = base_path(self::CACHE_PATH);
 
         if (file_exists($cachePath)) {
             File::delete($cachePath);
