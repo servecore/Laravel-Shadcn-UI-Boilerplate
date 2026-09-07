@@ -25,3 +25,7 @@ Thumbs.db
 /bootstrap/cache/components.php
 .setup-complete
 .setup-state
+
+# Local tooling artifacts (accidentally committed previously)
+/.gitconfig-phpserve
+/step3_response.html

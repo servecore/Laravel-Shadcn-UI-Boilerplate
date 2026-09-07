@@ -60,8 +60,12 @@ Route::middleware(['guest', 'setup'])->prefix('setup')->name('setup.')->group(fu
 */
 Route::middleware('setup')->group(function () {
 
-    // Component preview page
-    Route::get('/', fn () => view('test'));
+    // Component preview page (ShadCN UI gallery)
+    Route::get('/preview', fn () => view('test'));
+
+    // Root redirects authenticated users to the dashboard; guests bounce
+    // to login via the dashboard's auth middleware.
+    Route::get('/', fn () => redirect()->route('dashboard'));
 
     /*
     |--------------------------------------------------------------------------|
