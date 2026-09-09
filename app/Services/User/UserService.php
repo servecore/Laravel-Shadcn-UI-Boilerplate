@@ -4,6 +4,7 @@ namespace App\Services\User;
 
 use App\Models\User;
 use App\Services\BaseCrudService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class UserService extends BaseCrudService
 {
@@ -13,6 +14,31 @@ class UserService extends BaseCrudService
     protected function model(): string
     {
         return User::class;
+    }
+
+    /**
+     * Get a paginated, filterable list of users.
+     *
+     * @param  array<string, string>  $filters
+     */
+    public function paginateFiltered(array $filters, int $perPage = 10): LengthAwarePaginator
+    {
+        return User::query()
+            ->with($this->relations())
+            ->when(! empty($filters['search']), function ($query) use ($filters) {
+                $query->where(function ($query) use ($filters) {
+                    $query->where('name', 'like', '%'.$filters['search'].'%')
+                        ->orWhere('username', 'like', '%'.$filters['search'].'%')
+                        ->orWhere('email', 'like', '%'.$filters['search'].'%');
+                });
+            })
+            ->when(
+                isset($filters['status']) && in_array($filters['status'], ['active', 'inactive'], true),
+                fn ($query) => $query->where('is_active', $filters['status'] === 'active')
+            )
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**

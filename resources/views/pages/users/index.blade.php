@@ -34,18 +34,15 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-2.5 top-2.5 size-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    <x-input class="pl-9 w-64" placeholder="Search users..." />
+                    <x-input id="user-search" class="pl-9 w-64" placeholder="Search users..."
+                            value="{{ request('search') }}" />
                 </div>
-                <x-select.select>
-                    <x-select.trigger class="w-[150px]">
-                        <x-select.value placeholder="Status" />
-                    </x-select.trigger>
-                    <x-select.content>
-                        <x-select.item value="all">All Status</x-select.item>
-                        <x-select.item value="active">Active</x-select.item>
-                        <x-select.item value="inactive">Inactive</x-select.item>
-                    </x-select.content>
-                </x-select.select>
+                <select id="user-status" name="status"
+                    class="h-9 w-[150px] rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                    <option value="">All Status</option>
+                    <option value="active" @selected(request('status') === 'active')>Active</option>
+                    <option value="inactive" @selected(request('status') === 'inactive')>Inactive</option>
+                </select>
             </div>
         </div>
 

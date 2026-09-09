@@ -21,9 +21,12 @@ class UserController extends Controller
     /**
      * Display a listing of users.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = $this->userService->paginate(10);
+        $users = $this->userService->paginateFiltered(
+            filters: $request->only(['search', 'status']),
+            perPage: 10,
+        );
 
         return view('pages.users.index', [
             'users' => $users,

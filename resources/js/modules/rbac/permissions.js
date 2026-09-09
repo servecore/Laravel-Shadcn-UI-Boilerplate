@@ -13,6 +13,7 @@ export class PermissionList {
     constructor() {
         this.tableBody = document.querySelector('#permissions-table-body');
         this.createBtn = document.querySelector('#btn-create-permission');
+        this.searchInput = document.querySelector('#permission-search');
         this.modal = null;
         this.init();
     }
@@ -34,14 +35,30 @@ export class PermissionList {
             listSelector: '#permissions-table-body',
             fetchUrl: this.fetchUrl(),
         });
+
+        // Search (debounced) → reload with query param
+        let searchTimer = null;
+        if (this.searchInput) {
+            this.searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => this.reload(this.searchUrl()), 300);
+            });
+        }
     }
 
     fetchUrl() {
         return document.querySelector('[data-entity="permissions"]')?.dataset.fetchUrl || permissionRoutes.index;
     }
 
+    searchUrl() {
+        const url = new URL(this.fetchUrl(), window.location.origin);
+        const search = this.searchInput?.value.trim();
+        if (search) url.searchParams.set('search', search);
+        return url.toString();
+    }
+
     async reload(url) {
-        const doc = await loadHtml(url || this.fetchUrl());
+        const doc = await loadHtml(url || this.searchUrl());
         if (!doc) return;
 
         swapContainer(doc, '#permissions-table-body');

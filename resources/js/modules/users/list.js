@@ -13,6 +13,8 @@ export class UserList {
     constructor() {
         this.tableBody = document.querySelector('#users-table-body');
         this.createBtn = document.querySelector('#btn-create-user');
+        this.searchInput = document.querySelector('#user-search');
+        this.statusSelect = document.querySelector('#user-status');
         this.modal = null;
         this.init();
     }
@@ -34,14 +36,35 @@ export class UserList {
             listSelector: '#users-table-body',
             fetchUrl: this.fetchUrl(),
         });
+
+        // Search (debounced) + status filter → reload with query params
+        let searchTimer = null;
+        if (this.searchInput) {
+            this.searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => this.reload(this.searchUrl()), 300);
+            });
+        }
+        if (this.statusSelect) {
+            this.statusSelect.addEventListener('change', () => this.reload(this.searchUrl()));
+        }
     }
 
     fetchUrl() {
         return document.querySelector('[data-entity="users"]')?.dataset.fetchUrl || userRoutes.index;
     }
 
+    searchUrl() {
+        const url = new URL(this.fetchUrl(), window.location.origin);
+        const search = this.searchInput?.value.trim();
+        const status = this.statusSelect?.value;
+        if (search) url.searchParams.set('search', search);
+        if (status) url.searchParams.set('status', status);
+        return url.toString();
+    }
+
     async reload(url) {
-        const doc = await loadHtml(url || this.fetchUrl());
+        const doc = await loadHtml(url || this.searchUrl());
         if (!doc) return;
 
         swapContainer(doc, '#users-table-body');

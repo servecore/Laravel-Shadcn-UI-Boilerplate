@@ -169,6 +169,25 @@ class UserManagementTest extends TestCase
         $response->assertSee('editor');
     }
 
+    public function test_users_index_filters_by_search_and_status(): void
+    {
+        User::factory()->create(['name' => 'Alice Alpha', 'username' => 'alice', 'is_active' => true]);
+        User::factory()->create(['name' => 'Bob Beta', 'username' => 'bob', 'is_active' => false]);
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('users.index', ['search' => 'alpha']));
+
+        $response->assertOk();
+        $response->assertSee('Alice Alpha');
+        $response->assertDontSee('Bob Beta');
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('users.index', ['status' => 'inactive']));
+
+        $response->assertSee('Bob Beta');
+        $response->assertDontSee('Alice Alpha');
+    }
+
     public function test_user_cannot_delete_own_account(): void
     {
         $response = $this->actingAs($this->admin)

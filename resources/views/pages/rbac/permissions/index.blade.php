@@ -25,6 +25,13 @@
             </x-button>
         </div>
 
+        <!-- Search -->
+        <div class="relative">
+            <x-lucide-search class="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+            <x-input id="permission-search" class="w-full pl-9 sm:max-w-md" placeholder="Search by permission name..."
+                value="{{ request('search') }}" />
+        </div>
+
         <!-- Permissions Table -->
         <x-table.table>
             <x-table.header>

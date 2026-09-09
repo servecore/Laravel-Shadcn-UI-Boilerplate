@@ -6,6 +6,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | --- | --- |
 | bootstrap/app.php | .ai/rules/bootstrap.md |
 | app/View/Components/**, app/Providers/ShadcnServiceProvider.php, resources/shadcn-stubs/**, bootstrap/cache/components.php | .ai/rules/components.md |
+| app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/Http/Middleware/RedirectIfNotSetup.php | .ai/rules/middleware.md |
 | database/migrations/** | .ai/rules/migrations.md |
 | resources/views/pages/rbac/** | .ai/rules/pages-rbac.md |

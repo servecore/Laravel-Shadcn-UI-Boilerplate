@@ -21,12 +21,12 @@ class PermissionController extends Controller
     /**
      * Display a listing of permissions.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $permissions = Permission::query()
-            ->withCount('roles')
-            ->orderBy('name')
-            ->paginate(10);
+        $permissions = $this->permissionService->paginateFiltered(
+            filters: $request->only(['search']),
+            perPage: 10,
+        );
 
         return view('pages.rbac.permissions.index', [
             'permissions' => $permissions,

@@ -33,6 +33,7 @@ class RolePermissionSeeder extends Seeder
             'delete-roles',
             'manage-roles',
             'manage-permissions',
+            'manage-settings',
         ];
 
         foreach ($permissions as $permission) {

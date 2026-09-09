@@ -45,6 +45,19 @@ class PermissionManagementTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_permissions_index_filters_by_search(): void
+    {
+        Permission::firstOrCreate(['name' => 'view-reports']);
+        Permission::firstOrCreate(['name' => 'export-invoices']);
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('permissions.index', ['search' => 'reports']));
+
+        $response->assertOk();
+        $response->assertSee('view-reports');
+        $response->assertDontSee('export-invoices');
+    }
+
     public function test_admin_can_create_permission(): void
     {
         $response = $this->actingAs($this->admin)

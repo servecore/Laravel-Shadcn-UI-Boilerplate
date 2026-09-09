@@ -135,11 +135,13 @@ Route::middleware('setup')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
 
-        Route::get('/settings', [SettingsController::class, 'index'])
-            ->name('settings');
+        Route::middleware('permission:manage-settings')->group(function () {
+            Route::get('/settings', [SettingsController::class, 'index'])
+                ->name('settings');
 
-        Route::put('/settings', [SettingsController::class, 'update'])
-            ->name('settings.update');
+            Route::put('/settings', [SettingsController::class, 'update'])
+                ->name('settings.update');
+        });
 
         Route::prefix('users')->name('users.')->group(function () {
             Route::middleware('permission:manage-users')->group(function () {
