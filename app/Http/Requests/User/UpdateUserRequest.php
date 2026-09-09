@@ -41,6 +41,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($this->route('user')),
             ],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'is_active' => ['sometimes', 'boolean'],
         ];
     }
 }

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from './toast.js';
 
 /**
  * Centralized HTTP client with CSRF injection and uniform error handling.
@@ -39,41 +40,29 @@ http.interceptors.response.use(
 
         switch (status) {
             case 422:
-                // Validation errors: extract messages and dispatch event
+                // Validation errors: extract messages and show toast
                 const messages = (data?.errors || {});
                 const firstError = Object.values(messages)[0]?.[0] || data?.message || 'Validation failed.';
 
-                window.dispatchEvent(new CustomEvent('toast:error', {
-                    detail: { message: firstError, title: 'Validation Error' },
-                }));
+                toast.error(firstError, 'Validation Error');
                 break;
 
             case 403:
-                window.dispatchEvent(new CustomEvent('toast:error', {
-                    detail: { message: 'Anda tidak punya akses.', title: 'Unauthorized' },
-                }));
+                toast.error(data?.message || 'Anda tidak punya akses.', 'Unauthorized');
                 break;
 
             case 419:
                 // CSRF expired — reload to get fresh token
-                window.dispatchEvent(new CustomEvent('toast:warning', {
-                    detail: { message: 'Sesi kedaluwarsa. Halaman akan dimuat ulang.', title: 'Session Expired' },
-                }));
+                toast.warning(data?.message || 'Sesi kedaluwarsa. Halaman akan dimuat ulang.', 'Session Expired');
                 setTimeout(() => window.location.reload(), 1500);
                 break;
 
             case 500:
-                window.dispatchEvent(new CustomEvent('toast:error', {
-                    detail: { message: 'Terjadi kesalahan server. Silakan coba lagi.', title: 'Server Error' },
-                }));
+                toast.error(data?.message || 'Terjadi kesalahan server. Silakan coba lagi.', 'Server Error');
                 break;
 
             default:
-                if (error.message) {
-                    window.dispatchEvent(new CustomEvent('toast:error', {
-                        detail: { message: error.message, title: 'Error' },
-                    }));
-                }
+                toast.error(data?.message || error.message || 'Terjadi kesalahan.');
         }
 
         return Promise.reject(error);

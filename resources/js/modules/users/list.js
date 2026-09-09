@@ -149,8 +149,6 @@ export class UserList {
             this.modal?.setLoading(false);
             if (error.errors) {
                 this.modal?.showErrors(error.errors);
-            } else {
-                toast.error(error.message || 'Failed to create user');
             }
             throw error;
         }
@@ -168,8 +166,6 @@ export class UserList {
             this.modal?.setLoading(false);
             if (error.errors) {
                 this.modal?.showErrors(error.errors);
-            } else {
-                toast.error(error.message || 'Failed to update user');
             }
             throw error;
         }
@@ -185,7 +181,6 @@ export class UserList {
             return response;
         } catch (error) {
             this.modal?.setLoading(false);
-            toast.error(error.message || 'Failed to delete user');
             throw error;
         }
     }

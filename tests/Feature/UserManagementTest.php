@@ -188,6 +188,68 @@ class UserManagementTest extends TestCase
         $response->assertDontSee('Alice Alpha');
     }
 
+    public function test_admin_can_toggle_user_active_status(): void
+    {
+        $target = User::factory()->create(['is_active' => true]);
+
+        $this->actingAs($this->admin)
+            ->putJson(route('users.update', $target), [
+                'name' => $target->name,
+                'username' => $target->username,
+                'email' => $target->email,
+                'is_active' => false,
+            ])
+            ->assertOk();
+
+        $this->assertFalse($target->fresh()->is_active);
+
+        $this->actingAs($this->admin)
+            ->putJson(route('users.update', $target), [
+                'name' => $target->name,
+                'username' => $target->username,
+                'email' => $target->email,
+                'is_active' => true,
+            ])
+            ->assertOk();
+
+        $this->assertTrue($target->fresh()->is_active);
+    }
+
+    public function test_admin_can_create_inactive_user(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->postJson(route('users.store'), [
+                'name' => 'Jane Doe',
+                'username' => 'jane',
+                'email' => 'jane@example.com',
+                'password' => 'secret-password',
+                'password_confirmation' => 'secret-password',
+                'is_active' => false,
+            ]);
+
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('users', [
+            'username' => 'jane',
+            'is_active' => false,
+        ]);
+    }
+
+    public function test_user_cannot_deactivate_own_account(): void
+    {
+        $response = $this->actingAs($this->admin)
+            ->putJson(route('users.update', $this->admin), [
+                'name' => $this->admin->name,
+                'username' => $this->admin->username,
+                'email' => $this->admin->email,
+                'is_active' => false,
+            ]);
+
+        $response->assertStatus(422);
+
+        $this->assertTrue($this->admin->fresh()->is_active);
+    }
+
     public function test_user_cannot_delete_own_account(): void
     {
         $response = $this->actingAs($this->admin)

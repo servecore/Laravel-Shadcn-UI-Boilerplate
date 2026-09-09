@@ -76,6 +76,17 @@
                             <x-input id="password_confirmation" name="password_confirmation" type="password" placeholder="Confirm new password" />
                         </div>
                     @endif
+
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <input type="hidden" name="is_active" value="0" />
+                            <input id="is_active" name="is_active" type="checkbox" value="1"
+                                class="size-4 rounded border-input text-primary focus:ring-primary"
+                                @checked(old('is_active', $user->is_active ?? true)) />
+                            <x-label for="is_active">Active</x-label>
+                        </div>
+                        @error('is_active')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                    </div>
                 </x-card-content>
                 <x-card-footer class="border-t bg-muted/50 px-6 py-4">
                     <div class="flex items-center justify-end gap-2 w-full">

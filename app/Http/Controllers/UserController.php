@@ -98,6 +98,18 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
+        if ($user->is(Auth::user()) && $request->has('is_active') && ! $request->boolean('is_active')) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'You cannot deactivate your own account.',
+                ], 422);
+            }
+
+            return back()->withErrors([
+                'is_active' => 'You cannot deactivate your own account.',
+            ]);
+        }
+
         $this->userService->update($user->getKey(), $validated);
 
         if (isset($validated['role'])) {
