@@ -119,9 +119,7 @@
 
         <!-- Pagination -->
         @if($users->hasPages())
-            <div class="flex justify-center">
-                {{ $users->links() }}
-            </div>
+            {{ $users->links() }}
         @endif
     </div>
 @endsection

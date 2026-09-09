@@ -35,7 +35,7 @@
     data-sidebar="menu-button"
     data-active="{{ $active ? 'true' : 'false' }}"
     x-bind:class="{
-        'justify-center !p-2': $data.state === 'collapsed',
+        'justify-center p-2!': $data.state === 'collapsed',
     }"
     class="{{ $classes }} {{ $active ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium' : '' }}"
     @if ($tooltip)
@@ -69,7 +69,7 @@
     data-sidebar="menu-button"
     data-active="{{ $active ? 'true' : 'false' }}"
     x-bind:class="{
-        'justify-center !p-2': $data.state === 'collapsed',
+        'justify-center p-2!': $data.state === 'collapsed',
     }"
     class="{{ $classes }} {{ $active ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium' : '' }}"
     @if ($tooltip)

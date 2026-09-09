@@ -44,8 +44,18 @@
             @can('manage-roles')
                 <x-sidebar.menu-item>
                     <x-sidebar.menu-button :active="request()->routeIs('roles.*')" tooltip="Roles" href="{{ route('roles.index') }}">
-                        <x-lucide-shield-user class="size-4 inline-block mr-1" />
-                        Roles & Permissions
+                        <x-lucide-shield-user class="inline-block size-4" />
+                        Roles
+                    </x-sidebar.menu-button>
+                </x-sidebar.menu-item>
+            @endcan
+
+            {{-- Permissions --}}
+            @can('manage-permissions')
+                <x-sidebar.menu-item>
+                    <x-sidebar.menu-button :active="request()->routeIs('permissions.*')" tooltip="Permissions" href="{{ route('permissions.index') }}">
+                        <x-lucide-shield-check class="inline-block size-4" />
+                        Permissions
                     </x-sidebar.menu-button>
                 </x-sidebar.menu-item>
             @endcan

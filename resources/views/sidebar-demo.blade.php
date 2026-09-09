@@ -52,7 +52,7 @@
                                         type="button"
                                         @click="projectsOpen = !projectsOpen"
                                         class="peer/menu-button relative flex w-full items-center gap-2 overflow-visible rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground [&_svg]:size-4 [&_svg]:shrink-0 h-8"
-                                        x-bind:class="{ 'justify-center !p-2': $data.state === 'collapsed' }"
+                                        x-bind:class="{ 'justify-center p-2!': $data.state === 'collapsed' }"
                                     >
                                         <span class="shrink-0">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -106,7 +106,7 @@
                                         type="button"
                                         @click="reportsOpen = !reportsOpen"
                                         class="peer/menu-button relative flex w-full items-center gap-2 overflow-visible rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground [&_svg]:size-4 [&_svg]:shrink-0 h-8"
-                                        x-bind:class="{ 'justify-center !p-2': $data.state === 'collapsed' }"
+                                        x-bind:class="{ 'justify-center p-2!': $data.state === 'collapsed' }"
                                     >
                                         <span class="shrink-0">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

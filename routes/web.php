@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Rbac\PermissionController;
 use App\Http\Controllers\Rbac\RoleController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SetupWizardController;
@@ -162,6 +163,16 @@ Route::middleware('setup')->group(function () {
                 Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
                 Route::put('/{role}', [RoleController::class, 'update'])->name('update');
                 Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
+            });
+        });
+
+        Route::prefix('permissions')->name('permissions.')->group(function () {
+            Route::middleware('permission:manage-permissions')->group(function () {
+                Route::get('/', [PermissionController::class, 'index'])->name('index');
+                Route::post('/', [PermissionController::class, 'store'])->name('store');
+                Route::get('/{permission}/edit', [PermissionController::class, 'show'])->name('edit');
+                Route::put('/{permission}', [PermissionController::class, 'update'])->name('update');
+                Route::delete('/{permission}', [PermissionController::class, 'destroy'])->name('destroy');
             });
         });
     });
