@@ -64,10 +64,10 @@
                     @forelse($users as $user)
                         <x-table.row class="hover:bg-muted/50 transition-colors">
                             <x-table.cell class="text-left">
-                                <span data-action="edit" data-user-id="{{ $user->id }}" class="text-sm text-blue-500 cursor-pointer">
+                                <span data-action="edit" data-user-id="{{ $user->getRouteKey() }}" class="text-sm text-blue-500 cursor-pointer">
                                     <x-lucide-edit class="size-4 inline-block mr-1" />
                                 </span>
-                                <span data-action="delete" data-user-id="{{ $user->id }}" class="text-sm text-red-500 cursor-pointer">
+                                <span data-action="delete" data-user-id="{{ $user->getRouteKey() }}" class="text-sm text-red-500 cursor-pointer">
                                     <x-lucide-trash class="size-4 inline-block mr-1" />
                                 </span>
                             </x-table.cell>
