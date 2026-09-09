@@ -1,6 +1,6 @@
 <x-card-content>
 
-                        <div class="space-y-6">
+                        <div class="space-y-6" id="permission-panel">
 
                             @php
                                 $actions = isset($actionColumns) && ! empty($actionColumns)

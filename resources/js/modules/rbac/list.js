@@ -16,9 +16,13 @@ export class RoleList {
         this.selectedRoleIdInput = document.querySelector('#selected-role-id');
         this.savePermissionsBtn = document.querySelector('[data-action="save-permissions"]');
         this.cancelPermissionsBtn = document.querySelector('[data-action="cancel"]');
+        this.permissionPanel = document.querySelector('#permission-panel');
+        this.loadingEl = document.querySelector('#permission-loading');
         this.modal = null;
         this.selectedRoleId = this.selectedRoleIdInput?.value ?? null;
         this.selectedRoleName = this.selectedRoleNameEl?.textContent?.trim() ?? null;
+        this._loadTimer = null;
+        this._loadSeq = 0;
         this.init();
     }
 
@@ -114,14 +118,52 @@ export class RoleList {
     }
 
     async loadPermissions(roleId) {
+        // Guard against out-of-order responses when roles are switched quickly.
+        const seq = ++this._loadSeq;
+        this.clearLoading();
+
+        // Show the spinner only if the request outlasts ~200ms to avoid flicker.
+        this._loadTimer = setTimeout(() => this.showLoading(), 200);
+
         try {
             const response = await http.get(roleRoutes.edit(roleId));
+            if (seq !== this._loadSeq) return;
             const role = response.data.role || response.data;
             const permissionIds = (role.permissions || []).map((id) => String(id));
             this.applyPermissionState(permissionIds);
         } catch {
+            if (seq !== this._loadSeq) return;
             toast.error('Failed to load role permissions');
+        } finally {
+            if (seq !== this._loadSeq) return;
+            clearTimeout(this._loadTimer);
+            this._loadTimer = null;
+            this.hideLoading();
         }
+    }
+
+    showLoading() {
+        this.permissionPanel?.classList.add('opacity-60', 'pointer-events-none');
+        if (this.loadingEl) {
+            this.loadingEl.classList.remove('hidden');
+            this.loadingEl.classList.add('flex');
+        }
+    }
+
+    hideLoading() {
+        this.permissionPanel?.classList.remove('opacity-60', 'pointer-events-none');
+        if (this.loadingEl) {
+            this.loadingEl.classList.add('hidden');
+            this.loadingEl.classList.remove('flex');
+        }
+    }
+
+    clearLoading() {
+        if (this._loadTimer) {
+            clearTimeout(this._loadTimer);
+            this._loadTimer = null;
+        }
+        this.hideLoading();
     }
 
     applyPermissionState(checkedIds) {

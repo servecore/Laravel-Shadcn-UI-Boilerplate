@@ -100,6 +100,11 @@
                                     Manage permissions for this role.
                                 </x-card-description>
 
+                                <div id="permission-loading" class="hidden items-center gap-2 text-xs text-muted-foreground">
+                                    <x-lucide-loader-2 class="size-3.5 animate-spin" />
+                                    Loading permissions...
+                                </div>
+
                             </div>
 
                         </div>
