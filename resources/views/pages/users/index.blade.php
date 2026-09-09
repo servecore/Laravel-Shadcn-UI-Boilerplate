@@ -94,32 +94,12 @@
                                 {{ $user->created_at->diffForHumans() }}
                             </x-table.cell>
                             <x-table.cell class="text-right">
-                                <x-dropdown.dropdown align="end" :side="$loop->last ? 'top' : 'bottom'">
-                                    <x-slot:trigger>
-                                        <x-button variant="ghost" size="icon" class="size-8">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                                            </svg>
-                                        </x-button>
-                                    </x-slot:trigger>
-                                    <div class="w-44">
-                                        <x-dropdown.item
-                                            href="#"
-                                            data-action="edit"
-                                            data-user-id="{{ $user->id }}">
-    Edit
-                                        </x-dropdown.item>
-                                        <x-dropdown.separator />
-                                        <x-dropdown.item
-                                            variant="destructive"
-                                            as="button"
-                                            type="button"
-                                            data-action="delete"
-                                            data-user-id="{{ $user->id }}">
-                                            Delete User
-                                        </x-dropdown.item>
-                                    </div>
-                                </x-dropdown.dropdown>
+                                <span data-action="edit" data-user-id="{{ $user->id }}" class="text-sm text-blue-500 cursor-pointer">
+                                    <x-lucide-edit class="size-4 inline-block mr-1" />
+                                </span>
+                                <span data-action="delete" data-user-id="{{ $user->id }}" class="text-sm text-red-500 cursor-pointer">
+                                    <x-lucide-trash class="size-4 inline-block mr-1" />
+                                </span>
                             </x-table.cell>
                         </x-table.row>
                     @empty
