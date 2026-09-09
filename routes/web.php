@@ -128,7 +128,7 @@ Route::middleware('setup')->group(function () {
     | Authenticated Routes
     |--------------------------------------------------------------------------|
     */
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/logout', [LoginController::class, 'logout'])
             ->name('logout');
 

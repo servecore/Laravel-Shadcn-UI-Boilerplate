@@ -81,6 +81,22 @@ class LoginRequestTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_inactive_user_cannot_login(): void
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt('secret-password'),
+            'is_active' => false,
+        ]);
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'secret-password',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+        $this->assertGuest();
+    }
+
     public function test_remember_me_sets_remember_cookie(): void
     {
         $user = User::factory()->create([

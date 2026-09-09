@@ -24,3 +24,6 @@ Registration is email-only. `POST /register` (+ `/register/{token}`) issues a on
 
 ## Use HasEncryptedRouteKey for routable models
 Routable models must use App\Traits\HasEncryptedRouteKey so route URLs use EncryptedId::encrypt(getKey()) and resolveRouteBinding decrypts. Apply to any model exposed via {model} route binding (User already uses it; Role extends Spatie\Permission\Models\Role and uses it via config/permission.php models.role). Keep getKey() (raw int) for service method calls; only getRouteKey() is encrypted.
+
+## Block inactive users at login
+LoginRequest::authenticate() menolak user dengan is_active=false sebelum login (ValidationException 'email': 'Your account has been deactivated. Please contact an administrator.'), memakai Hash::check + auth()->login() manual menggantikan auth()->attempt(). Jangan menambah RateLimiter increment untuk user non-aktif.
