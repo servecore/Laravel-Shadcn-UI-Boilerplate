@@ -40,6 +40,16 @@
                 </x-sidebar.menu-item>
             @endcan
 
+            {{-- Roles --}}
+            @can('manage-roles')
+                <x-sidebar.menu-item>
+                    <x-sidebar.menu-button :active="request()->routeIs('roles.*')" tooltip="Roles" href="{{ route('roles.index') }}">
+                        <x-lucide-shield-user class="size-4 inline-block mr-1" />
+                        Roles & Permissions
+                    </x-sidebar.menu-button>
+                </x-sidebar.menu-item>
+            @endcan
+
             {{-- ============================================
                  MULTI-LEVEL MENU EXAMPLES
                  Copy and modify these for your own menus
