@@ -53,16 +53,24 @@
         <x-table.table>
                 <x-table.header>
                     <x-table.row>
+                        <x-table.head class="text-left">Actions</x-table.head>
                         <x-table.head>User</x-table.head>
                         <x-table.head>Role</x-table.head>
                         <x-table.head>Status</x-table.head>
-                        <x-table.head>Joined</x-table.head>
-                        <x-table.head class="text-right">Actions</x-table.head>
+                        <x-table.head  class="text-left">Joined</x-table.head>
                     </x-table.row>
                 </x-table.header>
                 <x-table.body id="users-table-body">
                     @forelse($users as $user)
                         <x-table.row class="hover:bg-muted/50 transition-colors">
+                            <x-table.cell class="text-left">
+                                <span data-action="edit" data-user-id="{{ $user->id }}" class="text-sm text-blue-500 cursor-pointer">
+                                    <x-lucide-edit class="size-4 inline-block mr-1" />
+                                </span>
+                                <span data-action="delete" data-user-id="{{ $user->id }}" class="text-sm text-red-500 cursor-pointer">
+                                    <x-lucide-trash class="size-4 inline-block mr-1" />
+                                </span>
+                            </x-table.cell>
                             <x-table.cell>
                                 <div class="flex items-center gap-3">
                                     <x-avatar class="size-9">
@@ -92,14 +100,6 @@
                             </x-table.cell>
                             <x-table.cell class="text-muted-foreground">
                                 {{ $user->created_at->diffForHumans() }}
-                            </x-table.cell>
-                            <x-table.cell class="text-right">
-                                <span data-action="edit" data-user-id="{{ $user->id }}" class="text-sm text-blue-500 cursor-pointer">
-                                    <x-lucide-edit class="size-4 inline-block mr-1" />
-                                </span>
-                                <span data-action="delete" data-user-id="{{ $user->id }}" class="text-sm text-red-500 cursor-pointer">
-                                    <x-lucide-trash class="size-4 inline-block mr-1" />
-                                </span>
                             </x-table.cell>
                         </x-table.row>
                     @empty
