@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Rbac\RoleController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\SetupWizardController;
 use App\Http\Controllers\UserController;
@@ -140,7 +141,7 @@ Route::middleware('setup')->group(function () {
             ->name('settings.update');
 
         Route::prefix('users')->name('users.')->group(function () {
-            Route::middleware('permission:manage users')->group(function () {
+            Route::middleware('permission:manage-users')->group(function () {
                 Route::get('/', [UserController::class, 'index'])->name('index');
                 Route::get('/create', [UserController::class, 'create'])->name('create');
                 Route::post('/', [UserController::class, 'store'])->name('store');
@@ -151,6 +152,12 @@ Route::middleware('setup')->group(function () {
 
             Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
             Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        });
+
+        Route::prefix('roles')->name('roles.')->group(function () {
+            Route::middleware('permission:manage-roles')->group(function () {
+                Route::get('/', [RoleController::class, 'index'])->name('index');
+            });
         });
     });
 

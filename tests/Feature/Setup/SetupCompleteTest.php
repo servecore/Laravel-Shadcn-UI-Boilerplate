@@ -63,7 +63,7 @@ class SetupCompleteTest extends TestCase
         $admin = User::where('email', 'admin@example.com')->first();
 
         $this->assertTrue($admin->hasRole('admin'));
-        $this->assertTrue($admin->hasPermissionTo('manage users'));
+        $this->assertTrue($admin->hasPermissionTo('manage-users'));
     }
 
     public function test_save_app_config_rejects_injection_characters_in_app_name(): void

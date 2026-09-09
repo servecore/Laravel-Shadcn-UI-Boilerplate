@@ -22,11 +22,16 @@ class RolePermissionSeeder extends Seeder
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $permissions = [
-            'view users',
-            'create users',
-            'edit users',
-            'delete users',
-            'manage users',
+            'view-users',
+            'create-users',
+            'edit-users',
+            'delete-users',
+            'manage-users',
+            'view-roles',
+            'create-roles',
+            'edit-roles',
+            'delete-roles',
+            'manage-roles',
         ];
 
         foreach ($permissions as $permission) {

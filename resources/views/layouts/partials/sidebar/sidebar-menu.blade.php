@@ -27,7 +27,7 @@
             </x-sidebar.menu-item>
 
             {{-- Users --}}
-            @can('manage users')
+            @can('manage-users')
                 <x-sidebar.menu-item>
                     <x-sidebar.menu-button :active="request()->routeIs('users.*')" tooltip="Users" href="{{ route('users.index') }}">
                         <x-slot:icon>

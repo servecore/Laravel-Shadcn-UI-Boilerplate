@@ -103,7 +103,7 @@ Jebakan umum developer baru: **`@` dipakai dua-duanya**. `@click` = Alpine (JS),
 ## 6. Directive penting yang dipakai
 
 - `@extends('layouts.app')` + `@section('content')` — struktur halaman.
-- `@can('manage users')` / `@endcan` — cek permission Spatie (sembunyikan tombol/admin).
+- `@can('manage-users')` / `@endcan` — cek permission Spatie (sembunyikan tombol/admin).
 - `@auth` / `@guest` — cek login.
 - `route('...')` — buat URL pakai nama route (jangan hardcode).
 

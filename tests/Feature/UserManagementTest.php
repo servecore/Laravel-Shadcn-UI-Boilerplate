@@ -19,7 +19,7 @@ class UserManagementTest extends TestCase
     {
         parent::setUp();
 
-        $permission = Permission::firstOrCreate(['name' => 'manage users']);
+        $permission = Permission::firstOrCreate(['name' => 'manage-users']);
         $role = Role::firstOrCreate(['name' => 'admin']);
         $role->givePermissionTo($permission);
 

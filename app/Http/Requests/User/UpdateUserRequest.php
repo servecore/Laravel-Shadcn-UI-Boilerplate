@@ -11,7 +11,7 @@ class UpdateUserRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * The route is already guarded by the "manage users" permission middleware.
+     * The route is already guarded by the "manage-users" permission middleware.
      */
     public function authorize(): bool
     {
