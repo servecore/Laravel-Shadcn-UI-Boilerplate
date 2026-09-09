@@ -119,7 +119,9 @@
 
         <!-- Pagination -->
         @if($users->hasPages())
-            {{ $users->links() }}
+            <div id="users-pagination">
+                {{ $users->links() }}
+            </div>
         @endif
     </div>
 @endsection

@@ -80,7 +80,9 @@
 
         <!-- Pagination -->
         @if ($permissions->hasPages())
-            {{ $permissions->links() }}
+            <div id="permissions-pagination">
+                {{ $permissions->links() }}
+            </div>
         @endif
     </div>
 @endsection

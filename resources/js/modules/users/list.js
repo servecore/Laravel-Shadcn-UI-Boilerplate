@@ -4,6 +4,7 @@
  * Works with server-rendered table as fallback (progressive enhancement).
  */
 import { userRoutes } from './routes.js';
+import { loadHtml, swapContainer, bindAjaxPagination } from '../../lib/ajax-pagination.js';
 import { http } from '../../lib/http.js';
 import { toast } from '../../lib/toast.js';
 import { AppModal } from '../../components/modal.js';
@@ -26,23 +27,25 @@ export class UserList {
         if (this.createBtn) {
             this.createBtn.addEventListener('click', () => this.openCreateModal());
         }
+
+        // AJAX pagination: swap only the table body + pagination nav
+        bindAjaxPagination({
+            containerSelector: '#users-pagination',
+            listSelector: '#users-table-body',
+            fetchUrl: this.fetchUrl(),
+        });
     }
 
-    async reload() {
-        try {
-            const container = document.querySelector('[data-entity="users"]');
-            const fetchUrl = container?.dataset.fetchUrl || userRoutes.index;
-            const response = await http.get(fetchUrl);
-            const html = typeof response.data === 'string' ? response.data : '';
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newBody = doc.querySelector('#users-table-body');
-            if (newBody && this.tableBody) {
-                this.tableBody.innerHTML = newBody.innerHTML;
-            }
-        } catch {
-            // Silent fail — keep existing table
-        }
+    fetchUrl() {
+        return document.querySelector('[data-entity="users"]')?.dataset.fetchUrl || userRoutes.index;
+    }
+
+    async reload(url) {
+        const doc = await loadHtml(url || this.fetchUrl());
+        if (!doc) return;
+
+        swapContainer(doc, '#users-table-body');
+        swapContainer(doc, '#users-pagination');
     }
 
     handleAction(e) {
