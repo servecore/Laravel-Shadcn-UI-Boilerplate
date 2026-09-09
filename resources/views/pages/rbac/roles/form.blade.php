@@ -34,27 +34,10 @@
                     <x-card-description>Basic details about the role.</x-card-description>
                 </x-card-header>
                 <x-card-content class="space-y-6">
-                    <div class="grid gap-4 md:grid-cols-2">
-                        <div class="space-y-2">
-                            <x-label for="name">Name</x-label>
-                            <x-input id="name" name="name" placeholder="John" value="{{ old('name', $role->name ?? '') }}" required />
-                            @error('name')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
-                        </div>
-                    </div>
                     <div class="space-y-2">
-                        <x-label for="guard_name">Guard Name</x-label>
-                        <x-select.select id="guard_name" name="guard_name" required>
-                            <x-select.trigger class="w-full">
-                                <x-select.value placeholder="Select a guard" />
-                            </x-select.trigger>
-                            <x-select.content>
-                                <x-select.item value="web">web</x-select.item>
-                                <x-select.item value="api">api</x-select.item>
-                                <x-select.item value="sanctum">sanctum</x-select.item>
-                                <x-select.item value="custom">custom</x-select.item>
-                            </x-select.content>
-                        </x-select.select>
-                        @error('guard_name')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
+                        <x-label for="name">Name</x-label>
+                        <x-input id="name" name="name" placeholder="e.g. editor" value="{{ old('name', $role->name ?? '') }}" required />
+                        @error('name')<p class="text-sm text-destructive">{{ $message }}</p>@enderror
                     </div>
                 </x-card-content>
                 <x-card-footer class="border-t bg-muted/50 px-6 py-4">

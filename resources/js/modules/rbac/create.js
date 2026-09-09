@@ -9,8 +9,6 @@
  */
 export function getCreateFormFields() {
     return [
-        { name: 'name', label: 'Name', type: 'text', value: '', required: true, placeholder: 'Enter role name' },
-        { name: 'guard_name', label: 'Guard Name', type: 'text', value: '', required: true, placeholder: 'Enter guard name' },
-       
+        { name: 'name', label: 'Name', type: 'text', value: '', required: true, placeholder: 'e.g. editor' },
     ];
 }

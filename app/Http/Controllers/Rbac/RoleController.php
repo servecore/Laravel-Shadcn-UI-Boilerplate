@@ -5,21 +5,28 @@ namespace App\Http\Controllers\Rbac;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use App\Services\Rbac\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    public function __construct(
+        private readonly RoleService $roleService,
+    ) {}
 
-    public function index()
+    /**
+     * Display a listing of roles.
+     */
+    public function index(): View
     {
         $roles = Role::query()
             ->orderBy('name')
+            ->withCount('permissions')
             ->get();
 
         $permissions = Permission::query()
@@ -38,74 +45,123 @@ class RoleController extends Controller
             ? $selectedRole->permissions->pluck('id')->all()
             : [];
 
-        return view('pages.rbac.roles.index', compact(
-            'roles',
-            'permissions',
-            'permissionGroups',
-            'selectedRole',
-            'selectedPermissionIds',
-        ));
+        return view('pages.rbac.roles.index', [
+            'roles' => $roles,
+            'permissions' => $permissions,
+            'permissionGroups' => $permissionGroups,
+            'selectedRole' => $selectedRole,
+            'selectedPermissionIds' => $selectedPermissionIds,
+        ]);
     }
 
-    public function partials()
-    {
-
-        $permissions = Permission::query()
-            ->orderBy('name')
-            ->get();
-
-        $permissionGroups = $permissions->groupBy(function ($permission) {
-            return str($permission->name)
-                ->afterLast('-')
-                ->toString();
-        });
-
-        // $selectedRole = $roles->first();
-        $selectedRole = Auth::user()->roles->first();
-
-        $selectedPermissionIds = $selectedRole
-            ? $selectedRole->permissions->pluck('id')->all()
-            : [];
-
-        return view('pages.rbac.roles.partials.permissions', compact(
-            'permissions',
-            'permissionGroups',
-            'selectedRole',
-            'selectedPermissionIds',
-        ));
-    }
-
-   public function create() : View
+    /**
+     * Show the form for creating a new role.
+     */
+    public function create(): View
     {
         return view('pages.rbac.roles.form', [
             'role' => null,
         ]);
     }
 
+    /**
+     * Store a newly created role.
+     */
     public function store(StoreRoleRequest $request): JsonResponse|RedirectResponse
     {
-        // Logic for storing a new role
+        $validated = $request->validated();
+
+        $role = $this->roleService->create([
+            'name' => $validated['name'],
+            'guard_name' => $validated['guard_name'],
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Role created successfully.',
+                'role' => $role,
+            ], 201);
+        }
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role created successfully.');
     }
 
-   public function edit(Request $request, Role $user, $id) : JsonResponse|View
+    /**
+     * Return role data as JSON for the edit modal.
+     */
+    public function show(Request $request, Role $role): JsonResponse
     {
-        if ($request->expectsJson()) {
-            return $this->show($request, $user);
-        }
-        // Logic for editing a role
-        return view('pages.rbac.roles.form', [
-            'role' => Role::findOrFail($id),
+        return response()->json([
+            'role' => $role->only(['id', 'name', 'guard_name']) + [
+                'permissions' => $this->roleService->permissionIds($role),
+            ],
         ]);
     }
 
-    public function update(UpdateRoleRequest $request, $id):  JsonResponse|RedirectResponse
+    /**
+     * Show the form for editing the specified role.
+     */
+    public function edit(Request $request, Role $role): JsonResponse|View
     {
-        // Logic for updating a role
+        if ($request->expectsJson()) {
+            return $this->show($request, $role);
+        }
+
+        return view('pages.rbac.roles.form', [
+            'role' => $role,
+        ]);
     }
 
-    public function destroy($id)
+    /**
+     * Update the specified role.
+     */
+    public function update(UpdateRoleRequest $request, Role $role): JsonResponse|RedirectResponse
     {
-        // Logic for deleting a role
+        $validated = $request->validated();
+
+        $this->roleService->update($role->getKey(), [
+            'name' => $validated['name'],
+            'guard_name' => $validated['guard_name'],
+        ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Role updated successfully.',
+                'role' => $role->refresh(),
+            ]);
+        }
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role updated successfully.');
     }
 
+    /**
+     * Remove the specified role.
+     */
+    public function destroy(Request $request, Role $role): JsonResponse|RedirectResponse
+    {
+        if ($role->name === 'admin') {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'message' => 'The admin role cannot be deleted.',
+                ], 422);
+            }
+
+            return back()->withErrors([
+                'role' => 'The admin role cannot be deleted.',
+            ]);
+        }
+
+        $this->roleService->delete($role->getKey());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Role deleted successfully.',
+            ]);
+        }
+
+        return redirect()->route('roles.index')
+            ->with('success', 'Role deleted successfully.');
+    }
 }

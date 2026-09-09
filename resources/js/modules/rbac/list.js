@@ -1,7 +1,7 @@
 /**
  * Role List Module
- * Handles role table rendering, action buttons, and AJAX operations.
- * Works with server-rendered table as fallback (progressive enhancement).
+ * Handles role list rendering, action buttons, and AJAX operations.
+ * Works with server-rendered list as fallback (progressive enhancement).
  */
 import { roleRoutes } from './routes.js';
 import { http } from '../../lib/http.js';
@@ -10,17 +10,17 @@ import { AppModal } from '../../components/modal.js';
 
 export class RoleList {
     constructor() {
-        this.listRoles = document.querySelector('#list-roles'); 
+        this.listBody = document.querySelector('#list-roles');
         this.createBtn = document.querySelector('#btn-create-role');
         this.modal = null;
         this.init();
     }
 
     init() {
-        if (!this.listRoles) return;
+        if (!this.listBody) return;
 
         // Event delegation for action buttons
-        this.listRoles.addEventListener('click', (e) => this.handleAction(e));
+        this.listBody.addEventListener('click', (e) => this.handleAction(e));
 
         // Create button
         if (this.createBtn) {
@@ -36,12 +36,12 @@ export class RoleList {
             const html = typeof response.data === 'string' ? response.data : '';
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-            const newBody = doc.querySelector('#roles-table-body');
-            if (newBody && this.listRoles) {
-                this.listRoles.innerHTML = newBody.innerHTML;
+            const newBody = doc.querySelector('#list-roles');
+            if (newBody && this.listBody) {
+                this.listBody.innerHTML = newBody.innerHTML;
             }
         } catch {
-            // Silent fail — keep existing table
+            // Silent fail — keep existing list
         }
     }
 
@@ -61,7 +61,7 @@ export class RoleList {
     openCreateModal() {
         this.modal = new AppModal({
             title: 'Create Role',
-            size: 'lg',
+            size: 'md',
             formAction: roleRoutes.store,
             method: 'POST',
             fields: this.getFormFields(),
@@ -76,7 +76,7 @@ export class RoleList {
                 const role = response.data.role || response.data;
                 this.modal = new AppModal({
                     title: 'Edit Role',
-                    size: 'lg',
+                    size: 'md',
                     formAction: roleRoutes.update(roleId),
                     method: 'PUT',
                     fields: this.getFormFields(role),
@@ -100,12 +100,11 @@ export class RoleList {
     }
 
     getFormFields(role = null) {
-        const isEdit = !!role;
         return [
-            { name: 'name', label: 'Name', type: 'text', value: role?.name ?? '', required: true, placeholder: 'Enter full name' },
-            { name: 'guard_name', label: 'Guard Name', type: 'text', value: role?.guard_name ?? '', required: true, placeholder: 'Enter guard name' },
+            { name: 'name', label: 'Name', type: 'text', value: role?.name ?? '', required: true, placeholder: 'e.g. editor' },
         ];
     }
+
     async storeRole(formData) {
         this.modal?.setLoading(true);
         try {
@@ -158,15 +157,11 @@ export class RoleList {
             throw error;
         }
     }
-
 }
-// Auto-initialize when module is loaded on a page that declares this entity.
-// app.js dynamically imports this module only when [data-entity="roles"] exists,
-// so no DOM sniffing is needed here — safe to instantiate directly.
-// Vite module scripts are deferred, so the DOM is already parsed.
-const ENTITY = 'roles';
 
-if (document.querySelector(`[data-entity="${ENTITY}"]`)) {
+// Auto-initialize when module is loaded on a page that declares this entity.
+// app.js dynamically imports this module only when [data-entity="roles"] exists.
+// Vite module scripts are deferred, so the DOM is already parsed.
+if (document.querySelector('[data-entity="roles"]')) {
     new RoleList();
 }
-

@@ -12,6 +12,7 @@
  */
 export const entityRegistry = {
     users: () => import('./users/list.js'),
+    roles: () => import('./rbac/list.js'),
     // products: () => import('./products/list.js'),
     // posts:    () => import('./posts/list.js'),
 };
