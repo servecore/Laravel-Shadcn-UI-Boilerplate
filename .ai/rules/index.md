@@ -12,3 +12,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Http/Controllers/Rbac/** | .ai/rules/rbac.md |
 | app/Http/Controllers/Auth/RegisterController.php, app/Http/Requests/Auth/**, app/Mail/**, app/Models/RegistrationInvite.php, resources/views/auth/register*.blade.php, app/Models/** | .ai/rules/registration.md |
 | routes/web.php | .ai/rules/routes.md |
+| resources/views/layouts/partials/sidebar/** | .ai/rules/sidebar.md |

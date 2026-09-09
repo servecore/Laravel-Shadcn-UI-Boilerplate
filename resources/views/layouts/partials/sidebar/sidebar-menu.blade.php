@@ -26,39 +26,8 @@
                 </x-sidebar.menu-button>
             </x-sidebar.menu-item>
 
-            {{-- Users --}}
-            @can('manage-users')
-                <x-sidebar.menu-item>
-                    <x-sidebar.menu-button :active="request()->routeIs('users.*')" tooltip="Users" href="{{ route('users.index') }}">
-                        <x-slot:icon>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </x-slot:icon>
-                        Users
-                    </x-sidebar.menu-button>
-                </x-sidebar.menu-item>
-            @endcan
-
-            {{-- Roles --}}
-            @can('manage-roles')
-                <x-sidebar.menu-item>
-                    <x-sidebar.menu-button :active="request()->routeIs('roles.*')" tooltip="Roles" href="{{ route('roles.index') }}">
-                        <x-lucide-shield-user class="inline-block size-4" />
-                        Roles
-                    </x-sidebar.menu-button>
-                </x-sidebar.menu-item>
-            @endcan
-
-            {{-- Permissions --}}
-            @can('manage-permissions')
-                <x-sidebar.menu-item>
-                    <x-sidebar.menu-button :active="request()->routeIs('permissions.*')" tooltip="Permissions" href="{{ route('permissions.index') }}">
-                        <x-lucide-shield-check class="inline-block size-4" />
-                        Permissions
-                    </x-sidebar.menu-button>
-                </x-sidebar.menu-item>
-            @endcan
+            {{-- Access Control (Users, Roles, Permissions) --}}
+            @include('layouts.partials.sidebar.sidebar-menu-access-control')
 
             {{-- ============================================
                  MULTI-LEVEL MENU EXAMPLES
