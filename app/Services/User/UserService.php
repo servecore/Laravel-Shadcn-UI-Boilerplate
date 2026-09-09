@@ -16,6 +16,16 @@ class UserService extends BaseCrudService
     }
 
     /**
+     * Get default relationships to eager load.
+     *
+     * @return array<int, string>
+     */
+    protected function relations(): array
+    {
+        return ['roles'];
+    }
+
+    /**
      * Assign a role to a user.
      */
     public function assignRole(User $user, string $role): User

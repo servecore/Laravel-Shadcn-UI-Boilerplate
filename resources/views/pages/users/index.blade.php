@@ -83,7 +83,11 @@
                                 </div>
                             </x-table.cell>
                             <x-table.cell>
-                                <x-badge variant="outline">User</x-badge>
+                                @forelse ($user->roles as $role)
+                                    <x-badge variant="outline">{{ $role->name }}</x-badge>
+                                @empty
+                                    <x-badge variant="secondary">No role</x-badge>
+                                @endforelse
                             </x-table.cell>
                             <x-table.cell>
                                 @if($user->is_active)

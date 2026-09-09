@@ -154,6 +154,21 @@ class UserManagementTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => 'jane@example.com']);
     }
 
+    public function test_users_index_displays_assigned_roles(): void
+    {
+        Role::firstOrCreate(['name' => 'editor']);
+
+        $target = User::factory()->create();
+        $target->assignRole('editor');
+
+        $response = $this->actingAs($this->admin)
+            ->get(route('users.index'));
+
+        $response->assertOk();
+        $response->assertSee('admin');
+        $response->assertSee('editor');
+    }
+
     public function test_user_cannot_delete_own_account(): void
     {
         $response = $this->actingAs($this->admin)
