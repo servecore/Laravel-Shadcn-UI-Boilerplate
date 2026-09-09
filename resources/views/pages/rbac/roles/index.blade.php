@@ -102,14 +102,6 @@
 
                             </div>
 
-                            @if (isset($selectedRole))
-                                <x-button type="button" variant="destructive" size="sm" data-action="delete"
-                                    id="btn-delete-selected-role" data-role-id="{{ $selectedRole->getRouteKey() }}">
-                                    <x-lucide-trash-2 class="mr-2 size-4" />
-                                    Delete Role
-                                </x-button>
-                            @endif
-
                         </div>
 
                     </x-card-header>

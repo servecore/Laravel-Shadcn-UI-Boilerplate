@@ -14,7 +14,6 @@ export class RoleList {
         this.createBtn = document.querySelector('#btn-create-role');
         this.selectedRoleNameEl = document.querySelector('#selected-role-name');
         this.selectedRoleIdInput = document.querySelector('#selected-role-id');
-        this.deleteSelectedBtn = document.querySelector('#btn-delete-selected-role');
         this.savePermissionsBtn = document.querySelector('[data-action="save-permissions"]');
         this.cancelPermissionsBtn = document.querySelector('[data-action="cancel"]');
         this.modal = null;
@@ -41,6 +40,20 @@ export class RoleList {
         if (this.cancelPermissionsBtn) {
             this.cancelPermissionsBtn.addEventListener('click', () => this.cancelPermissions());
         }
+
+        // Search / filter the permission matrix
+        const searchInput = document.querySelector('#permission-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => this.filterPermissions(e.target.value));
+        }
+
+        // Check all / clear for each resource group
+        document.querySelectorAll('[data-action="select-resource-all"]').forEach((btn) => {
+            btn.addEventListener('click', () => this.setResourceState(btn.closest('.permission-group'), true));
+        });
+        document.querySelectorAll('[data-action="select-resource-none"]').forEach((btn) => {
+            btn.addEventListener('click', () => this.setResourceState(btn.closest('.permission-group'), false));
+        });
     }
 
     async reload() {
@@ -90,9 +103,6 @@ export class RoleList {
         if (this.selectedRoleIdInput) {
             this.selectedRoleIdInput.value = roleId;
         }
-        if (this.deleteSelectedBtn) {
-            this.deleteSelectedBtn.setAttribute('data-role-id', roleId);
-        }
 
         // Visual selection
         this.listBody.querySelectorAll('[data-action="select"]').forEach((el) => {
@@ -123,12 +133,44 @@ export class RoleList {
     }
 
     setCheckboxState(box, checked) {
-        const isChecked = box.dataset.state === 'checked';
-        if (checked && !isChecked) {
-            box.click();
-        } else if (!checked && isChecked) {
-            box.click();
+        // Write the state directly instead of simulating clicks, so applying
+        // a role's permissions stays fast even with hundreds of checkboxes.
+        const state = checked ? 'checked' : 'unchecked';
+        box.dataset.state = state;
+        box.setAttribute('aria-checked', String(checked));
+
+        const indicator = box.querySelector('[x-ref="indicator"]');
+        if (indicator) {
+            indicator.dataset.state = state;
+            indicator.classList.toggle('hidden', !checked);
         }
+    }
+
+    setResourceState(section, checked) {
+        if (!section) return;
+        section.querySelectorAll('[data-permission-id]').forEach((box) => {
+            this.setCheckboxState(box, checked);
+        });
+    }
+
+    filterPermissions(query) {
+        const q = query.trim().toLowerCase();
+
+        document.querySelectorAll('.permission-group').forEach((section) => {
+            if (!q) {
+                section.hidden = false;
+                return;
+            }
+
+            const resource = (section.dataset.resource || '').toLowerCase();
+            const names = Array.from(section.querySelectorAll('[data-permission-name]'))
+                .map((box) => box.dataset.permissionName.toLowerCase());
+
+            const matches = resource.includes(q)
+                || names.some((name) => name.includes(q));
+
+            section.hidden = !matches;
+        });
     }
 
     savePermissions() {
@@ -141,30 +183,36 @@ export class RoleList {
             document.querySelectorAll('[data-permission-id][data-state="checked"]'),
         ).map((box) => box.dataset.permissionId);
 
-        const btn = this.savePermissionsBtn;
-        const originalLabel = btn?.innerHTML;
-        if (btn) {
-            btn.disabled = true;
-            btn.innerHTML = 'Saving...';
-        }
+        const label = permissionIds.length === 1 ? 'permission' : 'permissions';
+        const message = `Role "${this.selectedRoleName}" will be updated with ${permissionIds.length} ${label}.`;
 
-        http.put(roleRoutes.update(this.selectedRoleId), {
-            name: this.selectedRoleName,
-            permissions: permissionIds,
-        })
-            .then((response) => {
-                toast.success(response.data?.message || 'Permissions updated successfully');
-                this.loadPermissions(this.selectedRoleId);
-            })
-            .catch((error) => {
-                toast.error(error.message || 'Failed to update permissions');
-            })
-            .finally(() => {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = originalLabel;
-                }
+        this.modal = new AppModal({
+            title: 'Save Permissions',
+            message,
+            confirmText: 'Save',
+            cancelText: 'Cancel',
+            variant: 'default',
+            onConfirm: () => this.submitPermissions(permissionIds),
+        });
+        this.modal.open();
+    }
+
+    async submitPermissions(permissionIds) {
+        this.modal?.setLoading(true);
+        try {
+            const response = await http.put(roleRoutes.update(this.selectedRoleId), {
+                name: this.selectedRoleName,
+                permissions: permissionIds,
             });
+            toast.success(response.data?.message || 'Permissions updated successfully');
+            this.modal?.close();
+            this.loadPermissions(this.selectedRoleId);
+            return response;
+        } catch (error) {
+            this.modal?.setLoading(false);
+            toast.error(error.message || 'Failed to update permissions');
+            throw error;
+        }
     }
 
     cancelPermissions() {

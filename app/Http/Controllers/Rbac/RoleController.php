@@ -39,6 +39,21 @@ class RoleController extends Controller
                 ->toString();
         });
 
+        // Derive the action columns from the data itself so permissions with
+        // non-standard actions (e.g. export-invoices) stay visible in the matrix.
+        // Known CRUD actions keep a stable leading order; extras follow alphabetically.
+        $knownActions = ['view', 'create', 'edit', 'delete', 'manage'];
+        $presentActions = $permissions
+            ->map(fn ($permission) => str($permission->name)->before('-')->toString())
+            ->unique()
+            ->values();
+
+        $actionColumns = collect($knownActions)
+            ->filter(fn ($action) => $presentActions->contains($action))
+            ->merge($presentActions->reject(fn ($action) => in_array($action, $knownActions, true))->sort()->values())
+            ->values()
+            ->all();
+
         $selectedRole = $roles->first();
 
         $selectedPermissionIds = $selectedRole
@@ -49,6 +64,7 @@ class RoleController extends Controller
             'roles' => $roles,
             'permissions' => $permissions,
             'permissionGroups' => $permissionGroups,
+            'actionColumns' => $actionColumns,
             'selectedRole' => $selectedRole,
             'selectedPermissionIds' => $selectedPermissionIds,
         ]);

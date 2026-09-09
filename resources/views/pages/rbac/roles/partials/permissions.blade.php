@@ -1,6 +1,23 @@
-                    <x-card-content>
+<x-card-content>
 
-                        <div class="space-y-8">
+                        <div class="space-y-6">
+
+                            @php
+                                $actions = isset($actionColumns) && ! empty($actionColumns)
+                                    ? $actionColumns
+                                    : ['view', 'create', 'edit', 'delete', 'manage'];
+
+                                $columnCount = max(1, count($actions));
+                                $gridStyle = 'grid-template-columns: minmax(180px, 1fr) repeat('.$columnCount.', minmax(80px, 100px));';
+                                $minWidth = 640 + ($columnCount * 80);
+                            @endphp
+
+                            <!-- Search -->
+                            <div class="relative">
+                                <x-lucide-search class="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+                                <x-input id="permission-search" type="search" class="w-full pl-9"
+                                    placeholder="Search permissions..." />
+                            </div>
 
                             @forelse ($permissionGroups as $resource => $resourcePermissions)
 
@@ -8,31 +25,43 @@
                                     $permissionMap = $resourcePermissions->keyBy(function ($permission) {
                                         return str($permission->name)->before('-')->toString();
                                     });
-
-                                    $actions = collect(['view', 'create', 'edit', 'delete', 'manage']);
                                 @endphp
 
                                 <!-- Permission Group -->
-                                <section class="space-y-4">
+                                <section class="permission-group space-y-4" data-resource="{{ $resource }}">
 
                                     <!-- Group Header -->
-                                    <div>
-                                        <h3 class="text-sm font-semibold capitalize">
-                                            {{ str($resource)->replace(['-', '_'], ' ') }}
-                                        </h3>
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div>
+                                            <h3 class="text-sm font-semibold capitalize">
+                                                {{ str($resource)->replace(['-', '_'], ' ') }}
+                                            </h3>
 
-                                        <p class="text-sm text-muted-foreground">
-                                            Manage {{ str($resource)->replace(['-', '_'], ' ') }} permissions.
-                                        </p>
+                                            <p class="text-sm text-muted-foreground">
+                                                Manage {{ str($resource)->replace(['-', '_'], ' ') }} permissions.
+                                            </p>
+                                        </div>
+
+                                        <div class="flex shrink-0 items-center gap-3 text-xs">
+                                            <button type="button" data-action="select-resource-all"
+                                                class="text-muted-foreground transition-colors hover:text-foreground">
+                                                Check all
+                                            </button>
+
+                                            <button type="button" data-action="select-resource-none"
+                                                class="text-muted-foreground transition-colors hover:text-foreground">
+                                                Clear
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <!-- Permission Table -->
                                     <div class="overflow-x-auto rounded-lg border">
-                                        <div class="min-w-[640px]">
+                                        <div style="min-width: {{ $minWidth }}px">
 
                                             <!-- Table Header -->
                                             <div class="grid items-center gap-4 border-b bg-muted/40 px-4 py-3 text-sm font-medium"
-                                                style="grid-template-columns: minmax(180px, 1fr) repeat(5, minmax(80px, 100px));">
+                                                style="{{ $gridStyle }}">
                                                 <div>
                                                     Permission
                                                 </div>
@@ -46,7 +75,7 @@
 
                                             <!-- Permission Row -->
                                             <div class="grid items-center gap-4 px-4 py-4"
-                                                style="grid-template-columns: minmax(180px, 1fr) repeat(5, minmax(80px, 100px));">
+                                                style="{{ $gridStyle }}">
 
                                                 <!-- Resource -->
                                                 <div>
