@@ -4,11 +4,11 @@ namespace Tests\Feature\Auth;
 
 use App\Mail\RegistrationInviteMail;
 use App\Models\RegistrationInvite;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class RegistrationInviteTest extends TestCase

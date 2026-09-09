@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class RoleManagementTest extends TestCase
@@ -166,5 +166,80 @@ class RoleManagementTest extends TestCase
         $response->assertSessionHasErrors('role');
 
         $this->assertDatabaseHas('roles', ['name' => 'admin']);
+    }
+
+    public function test_admin_can_assign_permissions_to_role(): void
+    {
+        $role = Role::firstOrCreate(['name' => 'editor']);
+
+        $view = Permission::firstOrCreate(['name' => 'view-users']);
+        $create = Permission::firstOrCreate(['name' => 'create-users']);
+
+        $response = $this->actingAs($this->admin)
+            ->putJson(route('roles.update', $role), [
+                'name' => 'editor',
+                'permissions' => [$view->id, $create->id],
+            ]);
+
+        $response->assertOk()
+            ->assertJsonPath('message', 'Role updated successfully.')
+            ->assertJsonCount(2, 'role.permissions');
+
+        $this->assertTrue($role->hasPermissionTo('view-users'));
+        $this->assertTrue($role->hasPermissionTo('create-users'));
+    }
+
+    public function test_admin_can_assign_permissions_sent_as_string_ids(): void
+    {
+        $role = Role::firstOrCreate(['name' => 'editor']);
+
+        $view = Permission::firstOrCreate(['name' => 'view-users']);
+
+        // Mirrors the JS payload, where permission ids arrive as strings.
+        $response = $this->actingAs($this->admin)
+            ->putJson(route('roles.update', $role), [
+                'name' => 'editor',
+                'permissions' => [(string) $view->id],
+            ]);
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'role.permissions');
+
+        $this->assertTrue($role->hasPermissionTo('view-users'));
+    }
+
+    public function test_admin_can_revoke_permissions_from_role(): void
+    {
+        $role = Role::firstOrCreate(['name' => 'editor']);
+
+        $view = Permission::firstOrCreate(['name' => 'view-users']);
+        $create = Permission::firstOrCreate(['name' => 'create-users']);
+        $role->givePermissionTo([$view, $create]);
+
+        $response = $this->actingAs($this->admin)
+            ->putJson(route('roles.update', $role), [
+                'name' => 'editor',
+                'permissions' => [$view->id],
+            ]);
+
+        $response->assertOk()
+            ->assertJsonCount(1, 'role.permissions');
+
+        $this->assertTrue($role->hasPermissionTo('view-users'));
+        $this->assertFalse($role->hasPermissionTo('create-users'));
+    }
+
+    public function test_update_role_rejects_invalid_permission_id(): void
+    {
+        $role = Role::firstOrCreate(['name' => 'editor']);
+
+        $response = $this->actingAs($this->admin)
+            ->putJson(route('roles.update', $role), [
+                'name' => 'editor',
+                'permissions' => ['00000000-0000-0000-0000-000000000000'],
+            ]);
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors('permissions.0');
     }
 }

@@ -1,10 +1,11 @@
 ---
 paths:
   - app/Http/Controllers/Auth/RegisterController.php
-  - app/Http/Requests/Auth/**
-  - app/Mail/**
+  - 'app/Http/Requests/Auth/**'
+  - 'app/Mail/**'
   - app/Models/RegistrationInvite.php
-  - resources/views/auth/register*.blade.php
+  - 'resources/views/auth/register*.blade.php'
+  - 'app/Models/**'
 ---
 
 # Registration (email-only invite flow)
@@ -20,3 +21,6 @@ Registration is email-only. `POST /register` (+ `/register/{token}`) issues a on
 
 ## Mail
 `MAIL_FROM_ADDRESS` in `.env` must be RFC-valid. With Gmail SMTP the From must equal the authenticated `MAIL_USERNAME` (Gmail only sends from addresses it owns). A malformed From (e.g. a value containing a nested `@`) makes Symfony throw `RfcComplianceException` (500). Mailable `RegistrationInviteMail` intentionally has no `from()` so it inherits `mail.from` config.
+
+## Use HasEncryptedRouteKey for routable models
+Routable models must use App\Traits\HasEncryptedRouteKey so route URLs use EncryptedId::encrypt(getKey()) and resolveRouteBinding decrypts. Apply to any model exposed via {model} route binding (User already uses it; Role extends Spatie\Permission\Models\Role and uses it via config/permission.php models.role). Keep getKey() (raw int) for service method calls; only getRouteKey() is encrypted.

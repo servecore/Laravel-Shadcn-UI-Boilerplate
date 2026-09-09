@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Rbac;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Services\Rbac\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -125,10 +125,18 @@ class RoleController extends Controller
             'guard_name' => $validated['guard_name'],
         ]);
 
+        if ($request->has('permissions')) {
+            $this->roleService->syncPermissions($role, $validated['permissions'] ?? []);
+        }
+
+        $role->refresh();
+
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => 'Role updated successfully.',
-                'role' => $role->refresh(),
+                'role' => $role->only(['id', 'name', 'guard_name']) + [
+                    'permissions' => $this->roleService->permissionIds($role),
+                ],
             ]);
         }
 

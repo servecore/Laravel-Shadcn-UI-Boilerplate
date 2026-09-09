@@ -1,6 +1,6 @@
 /**
  * Role List Module
- * Handles role list rendering, action buttons, and AJAX operations.
+ * Handles role list rendering, rolu selection, permission matrix, and CRUD operations.
  * Works with server-rendered list as fallback (progressive enhancement).
  */
 import { roleRoutes } from './routes.js';
@@ -12,19 +12,34 @@ export class RoleList {
     constructor() {
         this.listBody = document.querySelector('#list-roles');
         this.createBtn = document.querySelector('#btn-create-role');
+        this.selectedRoleNameEl = document.querySelector('#selected-role-name');
+        this.selectedRoleIdInput = document.querySelector('#selected-role-id');
+        this.deleteSelectedBtn = document.querySelector('#btn-delete-selected-role');
+        this.savePermissionsBtn = document.querySelector('[data-action="save-permissions"]');
+        this.cancelPermissionsBtn = document.querySelector('[data-action="cancel"]');
         this.modal = null;
+        this.selectedRoleId = this.selectedRoleIdInput?.value ?? null;
+        this.selectedRoleName = this.selectedRoleNameEl?.textContent?.trim() ?? null;
         this.init();
     }
 
     init() {
         if (!this.listBody) return;
 
-        // Event delegation for action buttons
+        // Event delegation for role list actions
         this.listBody.addEventListener('click', (e) => this.handleAction(e));
 
         // Create button
         if (this.createBtn) {
             this.createBtn.addEventListener('click', () => this.openCreateModal());
+        }
+
+        // Permission save / cancel
+        if (this.savePermissionsBtn) {
+            this.savePermissionsBtn.addEventListener('click', () => this.savePermissions());
+        }
+        if (this.cancelPermissionsBtn) {
+            this.cancelPermissionsBtn.addEventListener('click', () => this.cancelPermissions());
         }
     }
 
@@ -46,6 +61,7 @@ export class RoleList {
     }
 
     handleAction(e) {
+        const item = e.target.closest('[data-action="select"]');
         const editBtn = e.target.closest('[data-action="edit"]');
         const deleteBtn = e.target.closest('[data-action="delete"]');
 
@@ -55,6 +71,105 @@ export class RoleList {
         } else if (deleteBtn) {
             e.preventDefault();
             this.confirmDelete(deleteBtn.dataset.roleId);
+        } else if (item) {
+            e.preventDefault();
+            this.selectRole(item);
+        }
+    }
+
+    selectRole(item) {
+        const roleId = item.dataset.roleId;
+        const roleName = item.dataset.roleName;
+
+        this.selectedRoleId = roleId;
+        this.selectedRoleName = roleName;
+
+        if (this.selectedRoleNameEl) {
+            this.selectedRoleNameEl.textContent = roleName;
+        }
+        if (this.selectedRoleIdInput) {
+            this.selectedRoleIdInput.value = roleId;
+        }
+        if (this.deleteSelectedBtn) {
+            this.deleteSelectedBtn.setAttribute('data-role-id', roleId);
+        }
+
+        // Visual selection
+        this.listBody.querySelectorAll('[data-action="select"]').forEach((el) => {
+            el.classList.toggle('bg-muted', el === item);
+        });
+
+        // Load permissions for the selected role
+        this.loadPermissions(roleId);
+    }
+
+    async loadPermissions(roleId) {
+        try {
+            const response = await http.get(roleRoutes.edit(roleId));
+            const role = response.data.role || response.data;
+            const permissionIds = (role.permissions || []).map((id) => String(id));
+            this.applyPermissionState(permissionIds);
+        } catch {
+            toast.error('Failed to load role permissions');
+        }
+    }
+
+    applyPermissionState(checkedIds) {
+        // Checkboxes live in the permission panel, not the list body.
+        document.querySelectorAll('[data-permission-id]').forEach((box) => {
+            const checked = checkedIds.includes(box.dataset.permissionId);
+            this.setCheckboxState(box, checked);
+        });
+    }
+
+    setCheckboxState(box, checked) {
+        const isChecked = box.dataset.state === 'checked';
+        if (checked && !isChecked) {
+            box.click();
+        } else if (!checked && isChecked) {
+            box.click();
+        }
+    }
+
+    savePermissions() {
+        if (!this.selectedRoleId) {
+            toast.error('Select a role first');
+            return;
+        }
+
+        const permissionIds = Array.from(
+            document.querySelectorAll('[data-permission-id][data-state="checked"]'),
+        ).map((box) => box.dataset.permissionId);
+
+        const btn = this.savePermissionsBtn;
+        const originalLabel = btn?.innerHTML;
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = 'Saving...';
+        }
+
+        http.put(roleRoutes.update(this.selectedRoleId), {
+            name: this.selectedRoleName,
+            permissions: permissionIds,
+        })
+            .then((response) => {
+                toast.success(response.data?.message || 'Permissions updated successfully');
+                this.loadPermissions(this.selectedRoleId);
+            })
+            .catch((error) => {
+                toast.error(error.message || 'Failed to update permissions');
+            })
+            .finally(() => {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalLabel;
+                }
+            });
+    }
+
+    cancelPermissions() {
+        if (this.selectedRoleId) {
+            this.loadPermissions(this.selectedRoleId);
         }
     }
 

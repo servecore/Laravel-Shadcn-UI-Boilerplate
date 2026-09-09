@@ -2,8 +2,8 @@
 
 namespace App\Services\Rbac;
 
+use App\Models\Role;
 use App\Services\BaseCrudService;
-use Spatie\Permission\Models\Role;
 
 class RoleService extends BaseCrudService
 {
@@ -18,10 +18,20 @@ class RoleService extends BaseCrudService
     /**
      * Get the permissions attached to a role.
      *
-     * @return array<int, int>
+     * @return array<int, string>
      */
     public function permissionIds(Role $role): array
     {
-        return $role->permissions()->pluck('id')->map(fn ($id) => (int) $id)->all();
+        return $role->permissions()->pluck('id')->all();
+    }
+
+    /**
+     * Sync the permissions attached to a role.
+     *
+     * @param  array<int, string>  $permissionIds
+     */
+    public function syncPermissions(Role $role, array $permissionIds): void
+    {
+        $role->syncPermissions($permissionIds);
     }
 }

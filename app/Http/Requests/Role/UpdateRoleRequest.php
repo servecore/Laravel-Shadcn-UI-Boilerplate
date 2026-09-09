@@ -45,6 +45,8 @@ class UpdateRoleRequest extends FormRequest
                 Rule::unique('roles', 'name')->ignore($this->route('role')),
             ],
             'guard_name' => ['required', 'string', 'max:255'],
+            'permissions' => ['sometimes', 'array'],
+            'permissions.*' => ['string', Rule::exists('permissions', 'id')],
         ];
     }
 }

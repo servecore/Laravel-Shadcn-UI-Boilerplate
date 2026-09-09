@@ -48,7 +48,9 @@
                         <ul class="space-y-2" id="list-roles">
                             @foreach ($roles as $role)
                                 <li>
-                                    <x-item class="cursor-pointer" data-role-id="{{ $role->getRouteKey() }}">
+                                    <x-item class="cursor-pointer" data-action="select"
+                                        data-role-id="{{ $role->getRouteKey() }}"
+                                        data-role-name="{{ $role->name }}">
                                         <span class="min-w-0 flex-1 truncate font-medium">
                                             {{ $role->name }}
                                         </span>
@@ -90,7 +92,7 @@
 
                             <div class="space-y-1">
 
-                                <x-card-title>
+                                <x-card-title id="selected-role-name">
                                     {{ $selectedRole->name ?? 'Administrator' }}
                                 </x-card-title>
 
@@ -102,7 +104,7 @@
 
                             @if (isset($selectedRole))
                                 <x-button type="button" variant="destructive" size="sm" data-action="delete"
-                                    data-role-id="{{ $selectedRole->getRouteKey() }}">
+                                    id="btn-delete-selected-role" data-role-id="{{ $selectedRole->getRouteKey() }}">
                                     <x-lucide-trash-2 class="mr-2 size-4" />
                                     Delete Role
                                 </x-button>
@@ -113,10 +115,11 @@
                     </x-card-header>
 
                     <!-- Permission Content -->
+                    <input type="hidden" id="selected-role-id" value="{{ $selectedRole?->getRouteKey() ?? '' }}">
                     @include('pages.rbac.roles.partials.permissions')
 
                     <!-- Actions -->
-                    <x-card-footer>
+                    <x-card-footer id="permission-actions">
 
                         <div class="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
 
@@ -141,7 +144,7 @@
 
 
         <!-- Pagination -->
-        {{-- 
+{{--         
         @if ($roles->hasPages())
             <div class="flex justify-center">
                 {{ $roles->links() }}

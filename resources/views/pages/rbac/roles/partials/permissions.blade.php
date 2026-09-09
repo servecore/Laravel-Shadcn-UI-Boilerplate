@@ -66,7 +66,7 @@
 
                                                         $isChecked = $permission
                                                             ? in_array(
-                                                                (int) $permission->id,
+                                                                (string) $permission->id,
                                                                 $selectedPermissionIds ?? [],
                                                                 true,
                                                             )
